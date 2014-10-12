@@ -57,8 +57,7 @@ class TestObject(unittest.TestCase):
 
     def test_empty_object(self):
         sg = SchemaGen().add_object({})
-        self.assertEqual(sg.get_schema(),
-                         {'required': [], 'type': 'object', 'properties': {}})
+        self.assertEqual(sg.get_schema(), {'type': 'object', 'properties': {}})
 
     def test_basic_object(self):
         sg = SchemaGen().add_object({

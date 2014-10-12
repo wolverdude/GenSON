@@ -18,7 +18,12 @@ JS_TYPES = {
 class SchemaGen(object):
 
     def __init__(self, schema=None):
-        self._schema = {}
+        self._type = set()
+        self._required = None
+        self._properties = defaultdict(lambda: SchemaGen())
+        self._items = []
+        self._other = {}
+
         if schema:
             self.add_schema(schema)
 
@@ -33,9 +38,9 @@ class SchemaGen(object):
                 self._add_properties(val, 'add_schema')
             elif prop == 'items':
                 self._add_items(val, 'add_schema')
-            elif prop not in self._schema:
-                self._schema[prop] = val
-            elif self._schema[prop] != val:
+            elif prop not in self._other:
+                self._other[prop] = val
+            elif self._other[prop] != val:
                 raise Exception('schema incompatible')
 
         # return self for easy method chaining
@@ -53,33 +58,41 @@ class SchemaGen(object):
         return self
 
     def get_type(self):
-        schema_type = self._schema.get('type')
-
-        if isinstance(schema_type, set):
-            if len(schema_type) == 1:
-                (schema_type,) = schema_type
-            else:
-                schema_type = sorted(schema_type)
+        if len(self._type) == 1:
+            (schema_type,) = self._type
+        else:
+            schema_type = sorted(self._type)
 
         return schema_type
 
+    def get_required(self):
+        return sorted(self._required) if self._required else []
+
+    def get_properties(self):
+        properties = {}
+        for prop, subschema in self._properties.iteritems():
+            properties[prop] = subschema.get_schema()
+        return properties
+
+    def get_items(self):
+        return [subschema.get_schema() for subschema in self._items]
+
     def get_schema(self):
-        schema = copy(self._schema)
+        # start with existing fields
+        schema = copy(self._other)
 
         # unpack the type field
-        if 'type' in self._schema:
+        if self._type:
             schema['type'] = self.get_type()
 
         # call recursively on subschemas if object or array
-        if 'object' in self._schema.get('type'):
-            schema['properties'] = {}
-            for prop, subschema in self._schema['properties'].iteritems():
-                schema['properties'][prop] = subschema.get_schema()
-            schema['required'] = sorted(self._schema['required'])
+        if 'object' in self._type:
+            schema['properties'] = self.get_properties()
+            if self._required:
+                schema['required'] = self.get_required()
 
-        elif 'array' in self._schema.get('type'):
-            schema['items'] = \
-                [subschema.get_schema() for subschema in self._schema['items']]
+        elif 'array' in self._type:
+            schema['items'] = self.get_items()
 
         return schema
 
@@ -108,43 +121,35 @@ class SchemaGen(object):
     # private methods
 
     def _add_type(self, val_type):
-        if 'type' not in self._schema:
-            self._schema['type'] = set()
         if isinstance(val_type, types.StringType):
-            self._schema['type'].add(val_type)
+            self._type.add(val_type)
         else:
-            self._schema['type'] |= set(val_type)
+            self._type |= set(val_type)
 
     def _add_required(self, required):
-        if 'required' not in self._schema:
-            self._schema['required'] = set(required)
+        if self._required == None:
+            # if not already set, set to this
+            self._required = set(required)
         else:
             # use intersection to limit to properties present in both
-            self._schema['required'] &= set(required)
+            self._required &= set(required)
 
     def _add_properties(self, properties, func):
-        if 'properties' not in self._schema:
-            self._schema['properties'] = defaultdict(lambda: SchemaGen())
-
         # recursively modify subschemas
-        for prop, val in schema['properties'].iteritems():
-            getattr(self._schema['properties'][prop], func)(val)
+        for prop, val in properties.iteritems():
+            getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
         """
         TODO: add _add_items_merge
         """
-        self._add_type('array')
-        if 'items' not in self._schema:
-            self._schema['items'] = []
-
-        for item in array:
+        for item in items:
             subschema = SchemaGen()
             getattr(subschema, func)(item)
 
             # only add schema if it's not already there.
-            if subschema not in self._schema['items']:
-                self._schema['items'].append(subschema)
+            if subschema not in self._items:
+                self._items.append(subschema)
 
     def _add_object_object(self, obj):
         self._add_type('object')
