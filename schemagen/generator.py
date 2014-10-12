@@ -1,5 +1,6 @@
 import types
 import json
+from copy import copy
 from collections import defaultdict
 
 JS_TYPES = {
@@ -16,16 +17,37 @@ JS_TYPES = {
 
 class SchemaGen(object):
 
-    def __init__(self):
+    def __init__(self, schema=None):
         self._schema = {}
+        if schema:
+            self.add_schema(schema)
+
+    def add_schema(self, schema):
+
+        for prop, val in schema.iteritems():
+            if prop == 'type':
+                self._add_type(val)
+            elif prop == 'required':
+                self._add_required(val)
+            elif prop == 'properties':
+                self._add_properties(val, 'add_schema')
+            elif prop == 'items':
+                self._add_items(val, 'add_schema')
+            elif prop not in self._schema:
+                self._schema[prop] = val
+            elif self._schema[prop] != val:
+                raise Exception('schema incompatible')
+
+        # return self for easy method chaining
+        return self
 
     def add_object(self, obj):
         if isinstance(obj, types.DictType):
-            self._gen_object(obj)
+            self._add_object_object(obj)
         elif isinstance(obj, types.ListType):
-            self._gen_array(obj)
+            self._add_object_array(obj)
         else:
-            self._gen_basic(obj)
+            self._add_object_basic(obj)
 
         # return self for easy method chaining
         return self
@@ -42,20 +64,20 @@ class SchemaGen(object):
         return schema_type
 
     def get_schema(self):
-        schema = {}
+        schema = copy(self._schema)
 
         # unpack the type field
         if 'type' in self._schema:
             schema['type'] = self.get_type()
 
         # call recursively on subschemas if object or array
-        if schema.get('type') == 'object':
+        if 'object' in self._schema.get('type'):
             schema['properties'] = {}
             for prop, subschema in self._schema['properties'].iteritems():
                 schema['properties'][prop] = subschema.get_schema()
             schema['required'] = sorted(self._schema['required'])
 
-        elif schema.get('type') == 'array':
+        elif 'array' in self._schema.get('type'):
             schema['items'] = \
                 [subschema.get_schema() for subschema in self._schema['items']]
 
@@ -85,24 +107,32 @@ class SchemaGen(object):
 
     # private methods
 
-    def _gen_object(self, obj):
-        self._add_type('object')
+    def _add_type(self, val_type):
+        if 'type' not in self._schema:
+            self._schema['type'] = set()
+        if isinstance(val_type, types.StringType):
+            self._schema['type'].add(val_type)
+        else:
+            self._schema['type'] |= set(val_type)
+
+    def _add_required(self, required):
+        if 'required' not in self._schema:
+            self._schema['required'] = set(required)
+        else:
+            # use intersection to limit to properties present in both
+            self._schema['required'] &= set(required)
+
+    def _add_properties(self, properties, func):
         if 'properties' not in self._schema:
             self._schema['properties'] = defaultdict(lambda: SchemaGen())
 
-        if 'required' not in self._schema:
-            self._schema['required'] = set(obj.keys())
-        else:
-            # use intersection to limit to properties present in both
-            self._schema['required'] &= set(obj.keys())
-
         # recursively modify subschemas
-        for prop, val in obj.iteritems():
-            self._schema['properties'][prop].add_object(val)
+        for prop, val in schema['properties'].iteritems():
+            getattr(self._schema['properties'][prop], func)(val)
 
-    def _gen_array(self, array):
+    def _add_items(self, items, func):
         """
-        TODO: add _get_array_type_merge
+        TODO: add _add_items_merge
         """
         self._add_type('array')
         if 'items' not in self._schema:
@@ -110,20 +140,24 @@ class SchemaGen(object):
 
         for item in array:
             subschema = SchemaGen()
-            subschema.add_object(item)
+            getattr(subschema, func)(item)
 
             # only add schema if it's not already there.
             if subschema not in self._schema['items']:
                 self._schema['items'].append(subschema)
 
-    def _gen_basic(self, val):
+    def _add_object_object(self, obj):
+        self._add_type('object')
+        self._add_required(obj.keys())
+        self._add_properties(obj, 'add_object')
+
+    def _add_object_array(self, array):
+        self._add_type('array')
+        self._add_items(array, 'add_object')
+
+    def _add_object_basic(self, val):
         val_type = JS_TYPES[type(val)]
         self._add_type(val_type)
-
-    def _add_type(self, val_type):
-        if 'type' not in self._schema:
-            self._schema['type'] = set()
-        self._schema['type'].add(val_type)
 
 
 class SchemaEncoder(json.JSONEncoder):
