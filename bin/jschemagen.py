@@ -9,31 +9,31 @@ import os
 import sys
 sys.path[0] = os.path.join(sys.path[0], '..')
 
-from schemagen import SchemaGen
+from jschemagen import Schema
 
 
 def single_schema(raw):
-    return SchemaGen().add_object(json.loads(raw))
+    return Schema().add_object(json.loads(raw))
 
 
 def multi_schema(raw):
     lines = raw.split(os.linesep)
 
-    sg = SchemaGen()
+    s = Schema()
     for line in lines:
         if line:
-            sg.add_object(json.loads(line))
+            s.add_object(json.loads(line))
 
-    return sg
+    return s
 
 
 if __name__ == '__main__':
     raw = sys.stdin.read()
 
     try:
-        sg = single_schema(raw)
+        s = single_schema(raw)
 
     except ValueError:
-        sg = multi_schema(raw)
+        s = multi_schema(raw)
 
-    print sg.dumps(indent=4)
+    print s.to_json(indent=4)

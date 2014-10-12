@@ -3,47 +3,47 @@ import os
 import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-from schemagen import SchemaGen
+from jschemagen import Schema
 
 
 class TestBasicTypes(unittest.TestCase):
 
     def test_no_object(self):
-        sg = SchemaGen()
-        self.assertEqual(sg.get_schema(), {})
+        s = Schema()
+        self.assertEqual(s.to_dict(), {})
 
     def test_string(self):
-        sg = SchemaGen().add_object('string')
-        self.assertEqual(sg.get_schema(), {'type': 'string'})
+        s = Schema().add_object('string')
+        self.assertEqual(s.to_dict(), {'type': 'string'})
 
     def test_number(self):
-        sg = SchemaGen().add_object(1.1)
-        self.assertEqual(sg.get_schema(), {'type': 'number'})
+        s = Schema().add_object(1.1)
+        self.assertEqual(s.to_dict(), {'type': 'number'})
 
     def test_boolean(self):
-        sg = SchemaGen().add_object(True)
-        self.assertEqual(sg.get_schema(), {'type': 'boolean'})
+        s = Schema().add_object(True)
+        self.assertEqual(s.to_dict(), {'type': 'boolean'})
 
     def test_null(self):
-        sg = SchemaGen().add_object(None)
-        self.assertEqual(sg.get_schema(), {'type': 'null'})
+        s = Schema().add_object(None)
+        self.assertEqual(s.to_dict(), {'type': 'null'})
 
 
 class TestArray(unittest.TestCase):
 
     def test_empty(self):
-        sg = SchemaGen().add_object([])
-        self.assertEqual(sg.get_schema(),
+        s = Schema().add_object([])
+        self.assertEqual(s.to_dict(),
                          {'type': 'array', 'items': []})
 
     def test_monotype(self):
-        sg = SchemaGen().add_object(['spam', 'spam', 'spam', 'egg', 'spam'])
-        self.assertEqual(sg.get_schema(),
+        s = Schema().add_object(['spam', 'spam', 'spam', 'egg', 'spam'])
+        self.assertEqual(s.to_dict(),
                          {'type': 'array', 'items': [{'type': 'string'}]})
 
     def test_multitype(self):
-        sg = SchemaGen().add_object([1, '2', None, False])
-        self.assertEqual(sg.get_schema(), {
+        s = Schema().add_object([1, '2', None, False])
+        self.assertEqual(s.to_dict(), {
             'type': 'array',
             'items': [
                 {'type': 'number'},
@@ -56,15 +56,15 @@ class TestArray(unittest.TestCase):
 class TestObject(unittest.TestCase):
 
     def test_empty_object(self):
-        sg = SchemaGen().add_object({})
-        self.assertEqual(sg.get_schema(), {'type': 'object', 'properties': {}})
+        s = Schema().add_object({})
+        self.assertEqual(s.to_dict(), {'type': 'object', 'properties': {}})
 
     def test_basic_object(self):
-        sg = SchemaGen().add_object({
+        s = Schema().add_object({
             'Red Windsor': 'Normally, but today the van broke down.',
             'Stilton': 'Sorry.',
             'Gruyere': False})
-        self.assertEqual(sg.get_schema(), {
+        self.assertEqual(s.to_dict(), {
             'required': ['Gruyere', 'Red Windsor', 'Stilton'],
             'type': 'object',
             'properties': {
@@ -77,11 +77,11 @@ class TestObject(unittest.TestCase):
 class TestComplex(unittest.TestCase):
 
     def test_array_reduce(self):
-        sg = SchemaGen().add_object([['egg', 'spam'],
+        s = Schema().add_object([['egg', 'spam'],
                                      ['egg', 'bacon', 'spam'],
                                      ['egg', 'bacon', 'sausage', 'spam'],
                                      ['spam', 'bacon', 'sausage', 'spam']])
-        self.assertEqual(sg.get_schema(), {
+        self.assertEqual(s.to_dict(), {
             'type': 'array',
             'items': [{
                 'type': 'array',

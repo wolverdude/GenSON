@@ -14,12 +14,12 @@ JS_TYPES = {
 }
 
 
-class SchemaGen(object):
+class Schema(object):
 
     def __init__(self, schema=None):
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: SchemaGen())
+        self._properties = defaultdict(lambda: Schema())
         self._items = []
         self._other = {}
 
@@ -56,7 +56,7 @@ class SchemaGen(object):
         # return self for easy method chaining
         return self
 
-    def get_schema(self, deep=True):
+    def to_dict(self, deep=True):
         # start with existing fields
         schema = dict(self._other)
 
@@ -75,21 +75,21 @@ class SchemaGen(object):
 
         return schema
 
-    def dumps(self, *args, **kwargs):
+    def to_json(self, *args, **kwargs):
         kwargs['cls'] = SchemaEncoder
-        return json.dumps(self.get_schema(deep=False), *args, **kwargs)
+        return json.dumps(self.to_dict(deep=False), *args, **kwargs)
 
     def __eq__(self, other):
         """required for comparing array items to ensure there aren't duplicates
         """
-        if not isinstance(other, SchemaGen):
+        if not isinstance(other, Schema):
             return False
 
         # check type first, before recursing the whole of both objects
         if self._get_type() != other._get_type():
             return False
 
-        return self.get_schema() == other.get_schema()
+        return self.to_dict() == other.to_dict()
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -123,14 +123,14 @@ class SchemaGen(object):
 
         properties = {}
         for prop, subschema in self._properties.iteritems():
-            properties[prop] = subschema.get_schema()
+            properties[prop] = subschema.to_dict()
         return properties
 
     def _get_items(self, deep=True):
         if not deep:
             return list(self._items)
 
-        return [subschema.get_schema() for subschema in self._items]
+        return [subschema.to_dict() for subschema in self._items]
 
     # setters
 
@@ -152,7 +152,7 @@ class SchemaGen(object):
         TODO: add _add_items_merge
         """
         for item in items:
-            subschema = SchemaGen()
+            subschema = Schema()
             getattr(subschema, func)(item)
 
             # only add schema if it's not already there.
@@ -176,11 +176,11 @@ class SchemaGen(object):
 
 
 class SchemaEncoder(json.JSONEncoder):
-    """subclass of json encoder, used to optimize the SchemaGen.dumps method
+    """subclass of json encoder, used to optimize the Schema.dumps method
     """
     def default(self, obj):
-        if isinstance(obj, SchemaGen):
-            return obj.get_schema(deep=False)
+        if isinstance(obj, Schema):
+            return obj.to_dict(deep=False)
 
         # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
