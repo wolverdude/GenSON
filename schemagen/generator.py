@@ -27,6 +27,9 @@ class SchemaGen(object):
         else:
             self._gen_primary_type(obj)
 
+        # return self for easy method chaining
+        return self
+
     def get_type(self):
         schema_type = self._schema.get('type')
 
@@ -48,7 +51,7 @@ class SchemaGen(object):
         # call recursively on subschemas if object or array
         if schema.get('type') == 'object':
             schema['properties'] = {}
-            for prop, subschema in self._schema['properties']:
+            for prop, subschema in self._schema['properties'].iteritems():
                 schema['properties'][prop] = subschema.get_schema()
             schema['required'] = sorted(self._schema['required'])
 
