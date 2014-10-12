@@ -62,8 +62,9 @@ class SchemaGen(object):
         return schema
 
     def dumps(self, *args, **kwargs):
-        kwargs['cls'] = SchemaEncoder
-        return json.dumps(self._schema, *args, **kwargs)
+        # TODO: fix custom JSON encoder
+        # kwargs['cls'] = SchemaEncoder
+        return json.dumps(self.get_schema(), *args, **kwargs)
 
     def __eq__(self, other):
         """required for comparing array items to ensure there aren't duplicates
@@ -133,6 +134,7 @@ class SchemaEncoder(json.JSONEncoder):
             return obj.dumps()
 
         if isinstance(obj, set):
+            # TODO: this is broken
             return json.JSONEncoder.default(self, sorted(obj))
 
         # Let the base class default method raise the TypeError
