@@ -1,2 +1,2 @@
-from generator import make_schema as generate
-__all__ = ['generate']
+from generator import SchemaGen
+__all__ = ['SchemaGen']

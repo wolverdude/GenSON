@@ -1,5 +1,6 @@
 import types
-
+import json
+from collections import defaultdict
 
 JS_TYPES = {
     types.DictType: 'object',
@@ -13,76 +14,123 @@ JS_TYPES = {
 }
 
 
-def make_schema(obj, schema=None):
-    if isinstance(obj, types.DictType):
-        schema = make_schema_obj(obj, schema)
-    elif isinstance(obj, types.ListType):
-        schema = make_schema_list(obj, schema)
-    else:
-        schema = make_schema_basic(obj, schema)
+class SchemaGen(object):
 
-    return schema
+    def __init__(self):
+        self._schema = {}
+
+    def add_object(self, obj):
+        if isinstance(obj, types.DictType):
+            self._gen_object_type(obj)
+        elif isinstance(obj, types.ListType):
+            self._gen_array_type(obj)
+        else:
+            self._gen_primary_type(obj)
+
+    def get_type(self):
+        schema_type = self._schema.get('type')
+
+        if isinstance(schema_type, set):
+            if len(schema_type) == 1:
+                (schema_type,) = schema_type
+            else:
+                schema_type = sorted(schema_type)
+
+        return schema_type
+
+    def get_schema(self):
+        schema = {}
+
+        # unpack the type field
+        if 'type' in self._schema:
+            schema['type'] = self.get_type()
+
+        # call recursively on subschemas if object or array
+        if schema.get('type') == 'object':
+            schema['properties'] = {}
+            for prop, subschema in self._schema['properties']:
+                schema['properties'][prop] = subschema.get_schema()
+            schema['required'] = sorted(self._schema['required'])
+
+        elif schema.get('type') == 'array':
+            schema['items'] = \
+                [subschema.get_schema() for subschema in self._schema['items']]
+
+        return schema
+
+    def dumps(self, *args, **kwargs):
+        kwargs['cls'] = SchemaEncoder
+        return json.dumps(self._schema, *args, **kwargs)
+
+    def __eq__(self, other):
+        """required for comparing array items to ensure there aren't duplicates
+        """
+        if not isinstance(other, SchemaGen):
+            return False
+
+        # check type first, before recursing the whole of both objects
+        if self.get_type() != other.get_type():
+            return False
+
+        return self.get_schema() == other.get_schema()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    # TODO: add sorting methods
+
+    # private methods
+
+    def _gen_object_type(self, obj):
+        self._add_type('object')
+        if 'properties' not in self._schema:
+            self._schema['properties'] = defaultdict(lambda: SchemaGen())
+
+        if 'required' not in self._schema:
+            self._schema['required'] = set(obj.keys())
+        else:
+            # use intersection to limit to properties present in both
+            self._schema['required'] &= set(obj.keys())
+
+        # recursively modify subschemas
+        for prop, val in obj.iteritems():
+            self._schema['properties'][prop].add_object(val)
+
+    def _gen_array_type(self, array):
+        """
+        TODO: add _get_array_type_merge
+        """
+        self._add_type('array')
+        if 'items' not in self._schema:
+            self._schema['items'] = []
+
+        for item in array:
+            subschema = SchemaGen()
+            subschema.add_object(item)
+
+            # only add schema if it's not already there.
+            if subschema not in self._schema['items']:
+                self._schema['items'].append(subschema)
+
+    def _gen_primary_type(self, val):
+        val_type = JS_TYPES[type(val)]
+        self._add_type(val_type)
+
+    def _add_type(self, val_type):
+        if 'type' not in self._schema:
+            self._schema['type'] = set()
+        self._schema['type'].add(val_type)
 
 
-def make_schema_obj(obj, schema=None):
-    if not schema:
-        schema = {
-            'type': 'object',
-            'properties': {},
-            'required': obj.keys()
-        }
+class SchemaEncoder(json.JSONEncoder):
+    """subclass of json encoder, used to optimize the SchemaGen.dumps method
+    """
+    def default(self, obj):
+        if isinstance(obj, SchemaGen):
+            return obj.dumps()
 
-    # make required into sets for later intersection
-    schema_required = set(schema['required'])
-    required = set()
+        if isinstance(obj, set):
+            return json.JSONEncoder.default(self, sorted(obj))
 
-    for k, v in obj.iteritems():
-        schema['properties'][k] = make_schema(v, schema['properties'].get(k))
-        required.add(k)
-
-    # limit required to only those keys in both sets
-    schema['required'] = sorted(list(schema_required & required))
-
-    return schema
-
-
-def make_schema_list(items, schema=None):
-    if not schema:
-        schema = {
-            'type': 'array',
-            'items': []
-        }
-
-    for item in items:
-        item_schema = make_schema(item)
-
-        # only add schema if it's not already there.
-        if item_schema not in schema['items']:
-            schema['items'].append(item_schema)
-
-    return schema
-
-
-def make_schema_basic(val, schema=None):
-    val_type = JS_TYPES[type(val)]
-
-    if schema:
-        add_type(schema, val_type)
-    else:
-        schema = {
-            'type': val_type
-        }
-    return schema
-
-
-def add_type(schema, val_type):
-
-    if isinstance(schema['type'], types.ListType):
-        if val_type not in schema['type']:
-            schema['type'].append(val_type)
-            schema['type'].sort()
-
-    # not a list, compare with value
-    elif schema['type'] != val_type:
-        # make it a list
-        schema['type'] = sorted([schema['type'], val_type])
+        # Let the base class default method raise the TypeError
+        return json.JSONEncoder.default(self, obj)
