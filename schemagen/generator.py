@@ -21,11 +21,11 @@ class SchemaGen(object):
 
     def add_object(self, obj):
         if isinstance(obj, types.DictType):
-            self._gen_object_type(obj)
+            self._gen_object(obj)
         elif isinstance(obj, types.ListType):
-            self._gen_array_type(obj)
+            self._gen_array(obj)
         else:
-            self._gen_primary_type(obj)
+            self._gen_basic(obj)
 
         # return self for easy method chaining
         return self
@@ -84,7 +84,7 @@ class SchemaGen(object):
 
     # private methods
 
-    def _gen_object_type(self, obj):
+    def _gen_object(self, obj):
         self._add_type('object')
         if 'properties' not in self._schema:
             self._schema['properties'] = defaultdict(lambda: SchemaGen())
@@ -99,7 +99,7 @@ class SchemaGen(object):
         for prop, val in obj.iteritems():
             self._schema['properties'][prop].add_object(val)
 
-    def _gen_array_type(self, array):
+    def _gen_array(self, array):
         """
         TODO: add _get_array_type_merge
         """
@@ -115,7 +115,7 @@ class SchemaGen(object):
             if subschema not in self._schema['items']:
                 self._schema['items'].append(subschema)
 
-    def _gen_primary_type(self, val):
+    def _gen_basic(self, val):
         val_type = JS_TYPES[type(val)]
         self._add_type(val_type)
 

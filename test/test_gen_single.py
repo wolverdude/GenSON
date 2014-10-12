@@ -1,12 +1,12 @@
 import unittest
 import os
 import sys
-from schemagen import SchemaGen
-
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
+from schemagen import SchemaGen
 
-class TestPrimaryTypes(unittest.TestCase):
+
+class TestBasicTypes(unittest.TestCase):
 
     def test_no_object(self):
         sg = SchemaGen()
@@ -37,7 +37,7 @@ class TestArray(unittest.TestCase):
                          {'type': 'array', 'items': []})
 
     def test_monotype(self):
-        sg = SchemaGen().add_object(['spam', 'spam', 'eggs', 'spam'])
+        sg = SchemaGen().add_object(['spam', 'spam', 'spam', 'egg', 'spam'])
         self.assertEqual(sg.get_schema(),
                          {'type': 'array', 'items': [{'type': 'string'}]})
 
@@ -49,7 +49,8 @@ class TestArray(unittest.TestCase):
                 {'type': 'number'},
                 {'type': 'string'},
                 {'type': 'null'},
-                {'type': 'boolean'}]})
+                {'type': 'boolean'}]
+            })
 
 
 class TestObject(unittest.TestCase):
@@ -70,7 +71,32 @@ class TestObject(unittest.TestCase):
             'properties': {
                 'Red Windsor': {'type': 'string'},
                 'Gruyere': {'type': 'boolean'},
-                'Stilton': {'type': 'string'}}})
+                'Stilton': {'type': 'string'}}
+            })
+
+
+class TestComplex(unittest.TestCase):
+
+    def test_array_reduce(self):
+        sg = SchemaGen().add_object([['egg', 'spam'],
+                                     ['egg', 'bacon', 'spam'],
+                                     ['egg', 'bacon', 'sausage', 'spam'],
+                                     ['spam', 'bacon', 'sausage', 'spam']])
+        self.assertEqual(sg.get_schema(), {
+            'type': 'array',
+            'items': [{
+                'type': 'array',
+                'items': [{'type': 'string'}]}]
+            })
+
+    def test_array_in_object(self):
+        pass
+
+    def test_object_in_array(self):
+        pass
+
+    def test_three_deep(self):
+        pass
 
 
 if __name__ == '__main__':
