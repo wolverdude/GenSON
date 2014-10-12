@@ -16,12 +16,13 @@ JS_TYPES = {
 
 class Schema(object):
 
-    def __init__(self, schema=None):
+    def __init__(self, schema=None, merge_arrays=True):
         self._type = set()
         self._required = None
         self._properties = defaultdict(lambda: Schema())
         self._items = []
         self._other = {}
+        self.merge_arrays = merge_arrays
 
         if schema:
             self.add_schema(schema)
@@ -135,7 +136,7 @@ class Schema(object):
     # setters
 
     def _add_required(self, required):
-        if self._required == None:
+        if self._required is None:
             # if not already set, set to this
             self._required = set(required)
         else:
@@ -148,9 +149,12 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
-        """
-        TODO: add _add_items_merge
-        """
+        if self.merge_arrays:
+            self._add_items_merge(items, func)
+        else:
+            self._add_items_sep(items, func)
+
+    def _add_items_sep(self, items, func):
         for item in items:
             subschema = Schema()
             getattr(subschema, func)(item)
@@ -158,6 +162,15 @@ class Schema(object):
             # only add schema if it's not already there.
             if subschema not in self._items:
                 self._items.append(subschema)
+
+    def _add_items_merge(self, items, func):
+        if items:
+            if not self._items:
+                self._items.append(Schema())
+
+            method = getattr(self._items[0], func)
+            for item in items:
+                method(item)
 
     # generators
 

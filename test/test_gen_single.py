@@ -41,8 +41,16 @@ class TestArray(unittest.TestCase):
         self.assertEqual(s.to_dict(),
                          {'type': 'array', 'items': [{'type': 'string'}]})
 
-    def test_multitype(self):
+    def test_multitype_merge(self):
         s = Schema().add_object([1, '2', None, False])
+        self.assertEqual(s.to_dict(), {
+            'type': 'array',
+            'items': [{
+                'type': ['boolean', 'null', 'number', 'string']}]
+            })
+
+    def test_multitype_sep(self):
+        s = Schema(merge_arrays=False).add_object([1, '2', None, False])
         self.assertEqual(s.to_dict(), {
             'type': 'array',
             'items': [
@@ -78,9 +86,9 @@ class TestComplex(unittest.TestCase):
 
     def test_array_reduce(self):
         s = Schema().add_object([['egg', 'spam'],
-                                     ['egg', 'bacon', 'spam'],
-                                     ['egg', 'bacon', 'sausage', 'spam'],
-                                     ['spam', 'bacon', 'sausage', 'spam']])
+                                 ['egg', 'bacon', 'spam'],
+                                 ['egg', 'bacon', 'sausage', 'spam'],
+                                 ['spam', 'bacon', 'sausage', 'spam']])
         self.assertEqual(s.to_dict(), {
             'type': 'array',
             'items': [{
