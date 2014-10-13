@@ -28,6 +28,9 @@ class Schema(object):
             self.add_schema(schema)
 
     def add_schema(self, schema):
+        """
+        TODO: Add schema validation
+        """
 
         for prop, val in schema.iteritems():
             if prop == 'type':
@@ -57,7 +60,7 @@ class Schema(object):
         # return self for easy method chaining
         return self
 
-    def to_dict(self, deep=True):
+    def to_dict(self, recurse=True):
         # start with existing fields
         schema = dict(self._other)
 
@@ -67,18 +70,17 @@ class Schema(object):
 
         # call recursively on subschemas if object or array
         if 'object' in self._type:
-            schema['properties'] = self._get_properties(deep)
+            schema['properties'] = self._get_properties(recurse)
             if self._required:
                 schema['required'] = self._get_required()
 
         elif 'array' in self._type:
-            schema['items'] = self._get_items(deep)
+            schema['items'] = self._get_items(recurse)
 
         return schema
 
     def to_json(self, *args, **kwargs):
-        kwargs['cls'] = SchemaEncoder
-        return json.dumps(self.to_dict(deep=False), *args, **kwargs)
+        return json.dumps(self.to_dict(), *args, **kwargs)
 
     def __eq__(self, other):
         """required for comparing array items to ensure there aren't duplicates
@@ -95,17 +97,9 @@ class Schema(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    # TODO: add sorting methods
-
     # private methods
 
     # getters
-
-    def _add_type(self, val_type):
-        if isinstance(val_type, types.StringType):
-            self._type.add(val_type)
-        else:
-            self._type |= set(val_type)
 
     def _get_type(self):
         if len(self._type) == 1:
@@ -118,8 +112,8 @@ class Schema(object):
     def _get_required(self):
         return sorted(self._required) if self._required else []
 
-    def _get_properties(self, deep=True):
-        if not deep:
+    def _get_properties(self, recurse=True):
+        if not recurse:
             return dict(self._properties)
 
         properties = {}
@@ -127,13 +121,19 @@ class Schema(object):
             properties[prop] = subschema.to_dict()
         return properties
 
-    def _get_items(self, deep=True):
-        if not deep:
+    def _get_items(self, recurse=True):
+        if not recurse:
             return list(self._items)
 
         return [subschema.to_dict() for subschema in self._items]
 
     # setters
+
+    def _add_type(self, val_type):
+        if isinstance(val_type, types.StringType):
+            self._type.add(val_type)
+        else:
+            self._type |= set(val_type)
 
     def _add_required(self, required):
         if self._required is None:
@@ -154,15 +154,6 @@ class Schema(object):
         else:
             self._add_items_sep(items, func)
 
-    def _add_items_sep(self, items, func):
-        for item in items:
-            subschema = Schema()
-            getattr(subschema, func)(item)
-
-            # only add schema if it's not already there.
-            if subschema not in self._items:
-                self._items.append(subschema)
-
     def _add_items_merge(self, items, func):
         if items:
             if not self._items:
@@ -172,7 +163,16 @@ class Schema(object):
             for item in items:
                 method(item)
 
-    # generators
+    def _add_items_sep(self, items, func):
+        for item in items:
+            subschema = Schema()
+            getattr(subschema, func)(item)
+
+            # only add schema if it's not already there.
+            if subschema not in self._items:
+                self._items.append(subschema)
+
+    # generate from object
 
     def _generate_object(self, obj):
         self._add_type('object')
@@ -186,14 +186,3 @@ class Schema(object):
     def _generate_basic(self, val):
         val_type = JS_TYPES[type(val)]
         self._add_type(val_type)
-
-
-class SchemaEncoder(json.JSONEncoder):
-    """subclass of json encoder, used to optimize the Schema.dumps method
-    """
-    def default(self, obj):
-        if isinstance(obj, Schema):
-            return obj.to_dict(deep=False)
-
-        # Let the base class default method raise the TypeError
-        return json.JSONEncoder.default(self, obj)
