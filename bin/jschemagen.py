@@ -36,4 +36,4 @@ if __name__ == '__main__':
     except ValueError:
         s = multi_schema(raw)
 
-    print s.to_json(indent=4)
+    print(s.to_json(indent=4))

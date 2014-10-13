@@ -1,16 +1,15 @@
-import types
 import json
 from collections import defaultdict
 
 JS_TYPES = {
-    types.DictType: 'object',
-    types.ListType: 'array',
-    types.StringType: 'string',
-    types.UnicodeType: 'string',
-    types.IntType: 'number',
-    types.FloatType: 'number',
-    types.BooleanType: 'boolean',
-    types.NoneType: 'null',
+    dict: 'object',
+    list: 'array',
+    str: 'string',
+    type(u''): 'string',
+    int: 'number',
+    float: 'number',
+    bool: 'boolean',
+    type(None): 'null',
 }
 
 
@@ -32,7 +31,7 @@ class Schema(object):
         TODO: Add schema validation
         """
 
-        for prop, val in schema.iteritems():
+        for prop, val in schema.items():
             if prop == 'type':
                 self._add_type(val)
             elif prop == 'required':
@@ -50,9 +49,9 @@ class Schema(object):
         return self
 
     def add_object(self, obj):
-        if isinstance(obj, types.DictType):
+        if isinstance(obj, dict):
             self._generate_object(obj)
-        elif isinstance(obj, types.ListType):
+        elif isinstance(obj, list):
             self._generate_array(obj)
         else:
             self._generate_basic(obj)
@@ -117,7 +116,7 @@ class Schema(object):
             return dict(self._properties)
 
         properties = {}
-        for prop, subschema in self._properties.iteritems():
+        for prop, subschema in self._properties.items():
             properties[prop] = subschema.to_dict()
         return properties
 
@@ -130,7 +129,7 @@ class Schema(object):
     # setters
 
     def _add_type(self, val_type):
-        if isinstance(val_type, types.StringType):
+        if isinstance(val_type, str):
             self._type.add(val_type)
         else:
             self._type |= set(val_type)
@@ -145,7 +144,7 @@ class Schema(object):
 
     def _add_properties(self, properties, func):
         # recursively modify subschemas
-        for prop, val in properties.iteritems():
+        for prop, val in properties.items():
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
