@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 DESCRIPTION = """
-Read one or more JSON objects and/or schemas and output one unified
-schema for them all.
+JSON Schema Generator - Read one or more JSON objects and/or schemas and
+output one unified schema for them all.
 """
 
 import argparse

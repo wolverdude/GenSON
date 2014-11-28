@@ -14,8 +14,20 @@ JS_TYPES = {
 
 
 class Schema(object):
+    """
+    Basic schema generator class. Schema objects can be loaded up
+    with existing schemas and objects before being serialized.
+    """
 
     def __init__(self, merge_arrays=True):
+        """
+        Builds a schema generator object.
+
+        arguments:
+        * `merge_arrays` (default `True`): Assume all array items share
+          the same schema (as they should). The alternate behavior is to
+          create a different schema for each item in every array.
+        """
         self._type = set()
         self._required = None
         self._properties = defaultdict(lambda: Schema())
@@ -25,9 +37,18 @@ class Schema(object):
 
     def add_schema(self, schema):
         """
-        TODO: Add schema validation
+        Merges in an existing schema.
+
+        arguments:
+        * `schema` (required - `dict` or `Schema`):
+          an existing JSON Schema to merge.
         """
 
+        # serialize instances of Schema before parsing
+        if isinstance(schema, Schema):
+            schema = schema.to_dict()
+
+        # parse properties and add them individually
         for prop, val in schema.items():
             if prop == 'type':
                 self._add_type(val)
@@ -42,10 +63,22 @@ class Schema(object):
             elif self._other[prop] != val:
                 raise Exception('schema incompatible')
 
+        # make sure the 'required' key gets set regardless
+        if 'required' not in schema:
+            self._add_required([])
+
         # return self for easy method chaining
         return self
 
     def add_object(self, obj):
+        """
+        Modify the schema to accomodate an object.
+
+        arguments:
+        * `obj` (required - `dict`):
+          a JSON object to use in generate the schema.
+        """
+
         if isinstance(obj, dict):
             self._generate_object(obj)
         elif isinstance(obj, list):
@@ -57,6 +90,9 @@ class Schema(object):
         return self
 
     def to_dict(self, recurse=True):
+        """
+        Convert the current schema to a `dict`.
+        """
         # start with existing fields
         schema = dict(self._other)
 
@@ -76,6 +112,9 @@ class Schema(object):
         return schema
 
     def to_json(self, *args, **kwargs):
+        """
+        Convert the current schema directly to serialized JSON.
+        """
         return json.dumps(self.to_dict(), *args, **kwargs)
 
     def __eq__(self, other):
