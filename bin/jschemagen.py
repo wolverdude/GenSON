@@ -1,26 +1,36 @@
 #!/usr/bin/env python
 
 DESCRIPTION = """
-reads JSON object from stdin and outputs a basic schema for it
+read one or more JSON objects from stdin and output one basic schema for them
 """
 
 import argparse
-import json
-import os
 import sys
-sys.path[0] = os.path.join(sys.path[0], '..')
+import os
+import json
 
+sys.path[0] = os.path.join(sys.path[0], '..')
 from jschemagen import Schema
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-d', '--delimiter', metavar='DELIM',
-                        help='delimiter for multiple JSON objects')
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
                         help='indent output SPACES spaces')
-    parser.add_argument('-s', '--schema',
-                        help='JSON file containing starting schema')
+    parser.add_argument('-s', '--schema', action='append', default=[],
+                        help='JSON file containing starting schema ' +
+                        '(can be specified mutliple times to merge schemas)')
+    parser.add_argument('-m', '--multi', action='store_true',
+                        help='take multiple JSON objects from stdin')
+    parser.add_argument('-d', '--delimiter', metavar='DELIM',
+                        default=os.linesep, help='set delimiter for ' +
+                        'JSON objects (EOL default)')
+    parser.add_argument('-a', '--no-merge-arrays', action='store_false',
+                        help='don\'t assume that all elements of an array ' +
+                        'share the same schema')
+    parser.add_argument('object', nargs=argparse.REMAINDER, default=[],
+                        help='JSON file containing base object (can pass ' +
+                        'multiple object files to create a unified schema')
 
     return parser.parse_args()
 
@@ -36,16 +46,15 @@ def multi_schema(s, raw, delimiter):
 
 if __name__ == '__main__':
     args = parse_args()
-    raw = sys.stdin.read()
 
-    s = Schema()
+    s = Schema(merge_arrays=args.no_merge_arrays)
 
-    if args.schema:
-        s.add_schema(json.load(args.schema))
+    for schema_file in args.schema:
+        with open(schema_file, 'r') as fp:
+            s.add_schema(json.load(fp))
 
-    if args.delimiter:
-        multi_schema(s, raw, args.delimiter)
-    else:
-        s.add_object(json.loads(raw))
+    for object_file in args.object:
+        with open(object_file, 'r') as fp:
+            s.add_object(json.load(fp))
 
     print(s.to_json(indent=args.indent))
