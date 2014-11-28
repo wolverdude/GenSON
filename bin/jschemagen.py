@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 DESCRIPTION = """
-read one or more JSON objects from stdin and output one basic schema for them
+Read one or more JSON objects and/or schemas and output one unified
+schema for them all.
 """
 
 import argparse
@@ -18,30 +19,32 @@ def parse_args():
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
                         help='indent output SPACES spaces')
     parser.add_argument('-s', '--schema', action='append', default=[],
-                        help='JSON file containing starting schema ' +
+                        type=argparse.FileType('r'),
+                        help='JSON file containing base schema ' +
                         '(can be specified mutliple times to merge schemas)')
-    parser.add_argument('-m', '--multi', action='store_true',
-                        help='take multiple JSON objects from stdin')
     parser.add_argument('-d', '--delimiter', metavar='DELIM',
-                        default=os.linesep, help='set delimiter for ' +
-                        'JSON objects (EOL default)')
+                        help='set a delimiter - use this option if the ' +
+                        'input files contain multiple JSON objects/schemas')
     parser.add_argument('-a', '--no-merge-arrays', action='store_false',
-                        help='don\'t assume that all elements of an array ' +
-                        'share the same schema')
-    parser.add_argument('object', nargs=argparse.REMAINDER, default=[],
-                        help='JSON file containing base object (can pass ' +
-                        'multiple object files to create a unified schema')
+                        help='create different schemas for each element of ' +
+                        'an array rather than merging them into one')
+    parser.add_argument('object', nargs=argparse.REMAINDER,
+                        type=argparse.FileType('r'), help='JSON file ' +
+                        'containing base object (pass "-" for stdin, can ' +
+                        'also accept multiple object files)')
 
     return parser.parse_args()
 
 
-def multi_schema(s, raw, delimiter):
-    lines = raw.split(delimiter)
+def add_json_from_file(s, fp, delimiter, schema=False):
+    method = getattr(s, 'add_schema' if schema else 'add_object')
 
-    s = Schema()
-    for line in lines:
-        if line:
-            s.add_object(json.loads(line))
+    if delimiter:
+        for json_string in fp.read().split(delimiter):
+            if json_string:
+                method(json.loads(json_string))
+    else:
+        method(json.load(fp))
 
 
 if __name__ == '__main__':
@@ -50,11 +53,9 @@ if __name__ == '__main__':
     s = Schema(merge_arrays=args.no_merge_arrays)
 
     for schema_file in args.schema:
-        with open(schema_file, 'r') as fp:
-            s.add_schema(json.load(fp))
+        add_json_from_file(s, schema_file, args.delimiter, schema=True)
 
     for object_file in args.object:
-        with open(object_file, 'r') as fp:
-            s.add_object(json.load(fp))
+        add_json_from_file(s, object_file, args.delimiter)
 
     print(s.to_json(indent=args.indent))
