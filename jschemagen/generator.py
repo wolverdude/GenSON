@@ -15,16 +15,13 @@ JS_TYPES = {
 
 class Schema(object):
 
-    def __init__(self, schema=None, merge_arrays=True):
+    def __init__(self, merge_arrays=True):
         self._type = set()
         self._required = None
         self._properties = defaultdict(lambda: Schema())
         self._items = []
         self._other = {}
         self.merge_arrays = merge_arrays
-
-        if schema:
-            self.add_schema(schema)
 
     def add_schema(self, schema):
         """
@@ -129,7 +126,7 @@ class Schema(object):
     # setters
 
     def _add_type(self, val_type):
-        if isinstance(val_type, str):
+        if isinstance(val_type, (str, type(u''))):
             self._type.add(val_type)
         else:
             self._type |= set(val_type)
