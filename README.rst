@@ -33,9 +33,9 @@ The package includes a ``genson`` executable that allows you to access this func
 
 .. code-block:: none
 
-    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+    usage: genson.py [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
 
-    generate one, unified JSON Schema from one or more JSON objects and/or JSON
+    Generate one, unified JSON Schema from one or more JSON objects and/or JSON
     Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
 
     positional arguments:
@@ -48,12 +48,16 @@ The package includes a ``genson`` executable that allows you to access this func
                             generate a different subschema for each element in an
                             array rather than merging them all into one
       -d DELIM, --delimiter DELIM
-                            set a delimiter - use this option if the input files
-                            contain multiple JSON objects/schemas
+                            set a delimiter - Use this option if the input files
+                            contain multiple JSON objects/schemas. You can pass
+                            any string. A few cases ('newline', 'tab', 'space')
+                            will get converted to a whitespace character, and if
+                            empty string ('') is passed, the parser will try to
+                            auto-detect where the boundary is.
       -i SPACES, --indent SPACES
-                            indent output SPACES spaces
+                            pretty-print the output, indenting SPACES spaces
       -s SCHEMA, --schema SCHEMA
-                            JSON file containing a base schema (can be specified
+                            file containing a JSON Schema (can be specified
                             mutliple times to merge schemas)
 
 

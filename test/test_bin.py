@@ -27,20 +27,28 @@ def run(args=[], stdin_data=None):
 
 class TestStdin(unittest.TestCase):
 
-    def test_no_input(self):
-        (stdout, stderr) = run()
+    def test_empty_input(self):
+        (stdout, stderr) = run(stdin_data='')
         self.assertEqual(stderr, None)
         self.assertEqual(json.loads(stdout), {})
 
-    def test_empty_object_stdin(self):
-        (stdout, stderr) = run(['-'], '{}')
+    def test_empty_object(self):
+        (stdout, stderr) = run(stdin_data='{}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
             {"type": "object", "properties": {}})
 
-    def test_delim_stdin(self):
-        (stdout, stderr) = run(['-d', 'x', '-'], '{"hi":"there"}x{"hi":5}')
+    def test_delim_newline(self):
+        (stdout, stderr) = run(['-d', 'newline'], '{"hi":"there"}\n{"hi":5}')
+        self.assertEqual(stderr, None)
+        self.assertEqual(
+            json.loads(stdout),
+            {"required": ["hi"], "type": "object", "properties": {
+                "hi": {"type": ["integer", "string"]}}})
+
+    def test_delim_auto(self):
+        (stdout, stderr) = run(['-d', ''], '{"hi":"there"}\n{"hi":5}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
