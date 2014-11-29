@@ -3,25 +3,23 @@ jschemagen
 
 A powerful, user-friendly `JSON Schema`_ generator built in Python.
 
-Its power comes from the ability to generate a single schema from multiple objects and merge in existing schemas as well. Basically, you can feed in as many schemas and objects as you want and it should generate one schema under which they are all valid.
+Its power comes from the ability to generate a single schema from multiple objects. You can also throw existing schemas into the mix. Basically, you can feed it as many schemas and objects as you want and it will spit out one, unified schema for all of them.
 
-The generator follows three rules:
+The generator follows these three rules:
 
-1. *Every* object that was used to generate the new schema must still validate.
-2. *Any* object that is valid under *any* merged schema must still validate.
+1. *Every* object it is given must validate under the generated schema.
+2. *Any* object that is valid under *any* schema it is given must also validate.
 3. The generated schema should be as strict as possible given the first 2 rules.
 
 
 JSON Schema Implementation
 ==========================
 
-This is a Draft 4 generator (``"$schema": "http://json-schema.org/draft-04/schema#"``"). Draft 3 support may come in the future. Even so, there are a couple of compliance issues.
+This is a `Draft 4`_ generator. Draft 3 support may come in the future.
 
-The generator only deals with 4 keywords: ``"type"``, ``"items"``, ``"properties"`` and ``"required"``. This is mainly because the generator doesn't know the specifics of your data model. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on tweaking the schema.
+It is important to note that the generator uses only a small subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it doesn't try to guess them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
-You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2 if you feed it schemas with advanced keywords. It will just blindly pass them on into the final schema.
-
-This also means that headers aren't included. This may change in the future, but for now, it's still manual.
+This means that headers and most keywords aren't dealt with. Specifically, the generator only deals with 4 keywords: ``"type"``, ``"items"``, ``"properties"`` and ``"required"``. You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema.
 
 
 CLI tool
@@ -145,9 +143,10 @@ You can also run any test file directly:
 TODO
 ====
 
-* Support for JSON Schema Draft 3
+* Validation for add_schema
 * Headers
-* validation for add_schema
+* Support for JSON Schema Draft 3
 
 
-.. _JSON schema: //json-schema.org/
+.. _JSON Schema: //json-schema.org/
+.. _Draft 4: http://json-schema.org/draft-04/schema
