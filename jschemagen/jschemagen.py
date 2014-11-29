@@ -1,17 +1,11 @@
-#!/usr/bin/env python
-
 DESCRIPTION = """
 JSON Schema Generator - Read one or more JSON objects and/or schemas and
 output one unified schema for them all.
 """
 
 import argparse
-import sys
-import os
 import json
-
-sys.path[0] = os.path.join(sys.path[0], '..')
-from jschemagen import Schema
+from .generator import Schema
 
 
 def main():
@@ -59,7 +53,3 @@ def add_json_from_file(s, fp, delimiter, schema=False):
                 method(json.loads(json_string))
     else:
         method(json.load(fp))
-
-
-if __name__ == '__main__':
-    main()

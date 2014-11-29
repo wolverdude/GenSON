@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def get_long_docs(*filenames):
@@ -22,8 +22,10 @@ setup(
     author_email='wolverton (dot) jr (at) gmail (dot) com',
     # ^^^ Much like Mrs. Bun, I don't like spam.
     py_modules=['jschemagen'],
+    packages=find_packages(exclude="test"),
     include_package_data=True,
-    entry_points={'console_scripts': ['jschemagen = bin.jschemagen:main']},
+    entry_points={
+        'console_scripts': ['jschemagen = jschemagen.jschemagen:main']},
     zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',

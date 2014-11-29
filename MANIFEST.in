@@ -1,4 +1,4 @@
-include *.md
+include *.rst
 include LICENSE
 recursive-include jschemagen *.py
 recursive-include bin *.py
