@@ -14,6 +14,20 @@ sys.path[0] = os.path.join(sys.path[0], '..')
 from jschemagen import Schema
 
 
+def main():
+    args = parse_args()
+
+    s = Schema(merge_arrays=args.no_merge_arrays)
+
+    for schema_file in args.schema:
+        add_json_from_file(s, schema_file, args.delimiter, schema=True)
+
+    for object_file in args.object:
+        add_json_from_file(s, object_file, args.delimiter)
+
+    print(s.to_json(indent=args.indent))
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
@@ -48,14 +62,4 @@ def add_json_from_file(s, fp, delimiter, schema=False):
 
 
 if __name__ == '__main__':
-    args = parse_args()
-
-    s = Schema(merge_arrays=args.no_merge_arrays)
-
-    for schema_file in args.schema:
-        add_json_from_file(s, schema_file, args.delimiter, schema=True)
-
-    for object_file in args.object:
-        add_json_from_file(s, object_file, args.delimiter)
-
-    print(s.to_json(indent=args.indent))
+    main()

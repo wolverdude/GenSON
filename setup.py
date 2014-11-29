@@ -23,6 +23,7 @@ setup(
     # ^^^ Much like Mrs. Bun, I don't like spam.
     py_modules=['jschemagen'],
     include_package_data=True,
+    entry_points={'console_scripts': ['jschemagen = bin.jschemagen:main']},
     zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',

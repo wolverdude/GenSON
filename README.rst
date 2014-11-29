@@ -17,14 +17,14 @@ The third rule is has limits. The generator does not generate any specific valid
 CLI tool
 ========
 
-``bin/jschemagen.py`` is an executable that takes a simple JSON object from stdin and outputs a naïve schema for it. There are additional options for generating a single schema from multiple objects or modifying an existing schema. To see these options, run:
+The package includes a ``jschemagen`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
 
 .. code-block:: bash
-    $ bin/jschemagen.py --help
+    $ jschemagen.py --help
 
 
-Schema Generator API
-====================
+jschemagen Python API
+=====================
 
 ``Schema`` is the basic schema generator class. ``Schema`` objects can be loaded up with existing schemas and objects before being serialized.
 
