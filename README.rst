@@ -22,7 +22,7 @@ It is important to note that the generator uses only a small subset of JSON Sche
 This means that headers and most keywords aren't dealt with. Specifically, the generator only deals with 4 keywords: ``"type"``, ``"items"``, ``"properties"`` and ``"required"``. You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema.
 
 
-CLI tool
+CLI Tool
 ========
 
 The package includes a ``jschemagen`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
@@ -47,10 +47,10 @@ jschemagen Python API
     s.add_object({"hi": 5})
 
     s.to_dict()
-    #=> {"type": "object", "properties": {"hi": {"type": ["number", "string"]}}}
+    #=> {"type": "object", "properties": {"hi": {"type": ["integer", "string"]}}}
 
     s.to_json()
-    #=> "{\"type\": \"object\", \"properties\": {\"hi\": {\"type\": [\"number\", \"string\"]}}}"
+    #=> "{\"type\": \"object\", \"properties\": {\"hi\": {\"type\": [\"integer\", \"string\"]}}}"
 
 
 Schema Object Methods
@@ -109,7 +109,7 @@ Schema objects can also interact with each other:
     s1.add_schema({"type": "object", "properties": {"hi": {"type": "string"}}})
 
     s2 = jschemagen.Schema()
-    s2.add_schema({"type": "object", "properties": {"hi": {"type": "number"}}})
+    s2.add_schema({"type": "object", "properties": {"hi": {"type": "integer"}}})
 
     s1 == s2
     #=> False
@@ -121,7 +121,7 @@ Schema objects can also interact with each other:
     #=> True
 
     s1.to_dict()
-    #=> {"type": "object", "properties": {"hi": {"type": ["number", "string"]}}}
+    #=> {"type": "object", "properties": {"hi": {"type": ["integer", "string"]}}}
 
 
 Tests
