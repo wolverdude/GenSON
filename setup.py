@@ -1,17 +1,26 @@
-import os
+try:
+    import pypandoc
+except (IOError, ImportError):
+    raise ImportError(
+        "pypandoc required for packaging because PyPI likes .rst and I don't.")
 
 from setuptools import setup
 
-def read(*paths):
-    """Build a file path from *paths* and return the contents."""
-    with open(os.path.join(*paths), 'r') as f:
-        return f.read()
+
+def get_long_docs(*filenames):
+    """Build rst description from a set of markdown files."""
+    docs = []
+    for filenames in filenames:
+        docs.append(pypandoc.convert(filenames, 'rst'))
+
+    return "\n\n".join(docs)
+
 
 setup(
     name='jschemagen',
     version='0.1.0',
     description='A powerful, user-friendly JSON Schema generator.',
-    long_description=(read('README.md')),
+    long_description=get_long_docs('README.md'),
     url='http://github.com/wolverdude/jschemagen/',
     license='MIT',
     author='Jon Wolverton',
@@ -19,6 +28,8 @@ setup(
     # ^^^ Much like Mrs. Bun, I don't like spam.
     py_modules=['jschemagen'],
     include_package_data=True,
+    entry_points={'console_scripts': ['jschemagen = bin.jschemagen:main']},
+    zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
