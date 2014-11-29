@@ -116,10 +116,10 @@ Schema objects can also interact with each other:
 Tests
 =====
 
-Tests are written in ``unittest``. You can run them easily with the ``nose`` package.
+Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
 
 .. code-block:: bash
-    $ nosetests
+    $ bin/test.py
 
 
 .. _JSON schema: //json-schema.org/
