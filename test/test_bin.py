@@ -4,12 +4,12 @@ import os
 import sys
 from subprocess import Popen, PIPE
 
-binpath = os.path.join(sys.path[0], '../bin/jschemagen.py')
+binpath = os.path.join(sys.path[0], '../bin/genson.py')
 
 
 def run(args=[], stdin_data=None):
     """
-    Run the ``jschemagen`` executable as a subprocess and return
+    Run the ``genson`` executable as a subprocess and return
     (stdout, stderr). Some assuaging is necessary to maintain
     Python compatibility with both Python 2 and 3.
     """

@@ -12,20 +12,19 @@ def get_long_docs(*filenames):
 
 
 setup(
-    name='jschemagen',
+    name='genson',
     version='0.1.0',
-    description='A powerful, user-friendly JSON Schema generator.',
+    description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
-    url='https://github.com/wolverdude/jschemagen/',
+    url='https://github.com/wolverdude/genson/',
     license='MIT',
     author='Jon Wolverton',
     author_email='wolverton (dot) jr (at) gmail (dot) com',
     # ^^^ Much like Mrs. Bun, I don't like spam.
-    py_modules=['jschemagen'],
+    py_modules=['genson'],
     packages=find_packages(exclude="test"),
     include_package_data=True,
-    entry_points={
-        'console_scripts': ['jschemagen = jschemagen.jschemagen:main']},
+    entry_points={'console_scripts': ['genson = genson.genson:main']},
     zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',

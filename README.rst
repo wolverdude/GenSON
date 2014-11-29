@@ -1,7 +1,7 @@
-jschemagen
-**********
+GenSON
+******
 
-A powerful, user-friendly `JSON Schema`_ generator built in Python.
+**GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_ generator built in Python.
 
 Its power comes from the ability to generate a single schema from multiple objects. You can also throw existing schemas into the mix. Basically, you can feed it as many schemas and objects as you want and it will spit out one, unified schema for all of them.
 
@@ -25,23 +25,23 @@ This means that headers and most keywords aren't dealt with. Specifically, the g
 CLI Tool
 ========
 
-The package includes a ``jschemagen`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
+The package includes a ``genson`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
 
 .. code-block:: bash
 
-    $ jschemagen.py --help
+    $ genson.py --help
 
 
-jschemagen Python API
-=====================
+GenSON Python API
+=================
 
 ``Schema`` is the basic schema generator class. ``Schema`` objects can be loaded up with existing schemas and objects before being serialized.
 
 .. code-block:: python
 
-    import jschemagen
+    import genson
 
-    s = jschemagen.Schema()
+    s = genson.Schema()
     s.add_schema({"type": "object", "properties": {}})
     s.add_object({"hi": "there"})
     s.add_object({"hi": 5})
@@ -77,7 +77,7 @@ arguments:
 ``add_object(obj)``
 +++++++++++++++++++
 
-Modify the schema to accomodate an object.
+Modify the schema to accommodate an object.
 
 arguments:
 
@@ -103,12 +103,12 @@ Schema objects can also interact with each other:
 
 .. code-block:: python
 
-    import jschemagen
+    import genson
 
-    s1 = jschemagen.Schema()
+    s1 = genson.Schema()
     s1.add_schema({"type": "object", "properties": {"hi": {"type": "string"}}})
 
-    s2 = jschemagen.Schema()
+    s2 = genson.Schema()
     s2.add_schema({"type": "object", "properties": {"hi": {"type": "integer"}}})
 
     s1 == s2

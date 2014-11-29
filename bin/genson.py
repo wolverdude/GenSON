@@ -4,7 +4,7 @@ import sys
 import os
 sys.path[0] = os.path.join(sys.path[0], '..')
 
-from jschemagen.jschemagen import main
+from genson.genson import main
 
 
 main()
