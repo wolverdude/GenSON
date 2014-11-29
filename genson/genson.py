@@ -5,8 +5,9 @@ JSON objects and/or JSON Schemas.
 """
 
 import argparse
-import json
 import sys
+import re
+import json
 from .generator import Schema
 
 
@@ -72,8 +73,6 @@ def get_delim(delim):
 
     return delim
 
-import re
-
 
 def get_stdin():
     """
@@ -82,7 +81,6 @@ def get_stdin():
     if sys.stdin.isatty():
         print('Enter a JSON object, then press ctrl-D')
     return sys.stdin
-
 
 
 def add_json_from_file(s, fp, delimiter, schema=False):
@@ -109,15 +107,18 @@ def get_json_strings(raw_text, delim):
 
 def detect_json_strings(raw_text):
     """
-    recursively build a list of JSON strings using a regex that
-    detects the first JSON object.
+    Use regex with lookaround to spot the boundaries between JSON objects.
+    Unfortunately, it has to match *something*, so at least one character
+    must be removed and replaced.
     """
+    strings = re.split('}\s*(?={)', raw_text)
 
-    match = re.match('\A({.*?})\s*({.*})\Z', raw_text)
+    json_strings = []
+    for string in strings:
+        # put back the stripped character
+        json_strings.append(string + '}')
 
-    if match:
-        json_strings = [match.group(1)] + detect_json_strings(match.group(2))
-    else:
-        json_strings = [raw_text]
+    # the last one doesn't need to be modified
+    json_strings[-1] = strings[-1]
 
     return json_strings

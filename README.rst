@@ -33,7 +33,7 @@ The package includes a ``genson`` executable that allows you to access this func
 
 .. code-block:: none
 
-    usage: genson.py [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
 
     Generate one, unified JSON Schema from one or more JSON objects and/or JSON
     Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)

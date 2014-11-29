@@ -47,8 +47,16 @@ class TestStdin(unittest.TestCase):
             {"required": ["hi"], "type": "object", "properties": {
                 "hi": {"type": ["integer", "string"]}}})
 
-    def test_delim_auto(self):
-        (stdout, stderr) = run(['-d', ''], '{"hi":"there"}\n{"hi":5}')
+    def test_delim_auto_empty(self):
+        (stdout, stderr) = run(['-d', ''], '{"hi":"there"}{"hi":5}')
+        self.assertEqual(stderr, None)
+        self.assertEqual(
+            json.loads(stdout),
+            {"required": ["hi"], "type": "object", "properties": {
+                "hi": {"type": ["integer", "string"]}}})
+
+    def test_delim_auto_whitespace(self):
+        (stdout, stderr) = run(['-d', ''], '{"hi":"there"} \n\t{"hi":5}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
