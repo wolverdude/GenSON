@@ -25,7 +25,7 @@ def run(args=[], stdin_data=None):
     return (stdout, stderr)
 
 
-class TestBin(unittest.TestCase):
+class TestStdin(unittest.TestCase):
 
     def test_no_input(self):
         (stdout, stderr) = run()
@@ -45,4 +45,8 @@ class TestBin(unittest.TestCase):
         self.assertEqual(
             json.loads(stdout),
             {"required": ["hi"], "type": "object", "properties": {
-                "hi": {"type": ["number", "string"]}}})
+                "hi": {"type": ["integer", "string"]}}})
+
+
+if __name__ == "__main__":
+    unittest.main()

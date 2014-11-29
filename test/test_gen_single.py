@@ -16,6 +16,10 @@ class TestBasicTypes(unittest.TestCase):
         s = Schema().add_object("string")
         self.assertEqual(s.to_dict(), {"type": "string"})
 
+    def test_integer(self):
+        s = Schema().add_object(1)
+        self.assertEqual(s.to_dict(), {"type": "integer"})
+
     def test_number(self):
         s = Schema().add_object(1.1)
         self.assertEqual(s.to_dict(), {"type": "number"})
@@ -46,7 +50,7 @@ class TestArray(unittest.TestCase):
         self.assertEqual(s.to_dict(), {
             "type": "array",
             "items": [{
-                "type": ["boolean", "null", "number", "string"]}]
+                "type": ["boolean", "integer", "null", "string"]}]
             })
 
     def test_multitype_sep(self):
@@ -54,7 +58,7 @@ class TestArray(unittest.TestCase):
         self.assertEqual(s.to_dict(), {
             "type": "array",
             "items": [
-                {"type": "number"},
+                {"type": "integer"},
                 {"type": "string"},
                 {"type": "null"},
                 {"type": "boolean"}]
@@ -112,7 +116,7 @@ class TestComplex(unittest.TestCase):
                 "c": {
                     "items": [
                         {
-                            "type": "number"
+                            "type": "integer"
                         }
                     ],
                     "type": "array"

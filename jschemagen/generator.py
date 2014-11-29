@@ -6,7 +6,7 @@ JS_TYPES = {
     list: 'array',
     str: 'string',
     type(u''): 'string',
-    int: 'number',
+    int: 'integer',
     float: 'number',
     bool: 'boolean',
     type(None): 'null',
@@ -137,10 +137,17 @@ class Schema(object):
     # getters
 
     def _get_type(self):
-        if len(self._type) == 1:
-            (schema_type,) = self._type
+        schema_type = self._type | set()  # get a copy
+
+        # remove any redundant integer type
+        if 'integer' in schema_type and 'number' in schema_type:
+            schema_type.remove('integer')
+
+        # unwrap if only one item, else convert to array
+        if len(schema_type) == 1:
+            (schema_type,) = schema_type
         else:
-            schema_type = sorted(self._type)
+            schema_type = sorted(schema_type)
 
         return schema_type
 

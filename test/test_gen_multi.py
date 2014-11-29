@@ -24,6 +24,13 @@ class TestBasicTypes(unittest.TestCase):
         self.assertEqual(s.to_dict(),
                          {'type': ['boolean', 'null', 'number', 'string']})
 
+    def test_redundant_integer_type(self):
+        s = Schema()
+        s.add_object(1)
+        s.add_object(1.1)
+        self.assertEqual(s.to_dict(),
+                         {'type': 'number'})
+
 
 if __name__ == '__main__':
     unittest.main()
