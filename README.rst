@@ -3,19 +3,19 @@ GenSON
 
 **GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_ generator built in Python.
 
-Its power comes from the ability to generate a single schema from multiple objects. You can also throw existing schemas into the mix. Basically, you can feed it as many schemas and objects as you want and it will spit out one, unified schema for all of them.
+Its power comes from the ability to generate a single schema from multiple objects. You can also throw existing schemas into the mix. Basically, you can feed it as many schemas and objects as you want and it will spit out one, unified schema for them all.
 
 The generator follows these three rules:
 
 1. *Every* object it is given must validate under the generated schema.
-2. *Any* object that is valid under *any* schema it is given must also validate.
+2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema.
 3. The generated schema should be as strict as possible given the first 2 rules.
 
 
 JSON Schema Implementation
 ==========================
 
-This is a `Draft 4`_ generator. Draft 3 support may come in the future.
+**GenSON** is a `Draft 4`_ generator. `Draft 3`_ support may come in the future.
 
 It is important to note that the generator uses only a small subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it doesn't try to guess them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
@@ -29,7 +29,32 @@ The package includes a ``genson`` executable that allows you to access this func
 
 .. code-block:: bash
 
-    $ genson.py --help
+    $ genson --help
+
+.. code-block:: none
+
+    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+
+    generate one, unified JSON Schema from one or more JSON objects and/or JSON
+    Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
+
+    positional arguments:
+      object                files containing JSON objects (defaults to stdin if no
+                            arguments are passed and the -s option is not present)
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -a, --no-merge-arrays
+                            generate a different subschema for each element in an
+                            array rather than merging them all into one
+      -d DELIM, --delimiter DELIM
+                            set a delimiter - use this option if the input files
+                            contain multiple JSON objects/schemas
+      -i SPACES, --indent SPACES
+                            indent output SPACES spaces
+      -s SCHEMA, --schema SCHEMA
+                            JSON file containing a base schema (can be specified
+                            mutliple times to merge schemas)
 
 
 GenSON Python API
@@ -81,7 +106,7 @@ Modify the schema to accommodate an object.
 
 arguments:
 
-* ``obj`` (required - ``dict``): a JSON object to use in generate the schema.
+* ``obj`` (required - ``dict``): a JSON object to use in generating the schema.
 
 ``to_dict()``
 +++++++++++++
@@ -150,3 +175,4 @@ TODO
 
 .. _JSON Schema: //json-schema.org/
 .. _Draft 4: http://json-schema.org/draft-04/schema
+.. _Draft 3: http://json-schema.org/draft-03/schema

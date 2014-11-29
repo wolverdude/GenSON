@@ -1,10 +1,12 @@
 DESCRIPTION = """
-JSON Schema Generator - Read one or more JSON objects and/or schemas and
-output one unified schema for them all.
+generate one, unified JSON Schema from one or more
+JSON objects and/or JSON Schemas.
+(uses Draft 4 - http://json-schema.org/draft-04/schema)
 """
 
 import argparse
 import json
+import sys
 from .generator import Schema
 
 
@@ -24,32 +26,52 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
+    parser.add_argument('-a', '--no-merge-arrays', action='store_false',
+                        help='''generate a different subschema for each element
+                        in an array rather than merging them all into one''')
+    parser.add_argument('-d', '--delimiter', metavar='DELIM',
+                        help='''set a delimiter - use this option if the
+                        input files contain multiple JSON objects/schemas''')
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
-                        help='indent output SPACES spaces')
+                        help='''indent output SPACES spaces''')
     parser.add_argument('-s', '--schema', action='append', default=[],
                         type=argparse.FileType('r'),
-                        help='JSON file containing base schema ' +
-                        '(can be specified mutliple times to merge schemas)')
-    parser.add_argument('-d', '--delimiter', metavar='DELIM',
-                        help='set a delimiter - use this option if the ' +
-                        'input files contain multiple JSON objects/schemas')
-    parser.add_argument('-a', '--no-merge-arrays', action='store_false',
-                        help='create different schemas for each element of ' +
-                        'an array rather than merging them into one')
+                        help='''JSON file containing a base schema (can be
+                        specified mutliple times to merge schemas)''')
     parser.add_argument('object', nargs=argparse.REMAINDER,
-                        type=argparse.FileType('r'), help='JSON file ' +
-                        'containing base object (pass "-" for stdin, can ' +
-                        'also accept multiple object files)')
+                        type=argparse.FileType('r'), help='''files containing
+                        JSON objects (defaults to stdin if no arguments
+                        are passed and the -s option is not present)''')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    # default to stdin if no objects or schemas
+    if not args.object and not args.schema:
+        args.object.append(get_stdin())
+
+    return args
+
+
+def get_stdin():
+    """
+    Grab stdin, printing simple instructions if it's interactive.
+    """
+    if sys.stdin.isatty():
+        print('Enter a JSON object, then press ctrl-D')
+    return sys.stdin
 
 
 def add_json_from_file(s, fp, delimiter, schema=False):
     method = getattr(s, 'add_schema' if schema else 'add_object')
 
-    if delimiter:
-        for json_string in fp.read().split(delimiter):
+    raw_text = fp.read().strip()
+    fp.close()
+
+    if not raw_text:
+        pass
+    elif delimiter:
+        for json_string in raw_text.split(delimiter):
             if json_string:
                 method(json.loads(json_string))
     else:
-        method(json.load(fp))
+        method(json.loads(raw_text))
