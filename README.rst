@@ -30,6 +30,7 @@ CLI tool
 The package includes a ``jschemagen`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
 
 .. code-block:: bash
+
     $ jschemagen.py --help
 
 
@@ -39,6 +40,7 @@ jschemagen Python API
 ``Schema`` is the basic schema generator class. ``Schema`` objects can be loaded up with existing schemas and objects before being serialized.
 
 .. code-block:: python
+
     import jschemagen
 
     s = jschemagen.Schema()
@@ -68,7 +70,7 @@ arguments:
 ``add_schema(schema)``
 ++++++++++++++++++++++
 
-Merges in an existing schema.
+Merges in an existing schema. Take care here because there is no schema validation. If you pass in a bad schema, you'll get back a bad schema.
 
 arguments:
 
@@ -102,6 +104,7 @@ Schema objects can also interact with each other:
 * You can compare schema equality directly.
 
 .. code-block:: python
+
     import jschemagen
 
     s1 = jschemagen.Schema()
@@ -129,7 +132,22 @@ Tests
 Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
 
 .. code-block:: bash
+
     $ bin/test.py
+
+You can also run any test file directly:
+
+.. code-block:: bash
+
+    $ python test/test_gen_single.py
+
+
+TODO
+====
+
+* Support for JSON Schema Draft 3
+* Headers
+* validation for add_schema
 
 
 .. _JSON schema: //json-schema.org/
