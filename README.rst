@@ -3,7 +3,7 @@ jschemagen
 
 A powerful, user-friendly `JSON Schema`_ generator built in Python.
 
-It generates a new schema from existing schemas and/or objects. The schema is naively generated, so as always, you'll want to give it a once-over to make sure it's right.
+Its power comes from the ability to generate a single schema from multiple objects and merge in existing schemas as well. Basically, you can feed in as many schemas and objects as you want and it should generate one schema under which they are all valid.
 
 The generator follows three rules:
 
@@ -11,7 +11,17 @@ The generator follows three rules:
 2. *Any* object that is valid under *any* merged schema must still validate.
 3. The generated schema should be as strict as possible given the first 2 rules.
 
-The third rule is has limits. The generator does not generate any specific validations for values other than ``type``. If you need those, you'll have to add them yourself once you get the generated schema.
+
+JSON Schema Implementation
+==========================
+
+This is a Draft 4 generator (``"$schema": "http://json-schema.org/draft-04/schema#"``"). Draft 3 support may come in the future. Even so, there are a couple of compliance issues.
+
+The generator only deals with 4 keywords: ``"type"``, ``"items"``, ``"properties"`` and ``"required"``. This is mainly because the generator doesn't know the specifics of your data model. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on tweaking the schema.
+
+You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2 if you feed it schemas with advanced keywords. It will just blindly pass them on into the final schema.
+
+This also means that headers aren't included. This may change in the future, but for now, it's still manual.
 
 
 CLI tool
@@ -53,7 +63,7 @@ Builds a schema generator object.
 
 arguments:
 
-* ``merge_arrays`` (default ``True``): Assume all array items share the same schema (as they should). The alternate behavior is to create a different schema for each item in every array.
+* ``merge_arrays`` (default ``True``): Assume all items in an array share the same schema. The alternate behavior is to create a different schema for each item in an array, only consolidating identical ones.
 
 ``add_schema(schema)``
 ++++++++++++++++++++++
