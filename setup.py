@@ -22,7 +22,7 @@ setup(
     download_url='https://github.com/wolverdude/GenSON/tarball/v0.1.0',
     license='MIT',
     author='Jon Wolverton',
-    author_email='wolverton (dot) jr (at) gmail (dot) com',
+    author_email='wolverton' '.' 'jr' '@' 'gmail' '.' 'com',
     # ^^^ Much like Mrs. Bun, I don't like spam.
     py_modules=['genson'],
     packages=find_packages(exclude="test"),

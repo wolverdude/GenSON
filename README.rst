@@ -1,5 +1,5 @@
 GenSON
-******
+======
 
 **GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_ generator built in Python.
 
@@ -13,7 +13,7 @@ The generator follows these three rules:
 
 
 JSON Schema Implementation
-==========================
+--------------------------
 
 **GenSON** is a `Draft 4`_ generator. `Draft 3`_ support may come in the future.
 
@@ -23,7 +23,7 @@ This means that headers and most keywords aren't dealt with. Specifically, the g
 
 
 CLI Tool
-========
+--------
 
 The package includes a ``genson`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
 
@@ -62,7 +62,7 @@ The package includes a ``genson`` executable that allows you to access this func
 
 
 GenSON Python API
-=================
+-----------------
 
 ``Schema`` is the basic schema generator class. ``Schema`` objects can be loaded up with existing schemas and objects before being serialized.
 
@@ -83,10 +83,10 @@ GenSON Python API
 
 
 Schema Object Methods
----------------------
++++++++++++++++++++++
 
 ``Schema(merge_arrays=True)``
-+++++++++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Builds a schema generator object.
 
@@ -95,7 +95,7 @@ arguments:
 * ``merge_arrays`` (default ``True``): Assume all items in an array share the same schema. The alternate behavior is to create a different schema for each item in an array, only consolidating identical ones.
 
 ``add_schema(schema)``
-++++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^^^
 
 Merges in an existing schema. Take care here because there is no schema validation. If you pass in a bad schema, you'll get back a bad schema.
 
@@ -104,7 +104,7 @@ arguments:
 * ``schema`` (required - ``dict`` or ``Schema``): an existing JSON Schema to merge.
 
 ``add_object(obj)``
-+++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^
 
 Modify the schema to accommodate an object.
 
@@ -113,17 +113,17 @@ arguments:
 * ``obj`` (required - ``dict``): a JSON object to use in generating the schema.
 
 ``to_dict()``
-+++++++++++++
+^^^^^^^^^^^^^
 
 Convert the current schema to a ``dict``.
 
 ``to_json()``
-+++++++++++++
+^^^^^^^^^^^^^
 
 Convert the current schema directly to serialized JSON.
 
 Schema Object Interaction
--------------------------
++++++++++++++++++++++++++
 
 Schema objects can also interact with each other:
 
@@ -154,7 +154,7 @@ Schema objects can also interact with each other:
 
 
 Tests
-=====
+-----
 
 Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
 
@@ -170,13 +170,13 @@ You can also run any test file directly:
 
 
 TODO
-====
+----
 
 * Validation for add_schema
 * Headers
 * Support for JSON Schema Draft 3
 
 
-.. _JSON Schema: //json-schema.org/
-.. _Draft 4: http://json-schema.org/draft-04/schema
-.. _Draft 3: http://json-schema.org/draft-03/schema
+.. _JSON Schema: http://json-schema.org/
+.. _Draft 4: http://json-schema.org/draft-04/schema#
+.. _Draft 3: http://json-schema.org/draft-03/schema#
