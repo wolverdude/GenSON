@@ -38,7 +38,7 @@ class TestArray(unittest.TestCase):
     def test_empty(self):
         s = Schema().add_object([])
         self.assertEqual(s.to_dict(),
-                         {"type": "array", "items": []})
+                         {"type": "array"})
 
     def test_monotype(self):
         s = Schema().add_object(["spam", "spam", "spam", "egg", "spam"])
