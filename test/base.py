@@ -1,10 +1,6 @@
-import sys
 import unittest
 
-try:
-    import jsonschema
-except ImportError:
-    print('Failed to import jsonschema module. Schemas will not be validated.')
+import jsonschema
 
 
 class SchemaTestCase(unittest.TestCase):
@@ -13,5 +9,4 @@ class SchemaTestCase(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def assertValidSchema(self, schema):
-        if 'jsonschema' in sys.modules:
-            jsonschema.Draft4Validator.check_schema(schema)
+        jsonschema.Draft4Validator.check_schema(schema)
