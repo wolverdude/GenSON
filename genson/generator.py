@@ -19,7 +19,7 @@ class Schema(object):
     with existing schemas and objects before being serialized.
     """
 
-    def __init__(self, merge_arrays=True):
+    def __init__(self, merge_arrays=True, _c=None):
         """
         Builds a schema generator object.
 
@@ -27,13 +27,19 @@ class Schema(object):
         * `merge_arrays` (default `True`): Assume all array items share
           the same schema (as they should). The alternate behavior is to
           create a different schema for each item in every array.
+        * `_c` (default `None`): private context
         """
+        if _c:
+            self._c = _c
+        else:
+            self._c = {
+                'merge_arrays': merge_arrays,
+            }
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: Schema())
+        self._properties = defaultdict(lambda: Schema(_c=self._c))
         self._items = []
         self._other = {}
-        self.merge_arrays = merge_arrays
 
     def add_schema(self, schema):
         """
@@ -107,8 +113,10 @@ class Schema(object):
                 schema['required'] = self._get_required()
 
         elif 'array' in self._type:
-            schema['items'] = self._get_items(recurse)
-
+            items = self._get_items(recurse)
+            if items or isinstance(items, dict):
+                schema['items'] = items
+ 
         return schema
 
     def to_json(self, *args, **kwargs):
@@ -164,10 +172,12 @@ class Schema(object):
         return properties
 
     def _get_items(self, recurse=True):
-        if not recurse:
-            return list(self._items)
-
-        return [subschema.to_dict() for subschema in self._items]
+        if isinstance(self._items, list):
+            if not recurse:
+                return list(self._items)
+            return [subschema.to_dict() for subschema in self._items]
+        else:
+            return self._items.to_dict()
 
     # setters
 
@@ -191,28 +201,23 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
-        if self.merge_arrays:
+        if self._c['merge_arrays']:
             self._add_items_merge(items, func)
         else:
             self._add_items_sep(items, func)
 
     def _add_items_merge(self, items, func):
-        if items:
-            if not self._items:
-                self._items.append(Schema())
-
-            method = getattr(self._items[0], func)
-            for item in items:
-                method(item)
+        if not self._items:
+            self._items = Schema(_c=self._c)
+        method = getattr(self._items, func)
+        for item in items:
+            method(item)
 
     def _add_items_sep(self, items, func):
         for item in items:
-            subschema = Schema()
+            subschema = Schema(_c=self._c)
             getattr(subschema, func)(item)
-
-            # only add schema if it's not already there.
-            if subschema not in self._items:
-                self._items.append(subschema)
+            self._items.append(subschema)
 
     # generate from object
 
