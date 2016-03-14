@@ -19,7 +19,8 @@ class Schema(object):
     with existing schemas and objects before being serialized.
     """
 
-    def __init__(self, merge_arrays=True, _c=None):
+    def __init__(self, merge_arrays=True,
+                 additional_items=True, additional_props=True, _c=None):
         """
         Builds a schema generator object.
 
@@ -27,6 +28,15 @@ class Schema(object):
         * `merge_arrays` (default `True`): Assume all array items share
           the same schema (as they should). The alternate behavior is to
           create a different schema for each item in every array.
+        * `additional_items` (default `False`): If True, allow
+          tuple-validated arrays to be followed by unvalidated items.
+          If False, generate an "additionalItems": False element so that
+          array items not specified in the schema cause a ValidationError.
+          Not used with list-validated (merged) arrays.
+        * `additional_props` (default `False`): If True, allow objects
+          to include unvalidated items.  If False, generate an
+          "additionalProperties": False element so that properties not
+          specified in the schema cause a ValidationError.
         * `_c` (default `None`): private context
         """
         if _c:
@@ -34,6 +44,8 @@ class Schema(object):
         else:
             self._c = {
                 'merge_arrays': merge_arrays,
+                'additional_items': additional_items,
+                'additional_props': additional_props,
             }
         self._type = set()
         self._required = None
@@ -101,6 +113,12 @@ class Schema(object):
         """
         # start with existing fields
         schema = dict(self._other)
+
+        if 'additionalItems' in schema:
+            if schema['additionalItems'] == True or not isinstance(self._items, list):
+                del(schema['additionalItems'])
+        if 'additionalProperties' in schema and schema['additionalProperties'] == True:
+            del(schema['additionalProperties'])
 
         # unpack the type field
         if self._type:
@@ -219,16 +237,24 @@ class Schema(object):
             getattr(subschema, func)(item)
             self._items.append(subschema)
 
+    def _add_additionalItems(self):
+        self._other['additionalItems'] = self._c['additional_items']
+
+    def _add_additionalProperties(self):
+        self._other['additionalProperties'] = self._c['additional_props']
+
     # generate from object
 
     def _generate_object(self, obj):
         self._add_type('object')
         self._add_required(obj.keys())
         self._add_properties(obj, 'add_object')
+        self._add_additionalProperties()
 
     def _generate_array(self, array):
         self._add_type('array')
         self._add_items(array, 'add_object')
+        self._add_additionalItems()
 
     def _generate_basic(self, val):
         val_type = JS_TYPES[type(val)]

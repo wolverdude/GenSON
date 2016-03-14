@@ -247,5 +247,66 @@ class TestComplex(unittest.TestCase):
         check(self, schema, instance, answer)
 
 
+class TestAdditional(unittest.TestCase):
+
+    def test_additional_items_sep(self):
+        instance1 = ["parrot", "dead"]
+        instance2 = ["parrot", "dead", "resting"]
+        answer = {
+            "type": "array",
+            "items": [
+                {"type":"string"},
+                {"type":"string"}],
+            "additionalItems": False
+        }
+        schema = Schema(merge_arrays=False, additional_items=False).add_object(instance1)
+        check(self, schema, instance1, answer)    # instance2 fails validation
+
+    def test_additional_items_merge(self):
+        instance1 = ["parrot", "dead"]
+        instance2 = ["parrot", "dead", "resting"]
+        answer = {
+            "type": "array",
+            "items": {"type":"string"}
+        }
+        schema = Schema(merge_arrays=True, additional_items=False).add_object(instance1)
+        check(self, schema, instance1, answer)    # additionalItems not used
+        check(self, schema, instance2, answer)    # both pass
+
+    def test_additional_props(self):
+        instance1 = {
+            "type": "witch",
+            "floats": {
+                "wood": True,
+                "stone": False
+            }}
+        instance2 = {
+            "type": "witch",
+            "floats": {
+                "wood": True,
+                "stone": False,
+                "duck": True
+            }}
+        answer = {
+            'type': 'object',
+            'required': ['floats', 'type'],
+            'additionalProperties': False,
+            'properties': {
+                'type': {'type': 'string'},
+                'floats': {
+                    'type': 'object',
+                    'required': ['stone', 'wood'],
+                    'additionalProperties': False,
+                    'properties': {
+                        'wood': {'type': 'boolean'},
+                        'stone': {'type': 'boolean'}
+                     }
+                }
+            }
+        }
+        schema = Schema(additional_props=False).add_object(instance1)
+        check(self, schema, instance1, answer)      # instance 2 fails validation
+
+
 if __name__ == "__main__":
     unittest.main()
