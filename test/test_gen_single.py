@@ -39,7 +39,7 @@ class TestArray(base.SchemaTestCase):
     def test_empty(self):
         s = Schema().add_object([])
         self.assertSchema(s.to_dict(),
-                          {"type": "array", "items": []})
+                          {"type": "array"})
 
     def test_monotype(self):
         s = Schema().add_object(["spam", "spam", "spam", "egg", "spam"])
