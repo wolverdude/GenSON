@@ -1,4 +1,5 @@
 build/*
 dist/*
 genson.egg-info/*
+*.egg
 __pycache__

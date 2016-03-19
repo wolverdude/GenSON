@@ -4,50 +4,51 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from genson import Schema
+import base
 
 
-class TestBasicTypes(unittest.TestCase):
+class TestBasicTypes(base.SchemaTestCase):
 
     def test_no_object(self):
         s = Schema()
-        self.assertEqual(s.to_dict(), {})
+        self.assertSchema(s.to_dict(), {})
 
     def test_string(self):
         s = Schema().add_object("string")
-        self.assertEqual(s.to_dict(), {"type": "string"})
+        self.assertSchema(s.to_dict(), {"type": "string"})
 
     def test_integer(self):
         s = Schema().add_object(1)
-        self.assertEqual(s.to_dict(), {"type": "integer"})
+        self.assertSchema(s.to_dict(), {"type": "integer"})
 
     def test_number(self):
         s = Schema().add_object(1.1)
-        self.assertEqual(s.to_dict(), {"type": "number"})
+        self.assertSchema(s.to_dict(), {"type": "number"})
 
     def test_boolean(self):
         s = Schema().add_object(True)
-        self.assertEqual(s.to_dict(), {"type": "boolean"})
+        self.assertSchema(s.to_dict(), {"type": "boolean"})
 
     def test_null(self):
         s = Schema().add_object(None)
-        self.assertEqual(s.to_dict(), {"type": "null"})
+        self.assertSchema(s.to_dict(), {"type": "null"})
 
 
-class TestArray(unittest.TestCase):
+class TestArray(base.SchemaTestCase):
 
     def test_empty(self):
         s = Schema().add_object([])
-        self.assertEqual(s.to_dict(),
-                         {"type": "array", "items": []})
+        self.assertSchema(s.to_dict(),
+                          {"type": "array"})
 
     def test_monotype(self):
         s = Schema().add_object(["spam", "spam", "spam", "egg", "spam"])
-        self.assertEqual(s.to_dict(),
-                         {"type": "array", "items": [{"type": "string"}]})
+        self.assertSchema(s.to_dict(),
+                          {"type": "array", "items": [{"type": "string"}]})
 
     def test_multitype_merge(self):
         s = Schema().add_object([1, "2", None, False])
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "type": "array",
             "items": [{
                 "type": ["boolean", "integer", "null", "string"]}]
@@ -55,7 +56,7 @@ class TestArray(unittest.TestCase):
 
     def test_multitype_sep(self):
         s = Schema(merge_arrays=False).add_object([1, "2", None, False])
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "type": "array",
             "items": [
                 {"type": "integer"},
@@ -65,18 +66,18 @@ class TestArray(unittest.TestCase):
             })
 
 
-class TestObject(unittest.TestCase):
+class TestObject(base.SchemaTestCase):
 
     def test_empty_object(self):
         s = Schema().add_object({})
-        self.assertEqual(s.to_dict(), {"type": "object", "properties": {}})
+        self.assertSchema(s.to_dict(), {"type": "object", "properties": {}})
 
     def test_basic_object(self):
         s = Schema().add_object({
             "Red Windsor": "Normally, but today the van broke down.",
             "Stilton": "Sorry.",
             "Gruyere": False})
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "required": ["Gruyere", "Red Windsor", "Stilton"],
             "type": "object",
             "properties": {
@@ -86,7 +87,7 @@ class TestObject(unittest.TestCase):
             })
 
 
-class TestComplex(unittest.TestCase):
+class TestComplex(base.SchemaTestCase):
 
     def test_array_reduce(self):
         s = Schema().add_object([["surprise"],
@@ -94,7 +95,7 @@ class TestComplex(unittest.TestCase):
                                  ["fear", "surprise", "ruthless efficiency"],
                                  ["fear", "surprise", "ruthless efficiency",
                                   "an almost fanatical devotion to the Pope"]])
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "type": "array",
             "items": [{
                 "type": "array",
@@ -103,7 +104,7 @@ class TestComplex(unittest.TestCase):
 
     def test_array_in_object(self):
         s = Schema().add_object({"a": "b", "c": [1, 2, 3]})
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "required": [
                 "a",
                 "c"
@@ -132,7 +133,7 @@ class TestComplex(unittest.TestCase):
             {"name": "Sir Robin of Camelot",
              "quest": "to seek the Holy Grail",
              "capitol of Assyria": None}])
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "items": [
                 {
                     "required": [
@@ -162,7 +163,7 @@ class TestComplex(unittest.TestCase):
     def test_three_deep(self):
         s = Schema().add_object(
             {"matryoshka": {"design": {"principle": "FTW!"}}})
-        self.assertEqual(s.to_dict(), {
+        self.assertSchema(s.to_dict(), {
             "required": ["matryoshka"],
             "type": "object",
             "properties": {"matryoshka": {

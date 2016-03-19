@@ -4,16 +4,17 @@ import sys
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 from genson import Schema
+import base
 
 
-class TestBasicTypes(unittest.TestCase):
+class TestBasicTypes(base.SchemaTestCase):
 
     def test_single_type(self):
         s = Schema()
         s.add_object('bacon')
         s.add_object('egg')
         s.add_object('spam')
-        self.assertEqual(s.to_dict(), {'type': 'string'})
+        self.assertSchema(s.to_dict(), {'type': 'string'})
 
     def test_multi_type(self):
         s = Schema()
@@ -21,15 +22,15 @@ class TestBasicTypes(unittest.TestCase):
         s.add_object(1.1)
         s.add_object(True)
         s.add_object(None)
-        self.assertEqual(s.to_dict(),
-                         {'type': ['boolean', 'null', 'number', 'string']})
+        self.assertSchema(s.to_dict(),
+                          {'type': ['boolean', 'null', 'number', 'string']})
 
     def test_redundant_integer_type(self):
         s = Schema()
         s.add_object(1)
         s.add_object(1.1)
-        self.assertEqual(s.to_dict(),
-                         {'type': 'number'})
+        self.assertSchema(s.to_dict(),
+                          {'type': 'number'})
 
 
 if __name__ == '__main__':
