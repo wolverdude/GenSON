@@ -7,4 +7,4 @@ Credits
 Contributors
 ------------
 
-No one as yet. You could change that...
+- `Brad Sokol <https://github.com/bradsokol>`_

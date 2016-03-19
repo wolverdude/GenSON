@@ -107,7 +107,9 @@ class Schema(object):
                 schema['required'] = self._get_required()
 
         elif 'array' in self._type:
-            schema['items'] = self._get_items(recurse)
+            items = self._get_items(recurse)
+            if items:
+                schema['items'] = items
 
         return schema
 

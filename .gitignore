@@ -1,3 +1,4 @@
 build/*
 dist/*
 genson.egg-info/*
+*.egg

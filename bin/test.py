@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 
-import unittest
-import sys
 import os
+import subprocess
+import sys
 
 
 def main():
-    loader = unittest.TestLoader()
-    tests = loader.discover(os.path.join(sys.path[0], '../test'))
-
-    runner = unittest.TextTestRunner()
-    runner.run(tests)
+    return subprocess.call(
+        ['python', 'setup.py', 'test'] + sys.argv[1:],
+        cwd=os.path.join(os.path.dirname(__file__), os.pardir)
+    )
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
