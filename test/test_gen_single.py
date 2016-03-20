@@ -207,5 +207,170 @@ class TestComplex(base.SchemaTestCase):
         }
         check(self, instance, {}, expected)
 
+
+
+class TestAdditional(base.SchemaTestCase):
+
+    def test_additional_items_sep(self):        # instance2 fails validation
+        instance1 = ["parrot", "dead"]
+        instance2 = ["parrot", "dead", "resting"]
+        options = {"merge_arrays": False, "additional_items": False}
+        expected = {
+            "type": "array",
+            "items": [
+                {"type":"string"},
+                {"type":"string"}],
+            "additionalItems": False
+        }
+        actual = check(self, instance1, options, expected)
+        self.assertInvalidData(instance2, actual)
+
+    def test_additional_items_merge(self):    # both pass
+        instance1 = ["parrot", "dead"]
+        instance2 = ["parrot", "dead", "resting"]
+        options = {"merge_arrays": True, "additional_items": False}
+        expected = {
+            "type": "array",
+            "items": {"type":"string"}
+        }
+        actual = check(self, instance1, options, expected)
+        self.assertValidData(instance2, actual)
+
+    def test_additional_props(self):    # instance 2 fails validation
+        instance1 = {
+            "witch": {
+                "wood": True,
+                "stone": False
+            }}
+        instance2 = {
+            "witch": {
+                "wood": True,
+                "stone": False,
+                "duck": True
+            }}
+        options = {"additional_props": False}
+        expected = {
+            'type': 'object',
+            'required': ['witch'],
+            'additionalProperties': False,
+            'properties': {
+                'witch': {
+                    'type': 'object',
+                    'required': ['stone', 'wood'],
+                    'additionalProperties': False,
+                    'properties': {
+                        'wood': {'type': 'boolean'},
+                        'stone': {'type': 'boolean'}
+                     }
+                }
+            }
+        }
+        actual = check(self, instance1, options, expected)
+        self.assertInvalidData(instance2, actual)
+
+
+class TestPatternProps(base.SchemaTestCase):
+
+    instance = [
+            2,
+            3.14159,
+            "a",
+            "b",
+            {
+                "c1":"fluffy",
+                "c2":"tiger",
+                "d":"spot",
+                "4":"red",
+                "5":"green",
+                "6":"blue"
+            },
+            {
+                "10":66,
+                "12":17.4,
+                "11":15
+            },
+            ["x", "y", "z"]
+        ]
+
+    def test_match_props1(self):    # merge numeric properties
+        options = {"match_props": ["^\d+$"]}
+        expected = {
+          'type': 'array',
+          'items': {
+            'type': ['array', 'number', 'object', 'string'],
+            'items': {'type': 'string'},
+            'properties': {
+              'c1': {'type': 'string'},
+              'c2': {'type': 'string'},
+              'd': {'type': 'string'}
+            },
+            'patternProperties': {
+              '^\\d+$': {'type': ['number', 'string']}
+            }
+          }
+        }
+        actual = check(self, self.instance, options, expected)
+
+    def test_match_props2(self):    # Schema error - pattern overlap
+        options = {"match_props": ["^\d+$","^\w+\d+$"]}  # bad alpha then numeric
+        expected = None
+        self.assertRaises(base.SchemaError, check, self, self.instance, options, expected)
+
+    def test_match_props3(self):    # 2 patterns no overlap - ugly but correct alpha
+        options = {"match_props": ["^\d+$","^[^\W\d_]+\d+$"]}
+        expected = {
+          'type': 'array',
+          'items': {
+            'type': ['array', 'number', 'object', 'string'],
+            'items': {'type': 'string'},
+            'properties': {
+              'd': {'type': 'string'}
+            },
+            'patternProperties': {
+              '^\\d+$': {'type': ['number', 'string']},  # numeric
+              '^[^\\W\\d_]+\\d+$': {'type': 'string'}    # alpha then numeric
+            }
+          }
+        }
+        actual = check(self, self.instance, options, expected)
+    
+    def test_match_props4(self):
+        options = {"match_props": ["^\d+$"], "merge_arrays": False}
+        expected = {
+          'type': 'array',
+          'items': [
+            {'type': 'integer'},
+            {'type': 'number'},
+            {'type': 'string'},
+            {'type': 'string'},
+            {
+              'type': 'object',
+              'required': ['c1', 'c2', 'd'],
+              'properties': {
+                'c1': {'type': 'string'},
+                'c2': {'type': 'string'},
+                'd': {'type': 'string'}
+              },
+              'patternProperties': {
+                '^\\d+$': {'type': 'string'}
+              }
+            },{
+              'type': 'object',
+              'patternProperties': {
+                '^\\d+$': {'type': 'number'}
+              }
+            },{
+              'type': 'array',
+              'items': [
+                {'type': 'string'},
+                {'type': 'string'},
+                {'type': 'string'}
+              ]
+            }
+          ]
+        }
+        actual = check(self, self.instance, options, expected)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@ import jsonschema
 import os, sys
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from genson import Schema
+from genson import Schema, SchemaError
 
 class SchemaTestCase(unittest.TestCase):
 
