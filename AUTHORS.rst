@@ -8,3 +8,4 @@ Contributors
 ------------
 
 - `Brad Sokol <https://github.com/bradsokol>`_
+- `David Kay <https://github.com/davek2>`_
