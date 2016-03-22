@@ -19,7 +19,8 @@ class Schema(object):
     """
 
     def __init__(self, merge_arrays=True, additional_items=True,
-                    additional_props=True, match_props=[], _c=None):
+                    additional_props=True, match_props=[]):
+
         """
         Builds a schema generator object.
 
@@ -39,22 +40,18 @@ class Schema(object):
         * `match_props` (default '[]'): List of regular expressions to
           compare with property keys.  Properties with matching
           keys share the same "patternProperties" schema.
-        * `_c` (default `None`): private context
         """
 
-        if _c:
-            self._c = _c
-        else:
-            self._c = {
-                'merge_arrays': merge_arrays,
-                'additional_items': additional_items,
-                'additional_props': additional_props,
-                'match_props': match_props,
-            }
+        self._options = {
+            'merge_arrays': merge_arrays,
+            'additional_items': additional_items,
+            'additional_props': additional_props,
+            'match_props': match_props,
+        }
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: Schema(_c=self._c))
-        self._patternProperties = defaultdict(lambda: Schema(_c=self._c))
+        self._properties = defaultdict(lambda: Schema(**self._options))
+        self._patternProperties = defaultdict(lambda: Schema(**self._options))
         self._items = []
         self._other = {}
 
@@ -225,7 +222,7 @@ class Schema(object):
 
     def _add_properties(self, ptype, properties, func):
         # recursively modify subschemas
-        pattern = self._c['match_props']
+        pattern = self._options['match_props']
         if pattern and not ptype:
             self._add_properties_merge(pattern, properties, func)
         else:
@@ -255,29 +252,29 @@ class Schema(object):
             getattr(pdict[prop], func)(val)
 
     def _add_items(self, items, func):
-        if self._c['merge_arrays']:
+        if self._options['merge_arrays']:
             self._add_items_merge(items, func)
         else:
             self._add_items_sep(items, func)
 
     def _add_items_merge(self, items, func):
         if not self._items:
-            self._items = Schema(_c=self._c)
+            self._items = Schema(**self._options)
         method = getattr(self._items, func)
         for item in items:
             method(item)
 
     def _add_items_sep(self, items, func):
         for item in items:
-            subschema = Schema(_c=self._c)
+            subschema = Schema(**self._options)
             getattr(subschema, func)(item)
             self._items.append(subschema)
 
     def _add_additionalItems(self):
-        self._other['additionalItems'] = self._c['additional_items']
+        self._other['additionalItems'] = self._options['additional_items']
 
     def _add_additionalProperties(self):
-        self._other['additionalProperties'] = self._c['additional_props']
+        self._other['additionalProperties'] = self._options['additional_props']
 
     # generate from object
 
