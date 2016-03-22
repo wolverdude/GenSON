@@ -19,7 +19,7 @@ class Schema(object):
     with existing schemas and objects before being serialized.
     """
 
-    def __init__(self, merge_arrays=True, _c=None):
+    def __init__(self, merge_arrays=True):
         """
         Builds a schema generator object.
 
@@ -27,17 +27,13 @@ class Schema(object):
         * `merge_arrays` (default `True`): Assume all array items share
           the same schema (as they should). The alternate behavior is to
           create a different schema for each item in every array.
-        * `_c` (default `None`): private context
         """
-        if _c:
-            self._c = _c
-        else:
-            self._c = {
-                'merge_arrays': merge_arrays,
-            }
+
+        self._kwargs = {}
+        self._kwargs['merge_arrays'] = merge_arrays
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: Schema(_c=self._c))
+        self._properties = defaultdict(lambda: Schema(**self._kwargs))
         self._items = []
         self._other = {}
 
@@ -201,21 +197,21 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
-        if self._c['merge_arrays']:
+        if self._kwargs['merge_arrays']:
             self._add_items_merge(items, func)
         else:
             self._add_items_sep(items, func)
 
     def _add_items_merge(self, items, func):
         if not self._items:
-            self._items = Schema(_c=self._c)
+            self._items = Schema(**self._kwargs)
         method = getattr(self._items, func)
         for item in items:
             method(item)
 
     def _add_items_sep(self, items, func):
         for item in items:
-            subschema = Schema(_c=self._c)
+            subschema = Schema(**self._kwargs)
             getattr(subschema, func)(item)
             self._items.append(subschema)
 

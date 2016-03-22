@@ -42,7 +42,7 @@ class TestArray(base.SchemaTestCase):
         instance2 = [1, "spam", "spam", "egg", "spam"]
         expected = {"type": "array", "items": {"type": ["integer","string"]}}
         actual = self.assertGenSchema(instance1, {}, expected)
-        self.assertValidData(instance2, actual)
+        self.assertObjectValid(instance2, actual)
 
     def test_bitype_sep(self):   # instance 2 doesn't validate against tuple array
         instance1 = ["spam", 1, "spam", "egg", "spam"]
@@ -54,7 +54,7 @@ class TestArray(base.SchemaTestCase):
                               {"type": "string"},
                               {"type": "string"}]}
         actual = self.assertGenSchema(instance1, {"merge_arrays": False}, expected)
-        self.assertInvalidData(instance2, actual)
+        self.assertObjectInvalid(instance2, actual)
 
     def test_multitype_merge(self):
         instance = [1, "2", None, False]
@@ -79,17 +79,18 @@ class TestArray(base.SchemaTestCase):
         self.assertGenSchema(instance, {"merge_arrays": False}, expected)
 
     def test_2deep(self):
-        instance = [1, "2", [3.14, 4, "5"], None, False]
+        instance = [1, "2", [3.14, 4, "5", 6], None, False]
         expected = {
             "type": "array",
             "items": [
                 {"type": "integer"},
                 {"type": "string"},
                 {"type": "array",
-                "items": [
+                 "items": [
                     {"type": "number"},
                     {"type": "integer"},
-                    {"type": "string"}]},
+                    {"type": "string"},
+                    {"type": "integer"}]},
                 {"type": "null"},
                 {"type": "boolean"}]
         }

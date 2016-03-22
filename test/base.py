@@ -10,7 +10,7 @@ class SchemaTestCase(unittest.TestCase):
     def assertGenSchema(self, instance, options, expected):
         actual = Schema(**options).add_object(instance).to_dict()
         self.assertSchema(actual, expected)
-        self.assertValidData(instance, actual)
+        self.assertObjectValid(instance, actual)
         return actual
 
     def assertSchema(self, actual, expected):
@@ -20,9 +20,9 @@ class SchemaTestCase(unittest.TestCase):
     def assertValidSchema(self, schema):
         jsonschema.Draft4Validator.check_schema(schema)
 
-    def assertValidData(self, data, schema):
+    def assertObjectValid(self, data, schema):
         jsonschema.Draft4Validator(schema).validate(data)
 
-    def assertInvalidData(self, data, schema):
+    def assertObjectInvalid(self, data, schema):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
             jsonschema.Draft4Validator(schema).validate(data)
