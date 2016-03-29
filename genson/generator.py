@@ -206,8 +206,11 @@ class Schema(object):
         if not self._items:
             self._items = Schema(**self._kwargs)
         method = getattr(self._items, func)
-        for item in items:
-            method(item)
+        if isinstance(items, list):
+            for item in items:
+                method(item)
+        else:
+            method(items)
 
     def _add_items_sep(self, items, func):
         for item in items:
