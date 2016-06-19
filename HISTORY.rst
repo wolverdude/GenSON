@@ -17,7 +17,7 @@ History
   ``merge_arrays`` was set to ``True``. This resulted in overly
   permissive schemas because ``items`` are matched optionally by
   default.
-* **Improvement**: Positional Array Matching -  In order to be more
+* **Improvement**: Positional Array Matching - In order to be more
   consistent with the way JSON Schema works, the alternate to
   `merge_arrays` is no longer never to merge list items, but instead to
   merge them based on their position in the list.
