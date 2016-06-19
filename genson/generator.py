@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from warnings import warn
 
 
 JS_TYPES = {
@@ -66,7 +67,9 @@ class Schema(object):
             elif prop not in self._other:
                 self._other[prop] = val
             elif self._other[prop] != val:
-                raise Exception('schema incompatible')
+                warn(('Schema incompatible. Keyword {0!r} has '
+                      'conflicting values ({1!r} vs. {2!r}). Using '
+                      '{1!r}').format(prop, self._other[prop], val))
 
         # make sure the 'required' key gets set regardless
         if 'required' not in schema:
