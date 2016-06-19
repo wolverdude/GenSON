@@ -185,8 +185,20 @@ GenSON has been tested and verified using the following versions of Python:
 * Python 3.5.1
 
 
+Contributing
+------------
+
+When contributing, please follow these steps:
+
+1. Clone the repo and make your changes.
+2. Make sure your code has test cases written against it.
+3. Make sure all the tests pass.
+4. Lint your code with `Flake8`_.
+5. Add your name to the list of contributers.
+6. Submit a Pull Request.
+
 Tests
------
++++++
 
 Tests are written in ``unittest``. You can run them all easily with the
 included executable ``bin/test.py``.
@@ -203,5 +215,5 @@ You can also invoke individual test suites:
 
 
 .. _JSON Schema: http://json-schema.org/
-.. _Draft 4: http://json-schema.org/draft-04/schema#
-.. _Draft 3: http://json-schema.org/draft-03/schema#
+.. _Draft 4: http://json-schema.org/draft-04/schema
+.. _Flake8: https://pypi.python.org/pypi/flake8
