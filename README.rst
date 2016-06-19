@@ -1,31 +1,48 @@
 GenSON
 ======
 
-**GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_ generator built in Python.
+**GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_
+generator built in Python.
 
-Its power comes from the ability to generate a single schema from multiple objects. You can also throw existing schemas into the mix. Basically, you can feed it as many schemas and objects as you want and it will spit out one, unified schema for them all.
+Its power comes from the ability to generate a single schema from
+multiple objects. You can also throw existing schemas into the mix.
+Basically, you can feed it as many schemas and objects as you want and
+it will spit out one, unified schema for them all.
 
 The generator follows these three rules:
 
 1. *Every* object it is given must validate under the generated schema.
-2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema.
-3. The generated schema should be as strict as possible given the first 2 rules.
+2. *Any* object that is valid under *any* schema it is given must also
+  validate under the generated schema.
+3. The generated schema should be as strict as possible given the first
+  2 rules.
 
 
 JSON Schema Implementation
 --------------------------
 
-**GenSON** is a `Draft 4`_ generator. `Draft 3`_ support may come in the future.
+**GenSON** is a `Draft 4`_ generator.
 
-It is important to note that the generator uses only a small subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it doesn't try to guess them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
+It is important to note that the generator uses only a small subset of
+JSON Schema's capabilities. This is mainly because the generator doesn't
+know the specifics of your data model, and it doesn't try to guess them.
+Its purpose is to generate the basic structure so that you can skip the
+boilerplate and focus on the details of the schema.
 
-This means that headers and most keywords aren't dealt with. Specifically, the generator only deals with 4 keywords: ``"type"``, ``"items"``, ``"properties"`` and ``"required"``. You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema.
+This means that headers and most keywords aren't dealt with.
+Specifically, the generator only deals with 4 keywords: ``"type"``,
+``"items"``, ``"properties"`` and ``"required"``. You should be aware
+that this limited vocabulary could cause the generator to violate rules
+1 and 2. If you feed it schemas with advanced keywords, it will just
+blindly pass them on to the final schema.
 
 
 CLI Tool
 --------
 
-The package includes a ``genson`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
+The package includes a ``genson`` executable that allows you to access
+this functionality from the command line. For usage info, run with
+``--help``:
 
 .. code-block:: bash
 
@@ -64,7 +81,8 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-``Schema`` is the basic schema generator class. ``Schema`` objects can be loaded up with existing schemas and objects before being serialized.
+``Schema`` is the basic schema generator class. ``Schema`` objects can
+be loaded up with existing schemas and objects before being serialized.
 
 .. code-block:: python
 
@@ -92,12 +110,15 @@ Builds a schema generator object.
 
 arguments:
 
-* ``merge_arrays`` (default ``True``): Assume all items in an array share the same schema. The alternate behavior is to create a different schema for each item in an array, only consolidating identical ones.
+* `merge_arrays` (default `True`): Assume all array items share the same
+  schema (as they should). The alternate behavior is to merge schemas
+  based on position in the array.
 
 ``add_schema(schema)``
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Merges in an existing schema. Take care here because there is no schema validation. If you pass in a bad schema, you'll get back a bad schema.
+Merges in an existing schema. Take care here because there is no schema
+validation. If you pass in a bad schema, you'll get back a bad schema.
 
 arguments:
 
@@ -153,10 +174,22 @@ Schema objects can also interact with each other:
     #=> {"type": "object", "properties": {"hi": {"type": ["integer", "string"]}}}
 
 
+Compatibility
+-------------
+
+GenSON has been tested and verified using the following versions of Python:
+
+* Python 2.7.11
+* Python 3.3.5
+* Python 3.4.4
+* Python 3.5.1
+
+
 Tests
 -----
 
-Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
+Tests are written in ``unittest``. You can run them all easily with the
+included executable ``bin/test.py``.
 
 .. code-block:: bash
 
@@ -167,14 +200,6 @@ You can also invoke individual test suites:
 .. code-block:: bash
 
     $ bin/test.py --test-suite test.test_gen_single
-
-
-TODO
-----
-
-* Validation for add_schema
-* Headers
-* Support for JSON Schema Draft 3
 
 
 .. _JSON Schema: http://json-schema.org/
