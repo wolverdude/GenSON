@@ -1,10 +1,5 @@
 import unittest
-import os
-import sys
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
-
-from genson import Schema
-import base
+from . import base
 
 
 class TestBasicTypes(base.SchemaTestCase):
@@ -26,7 +21,3 @@ class TestBasicTypes(base.SchemaTestCase):
         self.add_object(1)
         self.add_object(1.1)
         self.assertResult({'type': 'number'})
-
-
-if __name__ == '__main__':
-    unittest.main()

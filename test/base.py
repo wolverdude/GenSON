@@ -1,8 +1,5 @@
 import unittest
 import jsonschema
-import os, sys
-
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from genson import Schema
 
 class SchemaTestCase(unittest.TestCase):

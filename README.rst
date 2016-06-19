@@ -162,11 +162,11 @@ Tests are written in ``unittest``. You can run them all easily with the included
 
     $ bin/test.py
 
-You can also run any test file directly:
+You can also invoke individual test suites:
 
 .. code-block:: bash
 
-    $ python test/test_gen_single.py
+    $ bin/test.py --test-suite test.test_gen_single
 
 
 TODO

@@ -1,6 +1,5 @@
 import unittest
-import base
-
+from . import base
 
 class TestBasicTypes(base.SchemaTestCase):
 
@@ -183,6 +182,3 @@ class TestComplex(base.SchemaTestCase):
                 }
             }
         })
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,10 +1,5 @@
 import unittest
-import os
-import sys
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
-
-from genson import Schema
-import base
+from . import base
 
 
 class TestType(base.SchemaTestCase):
@@ -36,7 +31,3 @@ class TestPreserveKeys(base.SchemaTestCase):
         schema = {'type': 'number', 'value': 5}
         self.add_schema(schema)
         self.assertResult(schema)
-
-
-if __name__ == '__main__':
-    unittest.main()

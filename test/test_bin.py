@@ -1,10 +1,8 @@
 import unittest
 import json
-import os
-import sys
 from subprocess import Popen, PIPE
 
-binpath = os.path.join(sys.path[0], '../bin/genson.py')
+binpath = 'bin/genson.py'
 
 
 def run(args=[], stdin_data=None):
@@ -62,7 +60,3 @@ class TestStdin(unittest.TestCase):
             json.loads(stdout),
             {"required": ["hi"], "type": "object", "properties": {
                 "hi": {"type": ["integer", "string"]}}})
-
-
-if __name__ == "__main__":
-    unittest.main()
