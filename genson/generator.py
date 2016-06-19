@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 
+
 JS_TYPES = {
     dict: 'object',
     list: 'array',
@@ -26,14 +27,16 @@ class Schema(object):
         arguments:
         * `merge_arrays` (default `True`): Assume all array items share
           the same schema (as they should). The alternate behavior is to
-          create a different schema for each item in every array.
+          merge schemas based on position in the array.
         """
 
-        self._kwargs = {}
-        self._kwargs['merge_arrays'] = merge_arrays
+        self._options = {
+            'merge_arrays': merge_arrays
+        }
+
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: Schema(**self._kwargs))
+        self._properties = defaultdict(lambda: Schema(**self._options))
         self._items = []
         self._other = {}
 
@@ -112,7 +115,7 @@ class Schema(object):
             items = self._get_items(recurse)
             if items or isinstance(items, dict):
                 schema['items'] = items
- 
+
         return schema
 
     def to_json(self, *args, **kwargs):
@@ -197,14 +200,14 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
-        if self._kwargs['merge_arrays']:
+        if self._options['merge_arrays']:
             self._add_items_merge(items, func)
         else:
             self._add_items_sep(items, func)
 
     def _add_items_merge(self, items, func):
         if not self._items:
-            self._items = Schema(**self._kwargs)
+            self._items = Schema(**self._options)
         method = getattr(self._items, func)
         if isinstance(items, list):
             for item in items:
@@ -213,10 +216,10 @@ class Schema(object):
             method(items)
 
     def _add_items_sep(self, items, func):
-        for item in items:
-            subschema = Schema(**self._kwargs)
+        while len(self._items) < len(items):
+            self._items.append(Schema(**self._options))
+        for subschema, item in zip(self._items, items):
             getattr(subschema, func)(item)
-            self._items.append(subschema)
 
     # generate from object
 
