@@ -5,69 +5,58 @@ import base
 class TestBasicTypes(base.SchemaTestCase):
 
     def test_no_object(self):
-        s = base.Schema()
-        self.assertSchema(s.to_dict(), {})
+        self.assertResult({})
 
     def test_string(self):
-        self.assertGenSchema("string", {}, {"type": "string"})
+        self.add_object("string")
+        self.assertResult({"type": "string"})
 
     def test_integer(self):
-        self.assertGenSchema(1, {}, {"type": "integer"})
+        self.add_object(1)
+        self.assertResult({"type": "integer"})
 
     def test_number(self):
-        self.assertGenSchema(1.1, {}, {"type": "number"})
+        self.add_object(1.1)
+        self.assertResult({"type": "number"})
 
     def test_boolean(self):
-        self.assertGenSchema(True, {}, {"type": "boolean"})
+        self.add_object(True)
+        self.assertResult({"type": "boolean"})
 
     def test_null(self):
-        self.assertGenSchema(None, {}, {"type": "null"})
+        self.add_object(None)
+        self.assertResult({"type": "null"})
 
 
 class TestArray(base.SchemaTestCase):
 
     def test_empty(self):
-        self.assertGenSchema([], {}, {"type": "array", "items": {}})
+        self.add_object([])
+        self.assertResult({"type": "array", "items": {}})
 
     def test_empty_sep(self):
-        self.assertGenSchema([], {"merge_arrays": False}, {"type": "array"})
+        self.set_schema_options(merge_arrays=False)
+        self.add_object([])
+        self.assertResult({"type": "array"})
 
     def test_monotype(self):
-        instance = ["spam", "spam", "spam", "egg", "spam"]
-        expected = {"type": "array", "items": {"type": "string"}}
-        self.assertGenSchema(instance, {}, expected)
-
-    def test_bitype(self):   # both instances validate against merged array
-        instance1 = ["spam", 1, "spam", "egg", "spam"]
-        instance2 = [1, "spam", "spam", "egg", "spam"]
-        expected = {"type": "array", "items": {"type": ["integer","string"]}}
-        actual = self.assertGenSchema(instance1, {}, expected)
-        self.assertObjectValid(instance2, actual)
-
-    def test_bitype_sep(self):   # instance 2 doesn't validate against tuple array
-        instance1 = ["spam", 1, "spam", "egg", "spam"]
-        instance2 = [1, "spam", "spam", "egg", "spam"]
-        expected = {"type": "array",
-                    "items": [{"type": "string"},
-                              {"type":"integer"},
-                              {"type": "string"},
-                              {"type": "string"},
-                              {"type": "string"}]}
-        actual = self.assertGenSchema(instance1, {"merge_arrays": False}, expected)
-        self.assertObjectInvalid(instance2, actual)
+        self.add_object(["spam", "spam", "spam", "eggs", "spam"])
+        self.assertResult({"type": "array", "items": {"type": "string"}})
 
     def test_multitype_merge(self):
-        instance = [1, "2", None, False]
-        expected = {
+        self.add_object([1, "2", None, False])
+        self.assertResult({
             "type": "array",
             "items": {
                 "type": ["boolean", "integer", "null", "string"]}
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
+        self.assertObjectValidates([False, None, "2", 1])
 
     def test_multitype_sep(self):
-        instance = [1, "2", "3", None, False]
-        expected = {
+        self.set_schema_options(merge_arrays=False)
+        self.add_object([1, "2", "3", None, False])
+
+        self.assertResult({
             "type": "array",
             "items": [
                 {"type": "integer"},
@@ -75,12 +64,14 @@ class TestArray(base.SchemaTestCase):
                 {"type": "string"},
                 {"type": "null"},
                 {"type": "boolean"}]
-        }
-        self.assertGenSchema(instance, {"merge_arrays": False}, expected)
+        })
+        self.assertObjectDoesNotValidate([1, 2, "3", None, False])
 
     def test_2deep(self):
-        instance = [1, "2", [3.14, 4, "5", 6], None, False]
-        expected = {
+        self.set_schema_options(merge_arrays=False)
+        self.add_object([1, "2", [3.14, 4, "5", 6], None, False])
+
+        self.assertResult({
             "type": "array",
             "items": [
                 {"type": "integer"},
@@ -93,21 +84,21 @@ class TestArray(base.SchemaTestCase):
                     {"type": "integer"}]},
                 {"type": "null"},
                 {"type": "boolean"}]
-        }
-        self.assertGenSchema(instance, {"merge_arrays": False}, expected)
+        })
 
 
 class TestObject(base.SchemaTestCase):
 
     def test_empty_object(self):
-        self.assertGenSchema({}, {}, {"type": "object", "properties": {}})
+        self.add_object({})
+        self.assertResult({"type": "object", "properties": {}})
 
     def test_basic_object(self):
-        instance = {
+        self.add_object({
             "Red Windsor": "Normally, but today the van broke down.",
             "Stilton": "Sorry.",
-            "Gruyere": False}
-        expected = {
+            "Gruyere": False})
+        self.assertResult({
             "required": ["Gruyere", "Red Windsor", "Stilton"],
             "type": "object",
             "properties": {
@@ -115,31 +106,29 @@ class TestObject(base.SchemaTestCase):
                 "Gruyere": {"type": "boolean"},
                 "Stilton": {"type": "string"}
             }
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
 
 
 class TestComplex(base.SchemaTestCase):
 
     def test_array_reduce(self):
-        instance = [
+        self.add_object([
             ["surprise"],
             ["fear", "surprise"],
             ["fear", "surprise", "ruthless efficiency"],
             ["fear", "surprise", "ruthless efficiency",
                   "an almost fanatical devotion to the Pope"]
-        ]
-        expected = {
+        ])
+        self.assertResult({
             "type": "array",
             "items": {
                 "type": "array",
                 "items": {"type": "string"}}
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
 
     def test_array_in_object(self):
-        instance = {"a": "b", "c": [1, 2, 3]}
-        expected = {
+        self.add_object({"a": "b", "c": [1, 2, 3]})
+        self.assertResult({
             "required": ["a","c"],
             "type": "object",
             "properties": {
@@ -149,18 +138,17 @@ class TestComplex(base.SchemaTestCase):
                     "items": {"type": "integer"}
                 }
             }
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
 
     def test_object_in_array(self):
-        instance = [
+        self.add_object([
             {"name": "Sir Lancelot of Camelot",
              "quest": "to seek the Holy Grail",
              "favorite colour": "blue"},
             {"name": "Sir Robin of Camelot",
              "quest": "to seek the Holy Grail",
-             "capitol of Assyria": None}]
-        expected = {
+             "capitol of Assyria": None}])
+        self.assertResult({
             "type": "array",
             "items": {
                 "type": "object",
@@ -172,29 +160,29 @@ class TestComplex(base.SchemaTestCase):
                     "capitol of Assyria": {"type": "null"}
                 }
             }
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
 
     def test_three_deep(self):
-        instance = {"matryoshka": {"design": {"principle": "FTW!"}}}
-        expected = {
+        self.add_object({"matryoshka": {"design": {"principle": "FTW!"}}})
+        self.assertResult({
             "type": "object",
             "required": ["matryoshka"],
             "properties": {
                 "matryoshka": {
                     "type": "object",
                     "required": ["design"],
-                    "properties": {"design": {
-                        "type": "object",
-                        "required": ["principle"],
-                        "properties": {
-                            "principle": {"type": "string"}
+                    "properties": {
+                        "design": {
+                            "type": "object",
+                            "required": ["principle"],
+                            "properties": {
+                                "principle": {"type": "string"}
+                            }
                         }
-                    }}
+                    }
                 }
             }
-        }
-        self.assertGenSchema(instance, {}, expected)
+        })
 
 if __name__ == "__main__":
     unittest.main()
