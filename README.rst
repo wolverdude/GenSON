@@ -1,8 +1,13 @@
 GenSON
 ======
 
-**GenSON** (rhymes with *Gen Con*) is a powerful, user-friendly `JSON Schema`_
-generator built in Python.
+**GenSON** is a powerful, user-friendly `JSON Schema`_ generator built
+in Python.
+
+(**Note**: This is not to be confused with the `Java ``GenSON``
+library`_. If you are coming from Java and looking for a Python
+equivalent, this is not it. You should instead look into `Python's
+builtin ``json`` library`_.)
 
 Its power comes from the ability to generate a single schema from
 multiple objects. You can also throw existing schemas into the mix.
@@ -215,5 +220,7 @@ You can also invoke individual test suites:
 
 
 .. _JSON Schema: http://json-schema.org/
+.. _Java ``GenSON`` library: https://owlike.github.io/genson/
+.. _Python's builtin ``json`` library: https://docs.python.org/library/json.html
 .. _Draft 4: http://json-schema.org/draft-04/schema
 .. _Flake8: https://pypi.python.org/pypi/flake8
