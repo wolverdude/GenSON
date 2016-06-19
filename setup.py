@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 def get_long_docs(*filenames):
-    """Build rst description from a set of markdown files."""
+    """Build rst description from a set of files."""
     docs = []
     for filename in filenames:
         with open(filename, 'r') as f:
@@ -13,19 +13,18 @@ def get_long_docs(*filenames):
 
 setup(
     name='genson',
-    version='0.1.0',
+    version='0.2.0',
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
     keywords=['json', 'schema', 'object', 'generate', 'generator', 'builder',
               'draft 4', 'validate', 'validation'],
     url='https://github.com/wolverdude/genson/',
-    download_url='https://github.com/wolverdude/GenSON/tarball/v0.1.0',
+    download_url='https://github.com/wolverdude/GenSON/tarball/v0.2s.0',
     license='MIT',
     author='Jon Wolverton',
     author_email='wolverton' '.' 'jr' '@' 'gmail' '.' 'com',
     # ^^^ Much like Mrs. Bun, I don't like spam.
-    py_modules=['genson'],
-    packages=find_packages(exclude="test"),
+    packages=['genson'],
     include_package_data=True,
     entry_points={'console_scripts': ['genson = genson.genson:main']},
     zip_safe=True,
@@ -36,10 +35,10 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities',
     ],
