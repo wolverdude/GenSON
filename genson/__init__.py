@@ -1,2 +1,2 @@
-from .generator import Schema
-__all__ = ['Schema']
+from .generator import Schema, SchemaError
+__all__ = ['Schema', 'SchemaError']
