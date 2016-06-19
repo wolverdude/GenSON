@@ -28,12 +28,14 @@ class Schema(object):
           the same schema (as they should). The alternate behavior is to
           create a different schema for each item in every array.
         """
+
+        self._kwargs = {}
+        self._kwargs['merge_arrays'] = merge_arrays
         self._type = set()
         self._required = None
-        self._properties = defaultdict(lambda: Schema())
+        self._properties = defaultdict(lambda: Schema(**self._kwargs))
         self._items = []
         self._other = {}
-        self.merge_arrays = merge_arrays
 
     def add_schema(self, schema):
         """
@@ -108,9 +110,9 @@ class Schema(object):
 
         elif 'array' in self._type:
             items = self._get_items(recurse)
-            if items:
+            if items or isinstance(items, dict):
                 schema['items'] = items
-
+ 
         return schema
 
     def to_json(self, *args, **kwargs):
@@ -166,10 +168,12 @@ class Schema(object):
         return properties
 
     def _get_items(self, recurse=True):
-        if not recurse:
-            return list(self._items)
-
-        return [subschema.to_dict() for subschema in self._items]
+        if isinstance(self._items, list):
+            if not recurse:
+                return list(self._items)
+            return [subschema.to_dict() for subschema in self._items]
+        else:
+            return self._items.to_dict()
 
     # setters
 
@@ -193,28 +197,26 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
-        if self.merge_arrays:
+        if self._kwargs['merge_arrays']:
             self._add_items_merge(items, func)
         else:
             self._add_items_sep(items, func)
 
     def _add_items_merge(self, items, func):
-        if items:
-            if not self._items:
-                self._items.append(Schema())
-
-            method = getattr(self._items[0], func)
+        if not self._items:
+            self._items = Schema(**self._kwargs)
+        method = getattr(self._items, func)
+        if isinstance(items, list):
             for item in items:
                 method(item)
+        else:
+            method(items)
 
     def _add_items_sep(self, items, func):
         for item in items:
-            subschema = Schema()
+            subschema = Schema(**self._kwargs)
             getattr(subschema, func)(item)
-
-            # only add schema if it's not already there.
-            if subschema not in self._items:
-                self._items.append(subschema)
+            self._items.append(subschema)
 
     # generate from object
 

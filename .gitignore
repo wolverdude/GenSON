@@ -1,4 +1,12 @@
-build/*
-dist/*
-genson.egg-info/*
+# See: github.com/github/gitignore/blob/master/Python.gitignore
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
 *.egg
+
