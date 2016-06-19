@@ -27,22 +27,21 @@ class TestBasicTypes(base.SchemaTestCase):
         self.assertResult({"type": "null"})
 
 
-class TestArray(base.SchemaTestCase):
+class TestArrayMerge(base.SchemaTestCase):
+
+    def setUp(self):
+        base.SchemaTestCase.setUp(self)
+        self.set_schema_options(merge_arrays=True)
 
     def test_empty(self):
         self.add_object([])
         self.assertResult({"type": "array", "items": {}})
 
-    def test_empty_sep(self):
-        self.set_schema_options(merge_arrays=False)
-        self.add_object([])
-        self.assertResult({"type": "array"})
-
     def test_monotype(self):
         self.add_object(["spam", "spam", "spam", "eggs", "spam"])
         self.assertResult({"type": "array", "items": {"type": "string"}})
 
-    def test_multitype_merge(self):
+    def test_multitype(self):
         self.add_object([1, "2", None, False])
         self.assertResult({
             "type": "array",
@@ -51,8 +50,33 @@ class TestArray(base.SchemaTestCase):
         })
         self.assertObjectValidates([False, None, "2", 1])
 
-    def test_multitype_sep(self):
+    def test_nested(self):
+        self.add_object([
+            ["surprise"],
+            ["fear", "surprise"],
+            ["fear", "surprise", "ruthless efficiency"],
+            ["fear", "surprise", "ruthless efficiency",
+                  "an almost fanatical devotion to the Pope"]
+        ])
+        self.assertResult({
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {"type": "string"}}
+        })
+
+
+class TestArrayPositional(base.SchemaTestCase):
+
+    def setUp(self):
+        base.SchemaTestCase.setUp(self)
         self.set_schema_options(merge_arrays=False)
+
+    def test_empty(self):
+        self.add_object([])
+        self.assertResult({"type": "array"})
+
+    def test_multitype(self):
         self.add_object([1, "2", "3", None, False])
 
         self.assertResult({
@@ -66,23 +90,48 @@ class TestArray(base.SchemaTestCase):
         })
         self.assertObjectDoesNotValidate([1, 2, "3", None, False])
 
-    def test_2deep(self):
-        self.set_schema_options(merge_arrays=False)
-        self.add_object([1, "2", [3.14, 4, "5", 6], None, False])
-
+    def test_nested(self):
+        self.add_object([
+            ["surprise"],
+            ["fear", "surprise"],
+            ["fear", "surprise", "ruthless efficiency"],
+            ["fear", "surprise", "ruthless efficiency",
+                  "an almost fanatical devotion to the Pope"]
+        ])
         self.assertResult({
             "type": "array",
             "items": [
-                {"type": "integer"},
-                {"type": "string"},
-                {"type": "array",
-                 "items": [
-                    {"type": "number"},
-                    {"type": "integer"},
-                    {"type": "string"},
-                    {"type": "integer"}]},
-                {"type": "null"},
-                {"type": "boolean"}]
+                {
+                    "type": "array",
+                    "items": [
+                        {"type": "string"}
+                    ]
+                },
+                {
+                    "type": "array",
+                    "items": [
+                        {"type": "string"},
+                        {"type": "string"}
+                    ]
+                },
+                {
+                    "type": "array",
+                    "items": [
+                        {"type": "string"},
+                        {"type": "string"},
+                        {"type": "string"}
+                    ]
+                },
+                {
+                    "type": "array",
+                    "items": [
+                        {"type": "string"},
+                        {"type": "string"},
+                        {"type": "string"},
+                        {"type": "string"}
+                    ]
+                },
+            ]
         })
 
 
@@ -109,21 +158,6 @@ class TestObject(base.SchemaTestCase):
 
 
 class TestComplex(base.SchemaTestCase):
-
-    def test_array_reduce(self):
-        self.add_object([
-            ["surprise"],
-            ["fear", "surprise"],
-            ["fear", "surprise", "ruthless efficiency"],
-            ["fear", "surprise", "ruthless efficiency",
-                  "an almost fanatical devotion to the Pope"]
-        ])
-        self.assertResult({
-            "type": "array",
-            "items": {
-                "type": "array",
-                "items": {"type": "string"}}
-        })
 
     def test_array_in_object(self):
         self.add_object({"a": "b", "c": [1, 2, 3]})
