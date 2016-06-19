@@ -1,14 +1,14 @@
-DESCRIPTION = """
-Generate one, unified JSON Schema from one or more
-JSON objects and/or JSON Schemas.
-(uses Draft 4 - http://json-schema.org/draft-04/schema)
-"""
-
 import argparse
 import sys
 import re
 import json
 from .generator import Schema
+
+DESCRIPTION = """
+Generate one, unified JSON Schema from one or more
+JSON objects and/or JSON Schemas.
+(uses Draft 4 - http://json-schema.org/draft-04/schema)
+"""
 
 
 def main():

@@ -1,4 +1,3 @@
-import unittest
 from . import base
 
 
@@ -60,7 +59,7 @@ class TestArrayMerge(base.SchemaTestCase):
         self.add_object([
             ["fear", "surprise", "ruthless efficiency"],
             ["fear", "surprise", "ruthless efficiency",
-                  "an almost fanatical devotion to the Pope"]
+             "an almost fanatical devotion to the Pope"]
         ])
         self.assertResult({
             "type": "array",
@@ -103,7 +102,7 @@ class TestArrayPositional(base.SchemaTestCase):
         self.add_object([
             ["fear", "surprise", "ruthless efficiency"],
             ["fear", "surprise", "ruthless efficiency",
-                  "an almost fanatical devotion to the Pope"]
+             "an almost fanatical devotion to the Pope"]
         ])
 
         self.assertResult({

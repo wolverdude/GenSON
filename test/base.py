@@ -2,6 +2,7 @@ import unittest
 import jsonschema
 from genson import Schema
 
+
 class SchemaTestCase(unittest.TestCase):
 
     def setUp(self):

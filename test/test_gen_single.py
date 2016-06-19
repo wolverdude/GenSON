@@ -1,5 +1,5 @@
-import unittest
 from . import base
+
 
 class TestBasicTypes(base.SchemaTestCase):
 
@@ -56,7 +56,7 @@ class TestArrayMerge(base.SchemaTestCase):
             ["fear", "surprise"],
             ["fear", "surprise", "ruthless efficiency"],
             ["fear", "surprise", "ruthless efficiency",
-                  "an almost fanatical devotion to the Pope"]
+             "an almost fanatical devotion to the Pope"]
         ])
         self.assertResult({
             "type": "array",
@@ -96,7 +96,7 @@ class TestArrayPositional(base.SchemaTestCase):
             ["fear", "surprise"],
             ["fear", "surprise", "ruthless efficiency"],
             ["fear", "surprise", "ruthless efficiency",
-                  "an almost fanatical devotion to the Pope"]
+             "an almost fanatical devotion to the Pope"]
         ])
         self.assertResult({
             "type": "array",
@@ -162,7 +162,7 @@ class TestComplex(base.SchemaTestCase):
     def test_array_in_object(self):
         self.add_object({"a": "b", "c": [1, 2, 3]})
         self.assertResult({
-            "required": ["a","c"],
+            "required": ["a", "c"],
             "type": "object",
             "properties": {
                 "a": {"type": "string"},
@@ -185,7 +185,7 @@ class TestComplex(base.SchemaTestCase):
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["name","quest"],
+                "required": ["name", "quest"],
                 "properties": {
                     "quest": {"type": "string"},
                     "name": {"type": "string"},
