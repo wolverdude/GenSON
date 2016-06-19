@@ -37,7 +37,7 @@ class Schema(object):
         self._type = set()
         self._required = None
         self._properties = defaultdict(lambda: Schema(**self._options))
-        self._items = []
+        self._items = None
         self._other = {}
 
     def add_schema(self, schema):
@@ -171,12 +171,13 @@ class Schema(object):
         return properties
 
     def _get_items(self, recurse=True):
-        if isinstance(self._items, list):
-            if not recurse:
-                return list(self._items)
-            return [subschema.to_dict() for subschema in self._items]
-        else:
+        if not recurse:
+            return self._items
+
+        if self._options['merge_arrays']:
             return self._items.to_dict()
+        else:
+            return [subschema.to_dict() for subschema in self._items]
 
     # setters
 
@@ -208,16 +209,18 @@ class Schema(object):
     def _add_items_merge(self, items, func):
         if not self._items:
             self._items = Schema(**self._options)
+
         method = getattr(self._items, func)
-        if isinstance(items, list):
-            for item in items:
-                method(item)
-        else:
-            method(items)
+        for item in items:
+            method(item)
 
     def _add_items_sep(self, items, func):
+        if not self._items:
+            self._items = []
+
         while len(self._items) < len(items):
             self._items.append(Schema(**self._options))
+
         for subschema, item in zip(self._items, items):
             getattr(subschema, func)(item)
 
