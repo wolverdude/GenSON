@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('-s', '--schema', action='append', default=[],
                         type=argparse.FileType('r'),
                         help='''file containing a JSON Schema (can be
-                        specified mutliple times to merge schemas)''')
+                        specified multiple times to merge schemas)''')
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
