@@ -79,7 +79,7 @@ this functionality from the command line. For usage info, run with
                             pretty-print the output, indenting SPACES spaces
       -s SCHEMA, --schema SCHEMA
                             file containing a JSON Schema (can be specified
-                            mutliple times to merge schemas)
+                            multiple times to merge schemas)
 
 
 GenSON Python API
