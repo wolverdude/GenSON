@@ -1,5 +1,5 @@
 class List:
-    PROPERTIES = ('type', 'items')
+    KEYWORDS = ('type', 'items')
 
     def __init__(self):
         self._items = SchemaNode()
@@ -19,6 +19,6 @@ class List:
 
     def to_schema(self):
         return {
-            type: 'array',
-            items: items.to_schema()
+            'type': 'array',
+            'items': items.to_schema()
         }

@@ -1,5 +1,5 @@
 class Tuple:
-    PROPERTIES = ('type', 'items')
+    KEYWORDS = ('type', 'items')
 
     def __init__(self):
         self._items = []
@@ -25,6 +25,6 @@ class Tuple:
 
     def to_schema(self):
         return {
-            type: 'array',
-            items: [item.to_schema() for item in self._items]
+            'type': 'array',
+            'items': [item.to_schema() for item in self._items]
         }
