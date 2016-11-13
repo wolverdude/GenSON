@@ -74,7 +74,7 @@ class SchemaNode(object):
         types = set()
         type_schemas = []
         for schema_type in self._schema_types:
-            type_schema = schema_type.to_schema
+            type_schema = schema_type.to_schema()
             if len(type_schema) == 1:
                 types.add(type_schema['type'])
             else:
@@ -118,10 +118,10 @@ class SchemaNode(object):
     # private methods
 
     def _get_type_for_schema(self, schema):
-        self._get_type_for_('schema', schema)
+        return self._get_type_for_('schema', schema)
 
     def _get_type_for_object(self, obj):
-        self._get_type_for_('object', obj)
+        return self._get_type_for_('object', obj)
 
     def _get_type_for_(self, kind, schema_or_obj):
         # check existing types

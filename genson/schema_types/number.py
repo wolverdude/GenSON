@@ -1,4 +1,5 @@
 class Number(object):
+    KEYWORDS = ('type')
     JS_TYPES = ('integer', 'number')
     PYTHON_TYPES = (int, float)
 

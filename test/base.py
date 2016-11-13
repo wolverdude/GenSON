@@ -22,14 +22,14 @@ class SchemaTestCase(unittest.TestCase):
         self._schemas.append(schema)
 
     def assertObjectValidates(self, obj):
-        jsonschema.Draft4Validator(self._schema.to_dict()).validate(obj)
+        jsonschema.Draft4Validator(self._schema.to_schema()).validate(obj)
 
     def assertObjectDoesNotValidate(self, obj):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
-            jsonschema.Draft4Validator(self._schema.to_dict()).validate(obj)
+            jsonschema.Draft4Validator(self._schema.to_schema()).validate(obj)
 
     def assertResult(self, expected):
-        self.assertEqual(self._schema.to_dict(), expected)
+        self.assertEqual(self._schema.to_schema(), expected)
         self.assertUserContract()
 
     def assertUserContract(self):
@@ -37,9 +37,9 @@ class SchemaTestCase(unittest.TestCase):
         self._assertComponentObjectsValidate()
 
     def _assertSchemaIsValid(self):
-        jsonschema.Draft4Validator.check_schema(self._schema.to_dict())
+        jsonschema.Draft4Validator.check_schema(self._schema.to_schema())
 
     def _assertComponentObjectsValidate(self):
-        compiled_schema = self._schema.to_dict()
+        compiled_schema = self._schema.to_schema()
         for obj in self._objects:
             jsonschema.Draft4Validator(compiled_schema).validate(obj)
