@@ -1,2 +1,2 @@
-from .generator import Schema
-__all__ = ['Schema']
+from .generator import SchemaNode
+__all__ = ['SchemaNode']

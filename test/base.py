@@ -1,17 +1,17 @@
 import unittest
 import jsonschema
-from genson import Schema
+from genson import SchemaNode
 
 
 class SchemaTestCase(unittest.TestCase):
 
     def setUp(self):
-        self._schema = Schema()
+        self._schema = SchemaNode()
         self._objects = []
         self._schemas = []
 
     def set_schema_options(self, **options):
-        self._schema = Schema(**options)
+        self._schema = SchemaNode(**options)
 
     def add_object(self, obj):
         self._schema.add_object(obj)

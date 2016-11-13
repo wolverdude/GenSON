@@ -18,7 +18,7 @@ class SchemaNode(object):
         Merges in an existing schema.
 
         arguments:
-        * `schema` (required - `dict` or `Schema`):
+        * `schema` (required - `dict` or `SchemaNode`):
           an existing JSON Schema to merge.
         """
 
