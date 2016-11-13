@@ -145,6 +145,7 @@ class TestObject(base.SchemaTestCase):
             "Red Windsor": "Normally, but today the van broke down.",
             "Stilton": "Sorry.",
             "Gruyere": False})
+        print(self._schema.to_schema())
         self.assertResult({
             "required": ["Gruyere", "Red Windsor", "Stilton"],
             "type": "object",

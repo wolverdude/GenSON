@@ -83,6 +83,8 @@ class SchemaNode(object):
         if types:
             if len(types) == 1:
                 (types,) = types
+            else:
+                types = sorted(types)
             type_schemas = [{'type': types}] + type_schemas
         if len(type_schemas) == 1:
             schema.update(type_schemas[0])

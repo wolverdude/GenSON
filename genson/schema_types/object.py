@@ -15,7 +15,7 @@ class Object(object):
     def __init__(self, parent_node):
         cls = parent_node.__class__
         self._properties = defaultdict(lambda: cls())
-        self._required = set()
+        self._required = None
 
     def add_schema(self, schema):
         if 'properties' in schema:
@@ -27,7 +27,10 @@ class Object(object):
     def add_object(self, obj):
         for prop, subobj in obj.items():
             self._properties[prop].add_object(subobj)
-        self._required &= set(obj.keys())
+        if self._required:
+            self._required &= set(obj.keys())
+        else:
+            self._required = set(obj.keys())
 
     def _add(self, items, func):
         while len(self._items) < len(items):
@@ -37,13 +40,16 @@ class Object(object):
             getattr(subschema, func)(item)
 
     def to_schema(self):
-        return {
-            'type': 'array',
-            'properties': self._properties_to_schema(),
-            'required': list(self._required)
+        schema = {
+            'type': 'object',
+            'properties': self._properties_to_schema()
         }
+        if self._required:
+            schema['required'] = sorted(self._required)
+        return schema
 
     def _properties_to_schema(self):
-        schema = {}
+        schema_properties = {}
         for prop, schema_node in self._properties.items():
-            schema[prop] = schema_node.to_schema()
+            schema_properties[prop] = schema_node.to_schema()
+        return schema_properties
