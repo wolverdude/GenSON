@@ -1,6 +1,3 @@
-from generator import SchemaNode
-
-
 class List:
     KEYWORDS = ('type', 'items')
 
@@ -12,8 +9,8 @@ class List:
     def match_object(obj):
         return isinstance(obj, list)
 
-    def __init__(self):
-        self._items = SchemaNode()
+    def __init__(self, parent_node):
+        self._items = parent_node.__class__()
 
     def add_schema(self, schema):
         self._items.add_schema(schema['items'])

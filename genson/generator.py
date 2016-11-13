@@ -1,6 +1,6 @@
 import json
 from warnings import warn
-from .schema_types import types
+from .schema_types import SCHEMA_TYPES
 
 
 class SchemaNode(object):
@@ -120,9 +120,9 @@ class SchemaNode(object):
                 return schema_type
 
         # check all potential types
-        for schema_type_class in types:
+        for schema_type_class in SCHEMA_TYPES:
             if getattr(schema_type_class, 'match_' + kind)(schema_or_obj):
-                schema_type = schema_type_class()
+                schema_type = schema_type_class(self)
                 self._schema_types.append(schema_type)
                 return schema_type
 

@@ -1,12 +1,7 @@
 from .list import List
 from .tuple import Tuple
 
-__all__ = types = [
+SCHEMA_TYPES = (
     List,
     Tuple,
-]
-
-
-def add_type(schema_type):
-    # TODO: validate schema type
-    types.append(schema_type)
+)

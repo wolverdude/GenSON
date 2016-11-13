@@ -1,6 +1,3 @@
-from generator import SchemaNode
-
-
 class Tuple:
     KEYWORDS = ('type', 'items')
 
@@ -12,7 +9,8 @@ class Tuple:
     def match_object(obj):
         return isinstance(obj, list)
 
-    def __init__(self):
+    def __init__(self, parent_node):
+        self._schema_node_class = parent_node.__class__
         self._items = []
 
     def add_schema(self, schema):
@@ -23,7 +21,7 @@ class Tuple:
 
     def _add(self, items, func):
         while len(self._items) < len(items):
-            self._items.append(SchemaNode())
+            self._items.append(self._schema_node_class())
 
         for subschema, item in zip(self._items, items):
             getattr(subschema, func)(item)
