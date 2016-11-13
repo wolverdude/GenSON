@@ -27,7 +27,7 @@ class Tuple:
             getattr(subschema, func)(item)
 
     def to_schema(self):
-        return {
-            'type': 'array',
-            'items': [item.to_schema() for item in self._items]
-        }
+        schema = {'type': 'array'}
+        if self._items:
+            schema['items'] = [item.to_schema() for item in self._items]
+        return schema

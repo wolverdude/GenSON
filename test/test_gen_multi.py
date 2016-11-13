@@ -72,13 +72,18 @@ class TestArrayTuple(base.SchemaTestCase):
 
     def setUp(self):
         base.SchemaTestCase.setUp(self)
-        self.add_schema({"type": "array", "items": []})
 
     def test_empty(self):
+        self.add_schema({"type": "array", "items": []})
+
         self.add_object([])
+        self.add_object([])
+
         self.assertResult({"type": "array"})
 
     def test_multitype(self):
+        self.add_schema({"type": "array", "items": []})
+
         self.add_object([1, "2", "3", None, False])
         self.add_object([1, 2, "3", False])
 
@@ -94,6 +99,9 @@ class TestArrayTuple(base.SchemaTestCase):
         })
 
     def test_nested(self):
+        self.add_schema(
+            {"type": "array", "items": {"type": "array", "items": []}})
+
         self.add_object([
             ["surprise"],
             ["fear", "surprise"]
@@ -106,23 +114,13 @@ class TestArrayTuple(base.SchemaTestCase):
 
         self.assertResult({
             "type": "array",
-            "items": [
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"}
-                    ]
-                },
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"}
-                    ]
-                },
-            ]
+            "items": {
+                "type": "array",
+                "items": [
+                    {"type": "string"},
+                    {"type": "string"},
+                    {"type": "string"},
+                    {"type": "string"}
+                ]
+            }
         })
