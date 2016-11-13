@@ -1,14 +1,19 @@
+from generator import SchemaNode
+
+
 class List:
     KEYWORDS = ('type', 'items')
 
-    def __init__(self):
-        self._items = SchemaNode()
-
-    def match_schema(self, schema):
+    @staticmethod
+    def match_schema(schema):
         return schema['type'] == 'array' and isinstance(schema['items'], dict)
 
-    def match_object(self, obj):
+    @staticmethod
+    def match_object(obj):
         return isinstance(obj, list)
+
+    def __init__(self):
+        self._items = SchemaNode()
 
     def add_schema(self, schema):
         self._items.add_schema(schema['items'])
@@ -20,5 +25,5 @@ class List:
     def to_schema(self):
         return {
             'type': 'array',
-            'items': items.to_schema()
+            'items': self._items.to_schema()
         }

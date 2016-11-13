@@ -1,5 +1,7 @@
 import json
 from warnings import warn
+import types
+
 
 class SchemaNode(object):
     """
@@ -30,13 +32,14 @@ class SchemaNode(object):
 
         # record any extra keywords
         for keyword, value in schema.items():
-            if keyword not in schema_type.KEYWORDS:
-                if keyword not in self._unknown_keywords:
-                    self._unknown_keywords[keyword] = value
-                elif self._unknown_keywords[keyword] != value
-                    warn(('Schema incompatible. Keyword {0!r} has '
-                    'conflicting values ({1!r} vs. {2!r}). Using '
-                    '{1!r}').format(prop, self._other[prop], val))
+            if keyword in schema_type.KEYWORDS:
+                continue
+            elif keyword not in self._unknown_keywords:
+                self._unknown_keywords[keyword] = value
+            elif self._unknown_keywords[keyword] != value:
+                warn(('Schema incompatible. Keyword {0!r} has '
+                      'conflicting values ({1!r} vs. {2!r}). Using '
+                      '{1!r}').format(keyword, self._other[keyword], value))
 
         # return self for easy method chaining
         return self
@@ -52,14 +55,7 @@ class SchemaNode(object):
 
         # delegate to SchemaType object
         schema_type = self._get_type_for_object(obj)
-        schema_type.add_schema(schema)
-
-        if isinstance(obj, dict):
-            self._generate_object(obj)
-        elif isinstance(obj, list):
-            self._generate_array(obj)
-        else:
-            self._generate_basic(obj)
+        schema_type.add_object(obj)
 
         # return self for easy method chaining
         return self
@@ -77,7 +73,7 @@ class SchemaNode(object):
             type_schema = schema_type.to_schema
             if len(type_schema) == 1:
                 types.add(type_schema['type'])
-            else
+            else:
                 type_schemas.append(type_schema)
 
         if types:
@@ -99,10 +95,12 @@ class SchemaNode(object):
 
     def __eq__(self, other):
         # TODO: find a more optimal way to do this
-        if not isinstance(other, Schema):
+        if self == other:
+            return True
+        if not isinstance(other, SchemaNode):
             return False
 
-        return self.to_dict() == other.to_dict()
+        return self.to_schema() == other.to_schema()
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -110,7 +108,25 @@ class SchemaNode(object):
     # private methods
 
     def _get_type_for_schema(self, schema):
-        pass
+        self._get_type_for_('schema', schema)
 
     def _get_type_for_object(self, obj):
-        pass
+        self._get_type_for_('object', obj)
+
+    def _get_type_for_(self, kind, schema_or_obj):
+        # check existing types
+        for schema_type in self._schema_types:
+            if getattr(schema_type, 'match_' + kind)(schema_or_obj):
+                return schema_type
+
+        # check all potential types
+        for schema_type_class in types.schema_types:
+            if getattr(schema_type_class, 'match_' + kind)(schema_or_obj):
+                schema_type = schema_type_class()
+                self._schema_types.append(schema_type)
+                return schema_type
+
+        # no match found, raise an error
+        raise RuntimeError(
+            'Could not find matching type for {0}: {1!r}'.format(
+                kind, schema_or_obj))

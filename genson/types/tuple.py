@@ -1,14 +1,19 @@
+from generator import SchemaNode
+
+
 class Tuple:
     KEYWORDS = ('type', 'items')
 
-    def __init__(self):
-        self._items = []
-
-    def match_schema(self, schema):
+    @staticmethod
+    def match_schema(schema):
         return schema['type'] == 'array' and isinstance(schema['items'], list)
 
-    def match_object(self, obj):
+    @staticmethod
+    def match_object(obj):
         return isinstance(obj, list)
+
+    def __init__(self):
+        self._items = []
 
     def add_schema(self, schema):
         self._add(schema['items'], 'add_schema')
