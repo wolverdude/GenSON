@@ -27,11 +27,10 @@ class TestBasicTypes(base.SchemaTestCase):
         self.assertResult({"type": "null"})
 
 
-class TestArrayMerge(base.SchemaTestCase):
+class TestArrayList(base.SchemaTestCase):
 
     def setUp(self):
         base.SchemaTestCase.setUp(self)
-        self.set_schema_options(merge_arrays=True)
 
     def test_empty(self):
         self.add_object([])
@@ -66,15 +65,15 @@ class TestArrayMerge(base.SchemaTestCase):
         })
 
 
-class TestArrayPositional(base.SchemaTestCase):
+class TestArrayTuple(base.SchemaTestCase):
 
     def setUp(self):
         base.SchemaTestCase.setUp(self)
-        self.set_schema_options(merge_arrays=False)
+        self.add_schema({"type": "array", "items": []})
 
     def test_empty(self):
         self.add_object([])
-        self.assertResult({"type": "array"})
+        self.assertResult({"type": "array", "items": []})
 
     def test_multitype(self):
         self.add_object([1, "2", "3", None, False])
