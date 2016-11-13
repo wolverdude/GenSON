@@ -103,7 +103,7 @@ class SchemaNode(object):
         """
         Convert the current schema directly to serialized JSON.
         """
-        return json.dumps(self.to_dict(), *args, **kwargs)
+        return json.dumps(self.to_schema(), *args, **kwargs)
 
     def __eq__(self, other):
         # TODO: find a more optimal way to do this

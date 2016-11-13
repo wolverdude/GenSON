@@ -14,7 +14,7 @@ JSON objects and/or JSON Schemas.
 def main():
     args = parse_args()
 
-    s = SchemaNode(merge_arrays=args.no_merge_arrays)
+    s = SchemaNode()
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)
@@ -27,9 +27,6 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-a', '--no-merge-arrays', action='store_false',
-                        help='''generate a different subschema for each element
-                        in an array rather than merging them all into one''')
     parser.add_argument('-d', '--delimiter', metavar='DELIM',
                         help='''set a delimiter - Use this option if the
                         input files contain multiple JSON objects/schemas.
