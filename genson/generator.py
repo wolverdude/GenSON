@@ -26,6 +26,10 @@ class SchemaNode(object):
         if isinstance(schema, SchemaNode):
             schema = schema.to_schema()
 
+        if 'type' not in schema:
+            warn('Given schema has no "type" key: {0!r}')
+            return
+
         # delegate to SchemaType object
         schema_type = self._get_type_for_schema(schema)
         schema_type.add_schema(schema)
@@ -82,10 +86,16 @@ class SchemaNode(object):
             type_schemas = [{'type': types}] + type_schemas
         if len(type_schemas) == 1:
             schema.update(type_schemas[0])
-        else:
+        elif type_schemas:
             schema['anyOf'] = type_schemas
 
         return schema
+
+    def to_dict(self, recurse=True):
+        warn('#to_dict is deprecated in v1.0, and it may soon be removed')
+        if recurse is not True:
+            warn('the `recurse` option for #to_dict does nothing in v1.0')
+        return self.to_schema()
 
     def to_json(self, *args, **kwargs):
         """
