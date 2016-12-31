@@ -27,8 +27,8 @@ class SchemaNode(object):
             schema = schema.to_schema()
 
         if 'type' not in schema:
-            warn('Cannot parse given schema, It must have a "type" key.'
-                 ' Schema: {0!r}'.format(schema),
+            warn('Cannot parse given schema, It must have a "type" key. '
+                 'Invalid schema: {0!r}'.format(schema),
                  UserWarning)
             return
 
@@ -43,9 +43,9 @@ class SchemaNode(object):
             elif keyword not in self._unknown_keywords:
                 self._unknown_keywords[keyword] = value
             elif self._unknown_keywords[keyword] != value:
-                warn(('Schema incompatible. Keyword {0!r} has '
-                      'conflicting values ({1!r} vs. {2!r}). Using '
-                      '{1!r}').format(keyword, self._other[keyword], value))
+                warn(('Schema incompatible. Keyword {0!r} has conflicting '
+                      'values ({1!r} vs. {2!r}). Using {1!r}').format(
+                        keyword, self._unknown_keywords[keyword], value))
 
         # return self for easy method chaining
         return self
@@ -56,7 +56,7 @@ class SchemaNode(object):
 
         arguments:
         * `obj` (required - `dict`):
-          a JSON object to use in generate the schema.
+          a JSON object to use in generating the schema.
         """
 
         # delegate to SchemaType object

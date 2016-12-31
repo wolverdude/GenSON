@@ -16,3 +16,8 @@ class TestWarnings(base.SchemaTestCase):
         with self.assertWarns(DeprecationWarning):
             self.add_object('Go away or I shall taunt you a second time!')
             self._schema.to_dict(recurse=True)
+
+    def test_incompatible_schema_warning(self):
+        with self.assertWarns(UserWarning):
+            self.add_schema({'type': 'string', 'length': 5})
+            self.add_schema({'type': 'string', 'length': 7})
