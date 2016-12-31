@@ -3,11 +3,6 @@ from . import base
 
 class TestType(base.SchemaTestCase):
 
-    def test_no_schema(self):
-        schema = {}
-        self.add_schema(schema)
-        self.assertResult(schema)
-
     def test_single_type(self):
         schema = {'type': 'string'}
         self.add_schema(schema)

@@ -3,6 +3,10 @@ from warnings import warn
 from .schema_types import SCHEMA_TYPES
 
 
+class InvalidSchemaError(RuntimeError):
+    pass
+
+
 class SchemaNode(object):
     """
     Basic schema generator class. SchemaNode objects can be loaded
@@ -27,10 +31,9 @@ class SchemaNode(object):
             schema = schema.to_schema()
 
         if 'type' not in schema:
-            warn('Cannot parse given schema, It must have a "type" key. '
-                 'Invalid schema: {0!r}'.format(schema),
-                 UserWarning)
-            return
+            raise InvalidSchemaError(
+                'Cannot parse given schema, It must have a "type" '
+                'key:\n{0!r}'.format(schema))
 
         # delegate to SchemaType object
         schema_type = self._get_type_for_schema(schema)
@@ -45,7 +48,7 @@ class SchemaNode(object):
             elif self._unknown_keywords[keyword] != value:
                 warn(('Schema incompatible. Keyword {0!r} has conflicting '
                       'values ({1!r} vs. {2!r}). Using {1!r}').format(
-                        keyword, self._unknown_keywords[keyword], value))
+                          keyword, self._unknown_keywords[keyword], value))
 
         # return self for easy method chaining
         return self
@@ -144,6 +147,6 @@ class SchemaNode(object):
                 return schema_type
 
         # no match found, raise an error
-        raise RuntimeError(
+        raise InvalidSchemaError(
             'Could not find matching type for {0}: {1!r}'.format(
                 kind, schema_or_obj))

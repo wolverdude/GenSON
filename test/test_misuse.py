@@ -1,11 +1,16 @@
 from . import base
+from genson.generator import InvalidSchemaError
 
 
-class TestWarnings(base.SchemaTestCase):
+class TestMisuse(base.SchemaTestCase):
 
-    def test_schema_with_no_type_warning(self):
-        with self.assertWarns(UserWarning):
+    def test_schema_with_no_type_error(self):
+        with self.assertRaises(InvalidSchemaError):
             self.add_schema({"items": [{'type': 'string'}]})
+
+    def test_schema_with_bad_type_error(self):
+        with self.assertRaises(InvalidSchemaError):
+            self.add_schema({'type': 'african swallow'})
 
     def test_to_dict_pending_deprecation_warning(self):
         with self.assertWarns(PendingDeprecationWarning):
