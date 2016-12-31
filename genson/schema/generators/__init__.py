@@ -4,7 +4,6 @@ from .list import List
 from .tuple import Tuple
 from .object import Object
 
-
 GENERATORS = (
     Null,
     Boolean,

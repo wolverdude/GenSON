@@ -1,4 +1,4 @@
-class SchemaType(object):
+class SchemaGenerator(object):
     KEYWORDS = ('type')
     # JS_TYPE =
     # PYTHON_TYPE =
@@ -26,17 +26,17 @@ class SchemaType(object):
 
 # Concrete Types
 
-class Null(SchemaType):
+class Null(SchemaGenerator):
     JS_TYPE = 'null'
     PYTHON_TYPE = type(None)
 
 
-class Boolean(SchemaType):
+class Boolean(SchemaGenerator):
     JS_TYPE = 'boolean'
     PYTHON_TYPE = bool
 
 
-class String(SchemaType):
+class String(SchemaGenerator):
     JS_TYPE = 'string'
     PYTHON_TYPES = (str, type(u''))
 

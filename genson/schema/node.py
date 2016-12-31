@@ -14,7 +14,7 @@ class SchemaNode(object):
     """
 
     def __init__(self):
-        self._schema_types = []
+        self._schema_generators = []
         self._unknown_keywords = {}
 
     def add_schema(self, schema):
@@ -36,12 +36,12 @@ class SchemaNode(object):
                 'key:\n{0!r}'.format(schema))
 
         # delegate to SchemaType object
-        schema_type = self._get_type_for_schema(schema)
-        schema_type.add_schema(schema)
+        schema_generator = self._get_generator_for_schema(schema)
+        schema_generator.add_schema(schema)
 
         # record any extra keywords
         for keyword, value in schema.items():
-            if keyword in schema_type.KEYWORDS:
+            if keyword in schema_generator.KEYWORDS:
                 continue
             elif keyword not in self._unknown_keywords:
                 self._unknown_keywords[keyword] = value
@@ -63,8 +63,8 @@ class SchemaNode(object):
         """
 
         # delegate to SchemaType object
-        schema_type = self._get_type_for_object(obj)
-        schema_type.add_object(obj)
+        schema_generator = self._get_generator_for_object(obj)
+        schema_generator.add_object(obj)
 
         # return self for easy method chaining
         return self
@@ -74,29 +74,29 @@ class SchemaNode(object):
         Convert the current schema to a `dict`.
         """
         # start with unknown keywords
-        schema = dict(self._unknown_keywords)
+        result_schema = dict(self._unknown_keywords)
 
         types = set()
-        type_schemas = []
-        for schema_type in self._schema_types:
-            type_schema = schema_type.to_schema()
-            if len(type_schema) == 1:
-                types.add(type_schema['type'])
+        generated_schemas = []
+        for schema_generator in self._schema_generators:
+            generated_schema = schema_generator.to_schema()
+            if len(generated_schema) == 1:
+                types.add(generated_schema['type'])
             else:
-                type_schemas.append(type_schema)
+                generated_schemas.append(generated_schema)
 
         if types:
             if len(types) == 1:
                 (types,) = types
             else:
                 types = sorted(types)
-            type_schemas = [{'type': types}] + type_schemas
-        if len(type_schemas) == 1:
-            schema.update(type_schemas[0])
-        elif type_schemas:
-            schema['anyOf'] = type_schemas
+            generated_schemas = [{'type': types}] + generated_schemas
+        if len(generated_schemas) == 1:
+            result_schema.update(generated_schemas[0])
+        elif generated_schemas:
+            result_schema['anyOf'] = generated_schemas
 
-        return schema
+        return result_schema
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '
@@ -127,24 +127,24 @@ class SchemaNode(object):
 
     # private methods
 
-    def _get_type_for_schema(self, schema):
-        return self._get_type_for_('schema', schema)
+    def _get_generator_for_schema(self, schema):
+        return self._get_generator_for_('schema', schema)
 
-    def _get_type_for_object(self, obj):
-        return self._get_type_for_('object', obj)
+    def _get_generator_for_object(self, obj):
+        return self._get_generator_for_('object', obj)
 
-    def _get_type_for_(self, kind, schema_or_obj):
+    def _get_generator_for_(self, kind, schema_or_obj):
         # check existing types
-        for schema_type in self._schema_types:
-            if getattr(schema_type, 'match_' + kind)(schema_or_obj):
-                return schema_type
+        for schema_generator in self._schema_generators:
+            if getattr(schema_generator, 'match_' + kind)(schema_or_obj):
+                return schema_generator
 
         # check all potential types
-        for schema_type_class in GENERATORS:
-            if getattr(schema_type_class, 'match_' + kind)(schema_or_obj):
-                schema_type = schema_type_class(self)
-                self._schema_types.append(schema_type)
-                return schema_type
+        for schema_generator_class in GENERATORS:
+            if getattr(schema_generator_class, 'match_' + kind)(schema_or_obj):
+                schema_generator = schema_generator_class(self)
+                self._schema_generators.append(schema_generator)
+                return schema_generator
 
         # no match found, raise an error
         raise InvalidSchemaError(
