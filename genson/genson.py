@@ -110,12 +110,10 @@ def detect_json_strings(raw_text):
     """
     strings = re.split('}\s*(?={)', raw_text)
 
-    json_strings = []
-    for string in strings:
-        # put back the stripped character
-        json_strings.append(string + '}')
+    # put back the stripped character
+    json_strings = [string + '}' for string in strings[:-1]]
 
     # the last one doesn't need to be modified
-    json_strings[-1] = strings[-1]
+    json_strings.append(strings[-1])
 
     return json_strings
