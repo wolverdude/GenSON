@@ -27,7 +27,9 @@ class SchemaNode(object):
             schema = schema.to_schema()
 
         if 'type' not in schema:
-            warn('Given schema has no "type" key: {0!r}')
+            warn('Cannot parse given schema, It must have a "type" key.'
+                 ' Schema: {0!r}'.format(schema),
+                 UserWarning)
             return
 
         # delegate to SchemaType object
@@ -93,10 +95,13 @@ class SchemaNode(object):
 
         return schema
 
-    def to_dict(self, recurse=True):
-        warn('#to_dict is deprecated in v1.0, and it may soon be removed')
-        if recurse is not True:
-            warn('the `recurse` option for #to_dict does nothing in v1.0')
+    def to_dict(self, recurse='DEPRECATED'):
+        warn('#to_dict is deprecated in v1.0, and it may be removed in '
+             'future versions. Use #to_schema instead.',
+             PendingDeprecationWarning)
+        if recurse != 'DEPRECATED':
+            warn('the `recurse` option for #to_dict does nothing in v1.0',
+                 DeprecationWarning)
         return self.to_schema()
 
     def to_json(self, *args, **kwargs):
