@@ -1,6 +1,6 @@
 import json
 from warnings import warn
-from .schema_types import SCHEMA_TYPES
+from .generators import GENERATORS
 
 
 class InvalidSchemaError(RuntimeError):
@@ -140,7 +140,7 @@ class SchemaNode(object):
                 return schema_type
 
         # check all potential types
-        for schema_type_class in SCHEMA_TYPES:
+        for schema_type_class in GENERATORS:
             if getattr(schema_type_class, 'match_' + kind)(schema_or_obj):
                 schema_type = schema_type_class(self)
                 self._schema_types.append(schema_type)

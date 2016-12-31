@@ -2,7 +2,7 @@ import argparse
 import sys
 import re
 import json
-from .generator import SchemaNode
+from . import SchemaNode
 
 DESCRIPTION = """
 Generate one, unified JSON Schema from one or more

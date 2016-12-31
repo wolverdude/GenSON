@@ -1,5 +1,5 @@
 from . import base
-from genson.generator import InvalidSchemaError
+from genson import InvalidSchemaError
 
 
 class TestMisuse(base.SchemaTestCase):

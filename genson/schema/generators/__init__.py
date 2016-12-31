@@ -5,7 +5,7 @@ from .tuple import Tuple
 from .object import Object
 
 
-SCHEMA_TYPES = (
+GENERATORS = (
     Null,
     Boolean,
     String,
