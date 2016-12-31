@@ -25,3 +25,11 @@ History
   incompatibility used to cause a fatal error with a nondescript
   warning. The message has been improved and it has been reduced to a
   warning.
+
+1.0.0
+
+* Remove `merge_arrays` option in favor of list/tuple matching
+* Refactor of the generator engine to use the strategy pattern
+* rename Schema => SchemaNode
+* to_dict => to_schema
+* remove `recurse` option
