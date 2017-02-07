@@ -204,6 +204,8 @@ class Schema(object):
             getattr(self._properties[prop], func)(val)
 
     def _add_items(self, items, func):
+        if isinstance(items, dict):
+            items = [items]
         if self._options['merge_arrays']:
             self._add_items_merge(items, func)
         else:
