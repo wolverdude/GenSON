@@ -187,6 +187,7 @@ GenSON has been tested and verified using the following versions of Python:
 * Python 3.3.5
 * Python 3.4.4
 * Python 3.5.1
+* Python 3.6.2
 
 
 Contributing

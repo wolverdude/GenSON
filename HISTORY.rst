@@ -30,3 +30,7 @@ History
 -----
 * **Bugfix**: ``add_schema`` failed when adding list-style array schemas.
 * **Bugfix**: typo in readme
+
+0.2.2
+-----
+* **Docs**: Python 3.6 is now explicitly tested and listed as compatible.
