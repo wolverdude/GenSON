@@ -21,7 +21,7 @@ def pypi_safe(rst):
 
 setup(
     name='genson',
-    version='0.2.2',
+    version='0.2.3',
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
     keywords=['json', 'schema', 'object', 'generate', 'generator', 'builder',

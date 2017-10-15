@@ -34,3 +34,7 @@ History
 0.2.2
 -----
 * **Docs**: Python 3.6 is now explicitly tested and listed as compatible.
+
+0.2.3
+-----
+* **Docs**: add installation instructions

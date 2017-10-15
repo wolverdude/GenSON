@@ -41,6 +41,14 @@ that this limited vocabulary could cause the generator to violate rules
 blindly pass them on to the final schema.
 
 
+Installation
+------------
+
+.. code-block:: bash
+
+    $ pip install genson
+
+
 CLI Tool
 --------
 
