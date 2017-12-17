@@ -38,8 +38,4 @@ class Boolean(SchemaGenerator):
 
 class String(SchemaGenerator):
     JS_TYPE = 'string'
-    PYTHON_TYPES = (str, type(u''))
-
-    @classmethod
-    def match_object(cls, obj):
-        return type(obj) in cls.PYTHON_TYPES
+    PYTHON_TYPE = (str, type(u''))
