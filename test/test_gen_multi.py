@@ -4,22 +4,41 @@ from . import base
 class TestBasicTypes(base.SchemaTestCase):
 
     def test_single_type(self):
-        self.add_object('bacon')
-        self.add_object('egg')
-        self.add_object('spam')
-        self.assertResult({'type': 'string'})
-
-    def test_multi_type(self):
-        self.add_object('string')
-        self.add_object(1.1)
-        self.add_object(True)
-        self.add_object(None)
-        self.assertResult({'type': ['boolean', 'null', 'number', 'string']})
+        self.add_object("bacon")
+        self.add_object("egg")
+        self.add_object("spam")
+        self.assertResult({"type": "string"})
 
     def test_redundant_integer_type(self):
         self.add_object(1)
         self.add_object(1.1)
-        self.assertResult({'type': 'number'})
+        self.assertResult({"type": "number"})
+
+
+class TestAnyOf(base.SchemaTestCase):
+
+    def test_simple(self):
+        self.add_object("string")
+        self.add_object(1.1)
+        self.add_object(True)
+        self.add_object(None)
+        self.assertResult({"type": ["boolean", "null", "number", "string"]})
+
+    def test_complex(self):
+        self.add_object({})
+        self.add_object([])
+        self.assertResult({"anyOf": [
+            {"type": "object", "properties": {}},
+            {"type": "array", "items": {}}
+        ]})
+
+    def test_simple_and_complex(self):
+        self.add_object(None)
+        self.add_object([])
+        self.assertResult({"anyOf": [
+            {"type": "null"},
+            {"type": "array", "items": {}}
+        ]})
 
 
 class TestArrayList(base.SchemaTestCase):
