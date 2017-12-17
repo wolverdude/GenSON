@@ -6,7 +6,7 @@ class Object(object):
 
     @staticmethod
     def match_schema(schema):
-        return schema['type'] == 'object'
+        return schema.get('type') == 'object'
 
     @staticmethod
     def match_object(obj):

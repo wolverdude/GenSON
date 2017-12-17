@@ -3,7 +3,7 @@ class List:
 
     @staticmethod
     def match_schema(schema):
-        return schema['type'] == 'array' and isinstance(schema['items'], dict)
+        return schema.get('type') == 'array' and isinstance(schema['items'], dict)
 
     @staticmethod
     def match_object(obj):

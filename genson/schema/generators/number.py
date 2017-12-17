@@ -5,7 +5,7 @@ class Number(object):
 
     @classmethod
     def match_schema(cls, schema):
-        return schema['type'] in cls.JS_TYPES
+        return schema.get('type') in cls.JS_TYPES
 
     @classmethod
     def match_object(cls, obj):
@@ -15,7 +15,7 @@ class Number(object):
         self._type = 'integer'
 
     def add_schema(self, schema):
-        if schema['type'] == 'number':
+        if schema.get('type') == 'number':
             self._type = 'number'
 
     def add_object(self, obj):

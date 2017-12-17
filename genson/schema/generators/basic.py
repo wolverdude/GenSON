@@ -5,7 +5,7 @@ class SchemaGenerator(object):
 
     @classmethod
     def match_schema(cls, schema):
-        return schema['type'] == cls.JS_TYPE
+        return schema.get('type') == cls.JS_TYPE
 
     @classmethod
     def match_object(cls, obj):

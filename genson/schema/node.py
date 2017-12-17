@@ -30,11 +30,6 @@ class SchemaNode(object):
         if isinstance(schema, SchemaNode):
             schema = schema.to_schema()
 
-        if 'type' not in schema:
-            raise InvalidSchemaError(
-                'Cannot parse given schema, It must have a "type" '
-                'key:\n{0!r}'.format(schema))
-
         # delegate to SchemaType object
         schema_generator = self._get_generator_for_schema(schema)
         schema_generator.add_schema(schema)
@@ -80,7 +75,7 @@ class SchemaNode(object):
         generated_schemas = []
         for schema_generator in self._schema_generators:
             generated_schema = schema_generator.to_schema()
-            if len(generated_schema) == 1:
+            if len(generated_schema) == 1 and 'type' in generated_schema:
                 types.add(generated_schema['type'])
             else:
                 generated_schemas.append(generated_schema)

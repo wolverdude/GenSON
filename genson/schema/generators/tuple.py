@@ -3,7 +3,7 @@ class Tuple:
 
     @staticmethod
     def match_schema(schema):
-        return schema['type'] == 'array' and isinstance(schema['items'], list)
+        return schema.get('type') == 'array' and isinstance(schema['items'], list)
 
     @staticmethod
     def match_object(obj):
