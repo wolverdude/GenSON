@@ -15,7 +15,6 @@ class SchemaNode(object):
 
     def __init__(self):
         self._schema_generators = []
-        self._unknown_keywords = {}
 
     def add_schema(self, schema):
         """
@@ -30,20 +29,10 @@ class SchemaNode(object):
         if isinstance(schema, SchemaNode):
             schema = schema.to_schema()
 
-        # delegate to SchemaType object
-        schema_generator = self._get_generator_for_schema(schema)
-        schema_generator.add_schema(schema)
-
-        # record any extra keywords
-        for keyword, value in schema.items():
-            if keyword in schema_generator.KEYWORDS:
-                continue
-            elif keyword not in self._unknown_keywords:
-                self._unknown_keywords[keyword] = value
-            elif self._unknown_keywords[keyword] != value:
-                warn(('Schema incompatible. Keyword {0!r} has conflicting '
-                      'values ({1!r} vs. {2!r}). Using {1!r}').format(
-                          keyword, self._unknown_keywords[keyword], value))
+        for subschema in self._get_subschemas(schema):
+            # delegate to SchemaType object
+            schema_generator = self._get_generator_for_schema(subschema)
+            schema_generator.add_schema(subschema)
 
         # return self for easy method chaining
         return self
@@ -68,9 +57,6 @@ class SchemaNode(object):
         """
         Convert the current schema to a `dict`.
         """
-        # start with unknown keywords
-        result_schema = dict(self._unknown_keywords)
-
         types = set()
         generated_schemas = []
         for schema_generator in self._schema_generators:
@@ -87,9 +73,11 @@ class SchemaNode(object):
                 types = sorted(types)
             generated_schemas = [{'type': types}] + generated_schemas
         if len(generated_schemas) == 1:
-            result_schema.update(generated_schemas[0])
+            (result_schema,) = generated_schemas
         elif generated_schemas:
-            result_schema['anyOf'] = generated_schemas
+            result_schema = {'anyOf': generated_schemas}
+        else:
+            result_schema = {}
 
         return result_schema
 
@@ -121,6 +109,16 @@ class SchemaNode(object):
         return not self.__eq__(other)
 
     # private methods
+
+    def _get_subschemas(self, schema):
+        if 'anyOf' in schema:
+            return schema['anyOf']
+        elif isinstance(schema.get('type'), list):
+            other_keys = dict(schema)
+            del other_keys['type']
+            return [dict(type=tipe, **other_keys) for tipe in schema['type']]
+        else:
+            return [schema]
 
     def _get_generator_for_schema(self, schema):
         return self._get_generator_for_('schema', schema)
