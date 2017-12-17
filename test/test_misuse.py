@@ -4,10 +4,6 @@ from genson import InvalidSchemaError
 
 class TestMisuse(base.SchemaTestCase):
 
-    def test_schema_with_no_type_error(self):
-        with self.assertRaises(InvalidSchemaError):
-            self.add_schema({"items": [{'type': 'string'}]})
-
     def test_schema_with_bad_type_error(self):
         with self.assertRaises(InvalidSchemaError):
             self.add_schema({'type': 'african swallow'})
@@ -21,6 +17,10 @@ class TestMisuse(base.SchemaTestCase):
         with self.assertWarns(DeprecationWarning):
             self.add_object('Go away or I shall taunt you a second time!')
             self._schema.to_dict(recurse=True)
+
+    def test_schema_with_no_type_warning(self):
+        with self.assertWarns(UserWarning):
+            self.add_schema({"items": [{'type': 'string'}]})
 
     def test_incompatible_schema_warning(self):
         with self.assertWarns(UserWarning):
