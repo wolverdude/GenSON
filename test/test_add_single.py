@@ -1,3 +1,4 @@
+import warnings
 from . import base
 
 
@@ -15,7 +16,9 @@ class TestType(base.SchemaTestCase):
 
     def test_no_type(self):
         schema = {'title': 'ambiguous schema'}
-        self.add_schema(schema)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.add_schema(schema)
         self.assertResult(schema)
 
 
