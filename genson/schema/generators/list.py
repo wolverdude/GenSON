@@ -1,4 +1,7 @@
-class List:
+from .base import SchemaGenerator
+
+
+class List(SchemaGenerator):
     KEYWORDS = ('type', 'items')
 
     @staticmethod

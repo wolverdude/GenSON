@@ -1,7 +1,8 @@
 from collections import defaultdict
+from .base import SchemaGenerator
 
 
-class Object(object):
+class Object(SchemaGenerator):
     KEYWORDS = ('type', 'properties', 'required')
 
     @staticmethod

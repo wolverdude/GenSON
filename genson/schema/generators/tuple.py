@@ -1,4 +1,7 @@
-class Tuple:
+from .base import SchemaGenerator
+
+
+class Tuple(SchemaGenerator):
     KEYWORDS = ('type', 'items')
 
     @staticmethod
