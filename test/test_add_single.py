@@ -29,6 +29,17 @@ class TestAnyOf(base.SchemaTestCase):
         self.add_schema(schema)
         self.assertResult(schema)
 
+    def test_multi_type_with_extra_keywords(self):
+        schema = {'type': ['boolean', 'null', 'number', 'string'],
+                  'title': 'this will be duplicated'}
+        self.add_schema(schema)
+        self.assertResult({'anyOf': [
+            {'type': 'boolean', 'title': 'this will be duplicated'},
+            {'type': 'null', 'title': 'this will be duplicated'},
+            {'type': 'number', 'title': 'this will be duplicated'},
+            {'type': 'string', 'title': 'this will be duplicated'}
+        ]})
+
     def test_anyof(self):
         schema = {"anyOf": [
             {"type": "null"},
@@ -38,9 +49,32 @@ class TestAnyOf(base.SchemaTestCase):
         self.assertResult(schema)
 
 
-class TestPreserveKeys(base.SchemaTestCase):
+class TestPreserveExtraKeywords(base.SchemaTestCase):
 
-    def test_preserves_existing_keys(self):
-        schema = {'type': 'number', 'const': 5, 'my-custom-key': True}
+    def test_basic_type(self):
+        schema = {'type': 'boolean', 'const': False, 'myKeyword': True}
+        self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_number(self):
+        schema = {'type': 'number', 'const': 5, 'myKeyword': True}
+        self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_list(self):
+        schema = {'type': 'array', 'items': {},
+                  'const': 5, 'myKeyword': True}
+        self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_tuple(self):
+        schema = {'type': 'array', 'items': [],
+                  'const': 5, 'myKeyword': True}
+        self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_object(self):
+        schema = {'type': 'object', 'properties': {},
+                  'const': 5, 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
