@@ -5,8 +5,7 @@ from .scalar import (
     Number,
     String
 )
-from .list import List
-from .tuple import Tuple
+from .array import List, Tuple
 from .object import Object
 
 GENERATORS = (

@@ -1,3 +1,4 @@
+from builtins import super
 from collections import defaultdict
 from .base import SchemaGenerator
 
@@ -14,11 +15,13 @@ class Object(SchemaGenerator):
         return isinstance(obj, dict)
 
     def __init__(self, parent_node):
+        super().__init__(parent_node)
         cls = parent_node.__class__
         self._properties = defaultdict(lambda: cls())
         self._required = None
 
     def add_schema(self, schema):
+        super().add_schema(schema)
         if 'properties' in schema:
             for prop, subschema in schema['properties'].items():
                 self._properties[prop].add_schema(subschema)
@@ -41,10 +44,9 @@ class Object(SchemaGenerator):
             getattr(subschema, func)(item)
 
     def to_schema(self):
-        schema = {
-            'type': 'object',
-            'properties': self._properties_to_schema()
-        }
+        schema = super().to_schema()
+        schema['type'] = 'object'
+        schema['properties'] = self._properties_to_schema()
         if self._required:
             schema['required'] = sorted(self._required)
         return schema

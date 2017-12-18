@@ -1,3 +1,21 @@
+TODO
+====
+
+* don't include properties by default
+* only include items if specified
+* add base Schema class with header
+* patternProperties
+* additionalProperties & additionalItems
+* refactor generator interface & add API for custom generators
+* recognize every validation keyword and ignore any that don't apply
+* enum
+* set error level for mass add_object(s?)
+* ref to child, parent nodes
+* update docs
+* merge SchemasNodes directly, without serializing first
+
+
+
 GenSON
 ======
 
