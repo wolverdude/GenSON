@@ -121,7 +121,7 @@ class TestObject(base.SchemaTestCase):
 
     def test_empty_object(self):
         self.add_object({})
-        self.assertResult({"type": "object", "properties": {}})
+        self.assertResult({"type": "object"})
 
     def test_basic_object(self):
         self.add_object({

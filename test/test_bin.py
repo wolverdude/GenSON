@@ -35,7 +35,7 @@ class TestStdin(unittest.TestCase):
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
-            {"type": "object", "properties": {}})
+            {"type": "object"})
 
     def test_delim_newline(self):
         (stdout, stderr) = run(['-d', 'newline'], '{"hi":"there"}\n{"hi":5}')

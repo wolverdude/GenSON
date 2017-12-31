@@ -79,8 +79,7 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
         self.assertResult(schema)
 
     def test_object(self):
-        schema = {'type': 'object', 'properties': {},
-                  'const': {}, 'myKeyword': True}
+        schema = {'type': 'object', 'const': {}, 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
 

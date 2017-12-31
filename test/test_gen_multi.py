@@ -28,7 +28,7 @@ class TestAnyOf(base.SchemaTestCase):
         self.add_object({})
         self.add_object([None])
         self.assertResult({"anyOf": [
-            {"type": "object", "properties": {}},
+            {"type": "object"},
             {"type": "array", "items": {"type": "null"}}
         ]})
 
