@@ -61,6 +61,16 @@ class TestAnyOf(base.SchemaTestCase):
             schema2
         ]})
 
+    def test_list_plus_tuple(self):
+        schema1 = {"type": "array", "items": {"type": "null"}}
+        schema2 = {"type": "array", "items": [{"type": "null"}]}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult({"anyOf": [
+            schema1,
+            schema2
+        ]})
+
     def test_multi_type_and_anyof(self):
         schema1 = {'type': ['boolean', 'null', 'string']}
         schema2 = {"type": "boolean", "title": "Gruyere"}

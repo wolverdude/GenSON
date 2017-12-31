@@ -62,13 +62,13 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
         self.assertResult(schema)
 
     def test_list(self):
-        schema = {'type': 'array', 'items': {},
+        schema = {'type': 'array', 'items': {"type": "null"},
                   'const': 5, 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
 
     def test_tuple(self):
-        schema = {'type': 'array', 'items': [],
+        schema = {'type': 'array', 'items': [{"type": "null"}],
                   'const': 5, 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
