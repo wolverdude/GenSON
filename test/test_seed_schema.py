@@ -48,12 +48,13 @@ class TestPatternProperties(base.SchemaTestCase):
 
     def test_prefers_existing_properties(self):
         self.add_schema({'type': 'object',
-                         'properties': {'0': {'type': 'boolean'}},
+                         'properties': {'0': None},
                          'patternProperties': {'^\d$': None}})
         self.add_object({'0': 0, '1': 1, '2': 2})
         self.assertResult({'type': 'object',
-                           'properties': {'0': {'type': ['boolean', 'integer']}},
-                           'patternProperties': {'^\d$': {'type': 'integer'}}})
+                           'properties': {'0': {'type': 'integer'}},
+                           'patternProperties': {'^\d$': {'type': 'integer'}},
+                           'required': ['0']})
 
     def test_keeps_unrecognized_properties(self):
         self.add_schema({'type': 'object',
@@ -61,4 +62,5 @@ class TestPatternProperties(base.SchemaTestCase):
         self.add_object({'0': 0, '1': 1, '2': 2, 'a': True})
         self.assertResult({'type': 'object',
                            'properties': {'a': {'type': 'boolean'}},
-                           'patternProperties': {'^\d$': {'type': 'integer'}}})
+                           'patternProperties': {'^\d$': {'type': 'integer'}},
+                           'required': ['a']})

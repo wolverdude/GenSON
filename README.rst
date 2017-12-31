@@ -2,7 +2,6 @@ TODO
 ====
 
 * don't include properties by default
-* only include items if specified
 * add base Schema class with header
 * patternProperties
 * additionalProperties & additionalItems
@@ -12,8 +11,13 @@ TODO
 * set error level for mass add_object(s?)
 * ref to child, parent nodes
 * update docs
-* merge SchemasNodes directly, without serializing first
 
+DOCS
+====
+* patternProperties
+  * preserves existing keys first
+  * uses Python regex, so beware
+  * no guarantees for overlapping regexes
 
 
 GenSON
