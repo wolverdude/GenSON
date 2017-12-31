@@ -53,7 +53,8 @@ class Tuple(BaseArray):
 
     def add_schema(self, schema):
         super().add_schema(schema)
-        self._add(schema['items'], 'add_schema')
+        if 'items' in schema:
+            self._add(schema['items'], 'add_schema')
 
     def add_object(self, obj):
         self._add(obj, 'add_object')
