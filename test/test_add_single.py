@@ -15,10 +15,15 @@ class TestType(base.SchemaTestCase):
         self.assertResult(schema)
 
     def test_no_type(self):
-        schema = {'title': 'ambiguous schema'}
+        schema = {}
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_array_type_no_items(self):
+        schema = {'type': 'array'}
+        self.add_schema(schema)
         self.assertResult(schema)
 
 
@@ -63,18 +68,25 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
 
     def test_list(self):
         schema = {'type': 'array', 'items': {"type": "null"},
-                  'const': 5, 'myKeyword': True}
+                  'const': [], 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
 
     def test_tuple(self):
         schema = {'type': 'array', 'items': [{"type": "null"}],
-                  'const': 5, 'myKeyword': True}
+                  'const': [], 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)
 
     def test_object(self):
         schema = {'type': 'object', 'properties': {},
-                  'const': 5, 'myKeyword': True}
+                  'const': {}, 'myKeyword': True}
         self.add_schema(schema)
+        self.assertResult(schema)
+
+    def test_no_type(self):
+        schema = {'const': 5, 'myKeyword': True}
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.add_schema(schema)
         self.assertResult(schema)

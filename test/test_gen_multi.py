@@ -26,18 +26,18 @@ class TestAnyOf(base.SchemaTestCase):
 
     def test_complex(self):
         self.add_object({})
-        self.add_object([])
+        self.add_object([None])
         self.assertResult({"anyOf": [
             {"type": "object", "properties": {}},
-            {"type": "array", "items": {}}
+            {"type": "array", "items": {"type": "null"}}
         ]})
 
     def test_simple_and_complex(self):
         self.add_object(None)
-        self.add_object([])
+        self.add_object([None])
         self.assertResult({"anyOf": [
             {"type": "null"},
-            {"type": "array", "items": {}}
+            {"type": "array", "items": {"type": "null"}}
         ]})
 
 
@@ -50,7 +50,7 @@ class TestArrayList(base.SchemaTestCase):
         self.add_object([])
         self.add_object([])
 
-        self.assertResult({"type": "array", "items": {}})
+        self.assertResult({"type": "array"})
 
     def test_monotype(self):
         self.add_object(["spam", "spam", "spam", "eggs", "spam"])

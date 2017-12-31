@@ -16,6 +16,9 @@ class SchemaNode(object):
     def __init__(self):
         self._schema_generators = []
 
+    def __len__(self):
+        return len(self._schema_generators)
+
     def add_schema(self, schema):
         """
         Merges in an existing schema.

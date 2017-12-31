@@ -34,7 +34,7 @@ class TestArrayList(base.SchemaTestCase):
 
     def test_empty(self):
         self.add_object([])
-        self.assertResult({"type": "array", "items": {}})
+        self.assertResult({"type": "array"})
 
     def test_monotype(self):
         self.add_object(["spam", "spam", "spam", "eggs", "spam"])
