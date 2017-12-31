@@ -90,11 +90,3 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
             warnings.simplefilter("ignore")
             self.add_schema(schema)
         self.assertResult(schema)
-
-
-class TestSeedSchema(base.SchemaTestCase):
-
-    def test_seed_tuple(self):
-        self.add_schema({'type': 'array', 'items': []})
-        self.add_object([None])
-        self.assertResult({'type': 'array', 'items': [{'type': 'null'}]})
