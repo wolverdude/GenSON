@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestBasicTypes(base.SchemaTestCase):
+class TestBasicTypes(base.SchemaNodeTestCase):
 
     def test_single_type(self):
         self.add_object("bacon")
@@ -15,7 +15,7 @@ class TestBasicTypes(base.SchemaTestCase):
         self.assertResult({"type": "number"})
 
 
-class TestAnyOf(base.SchemaTestCase):
+class TestAnyOf(base.SchemaNodeTestCase):
 
     def test_simple(self):
         self.add_object("string")
@@ -41,10 +41,10 @@ class TestAnyOf(base.SchemaTestCase):
         ]})
 
 
-class TestArrayList(base.SchemaTestCase):
+class TestArrayList(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
         self.add_object([])
@@ -87,10 +87,10 @@ class TestArrayList(base.SchemaTestCase):
         })
 
 
-class TestArrayTuple(base.SchemaTestCase):
+class TestArrayTuple(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
         self.add_schema({"type": "array", "items": []})

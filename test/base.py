@@ -1,12 +1,12 @@
 import unittest
 import jsonschema
-from genson import SchemaNode
+from genson import SchemaNode, SchemaRoot
 
 
 class SchemaTestCase(unittest.TestCase):
 
     def setUp(self):
-        self._schema = SchemaNode()
+        self._schema = self.CLASS()
         self._objects = []
         self._schemas = []
 
@@ -43,3 +43,11 @@ class SchemaTestCase(unittest.TestCase):
         compiled_schema = self._schema.to_schema()
         for obj in self._objects:
             jsonschema.Draft4Validator(compiled_schema).validate(obj)
+
+
+class SchemaNodeTestCase(SchemaTestCase):
+    CLASS = SchemaNode
+
+
+class SchemaRootTestCase(SchemaTestCase):
+    CLASS = SchemaRoot

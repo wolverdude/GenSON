@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestBasicTypes(base.SchemaTestCase):
+class TestBasicTypes(base.SchemaNodeTestCase):
 
     def test_no_object(self):
         self.assertResult({})
@@ -27,10 +27,10 @@ class TestBasicTypes(base.SchemaTestCase):
         self.assertResult({"type": "null"})
 
 
-class TestArrayList(base.SchemaTestCase):
+class TestArrayList(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
         self.add_object([])
@@ -65,10 +65,10 @@ class TestArrayList(base.SchemaTestCase):
         })
 
 
-class TestArrayTuple(base.SchemaTestCase):
+class TestArrayTuple(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
         self.add_schema({"type": "array", "items": []})
@@ -117,7 +117,7 @@ class TestArrayTuple(base.SchemaTestCase):
         })
 
 
-class TestObject(base.SchemaTestCase):
+class TestObject(base.SchemaNodeTestCase):
 
     def test_empty_object(self):
         self.add_object({})
@@ -139,7 +139,7 @@ class TestObject(base.SchemaTestCase):
         })
 
 
-class TestComplex(base.SchemaTestCase):
+class TestComplex(base.SchemaNodeTestCase):
 
     def test_array_in_object(self):
         self.add_object({"a": "b", "c": [1, 2, 3]})

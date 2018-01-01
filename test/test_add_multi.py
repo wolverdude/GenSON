@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestType(base.SchemaTestCase):
+class TestType(base.SchemaNodeTestCase):
 
     def test_single_type(self):
         schema = {'type': 'null'}
@@ -34,7 +34,7 @@ class TestType(base.SchemaTestCase):
         self.assertResult({"type": "boolean", "title": "Gruyere"})
 
 
-class TestAnyOf(base.SchemaTestCase):
+class TestAnyOf(base.SchemaNodeTestCase):
 
     def test_multi_type(self):
         self.add_schema({'type': 'boolean'})

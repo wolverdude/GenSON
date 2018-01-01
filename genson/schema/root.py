@@ -4,8 +4,9 @@ from .node import SchemaNode
 
 
 class SchemaRoot(object):
+    DEFAULT_URL = 'http://json-schema.org/schema#'
 
-    def __init__(self, node_class=SchemaNode, url='http://json-schema.org/schema#'):
+    def __init__(self, node_class=SchemaNode, url=DEFAULT_URL):
         self._root_node = node_class()
         self._url = url
 

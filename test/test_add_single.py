@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestType(base.SchemaTestCase):
+class TestType(base.SchemaNodeTestCase):
 
     def test_single_type(self):
         schema = {'type': 'string'}
@@ -24,7 +24,7 @@ class TestType(base.SchemaTestCase):
         self.assertResult(schema)
 
 
-class TestAnyOf(base.SchemaTestCase):
+class TestAnyOf(base.SchemaNodeTestCase):
 
     def test_multi_type(self):
         schema = {'type': ['boolean', 'null', 'number', 'string']}
@@ -51,7 +51,7 @@ class TestAnyOf(base.SchemaTestCase):
         self.assertResult(schema)
 
 
-class TestPreserveExtraKeywords(base.SchemaTestCase):
+class TestPreserveExtraKeywords(base.SchemaNodeTestCase):
 
     def test_basic_type(self):
         schema = {'type': 'boolean', 'const': False, 'myKeyword': True}

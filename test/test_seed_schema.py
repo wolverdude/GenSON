@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestSeedTuple(base.SchemaTestCase):
+class TestSeedTuple(base.SchemaNodeTestCase):
 
     def test_tuple(self):
         self.add_schema({'type': 'array', 'items': []})
@@ -9,7 +9,7 @@ class TestSeedTuple(base.SchemaTestCase):
         self.assertResult({'type': 'array', 'items': [{'type': 'null'}]})
 
 
-class TestPatternProperties(base.SchemaTestCase):
+class TestPatternProperties(base.SchemaNodeTestCase):
 
     def test_single_pattern(self):
         self.add_schema({'type': 'object', 'patternProperties': {

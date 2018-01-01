@@ -2,7 +2,7 @@ from . import base
 from genson import InvalidSchemaError
 
 
-class TestMisuse(base.SchemaTestCase):
+class TestMisuse(base.SchemaNodeTestCase):
 
     def test_schema_with_bad_type_error(self):
         with self.assertRaises(InvalidSchemaError):
