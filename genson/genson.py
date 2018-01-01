@@ -13,7 +13,7 @@ and/or JSON Schemas. It's compatible with Draft 4 and above.
 def main():
     args = parse_args()
 
-    s = SchemaRoot()
+    s = SchemaRoot(schema_uri=args.schema_uri)
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)
@@ -40,18 +40,28 @@ def parse_args():
                         type=argparse.FileType('r'),
                         help='''file containing a JSON Schema (can be
                         specified multiple times to merge schemas)''')
+    parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
+                        help='''the value of the '$schema' keyword (defaults
+                        to %r or can be specified in a schema with the -s
+                        option)''' % SchemaRoot.DEFAULT_URI)
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
-                        are passed and the -s option is not present)''')
+                        are passed)''')
 
     args = parser.parse_args()
 
     args.delimiter = get_delim(args.delimiter)
 
     # default to stdin if no objects or schemas
-    if not args.object and not args.schema:
-        args.object.append(get_stdin())
+    if not args.object and not sys.stdin.isatty():
+        args.object.append(sys.stdin)
+
+    if not args.schema and not args.object:
+        print('GenSON: noting to do - no schemas or objects given\n')
+
+        parser.print_help()
+        sys.exit(1)
 
     return args
 
@@ -68,15 +78,6 @@ def get_delim(delim):
         delim = ' '
 
     return delim
-
-
-def get_stdin():
-    """
-    Grab stdin, printing simple instructions if it's interactive.
-    """
-    if sys.stdin.isatty():
-        print('Enter a JSON object, then press ctrl-D')
-    return sys.stdin
 
 
 def add_json_from_file(s, fp, delimiter, schema=False):
