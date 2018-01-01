@@ -21,17 +21,17 @@ def pypi_safe(rst):
 
 setup(
     name='genson',
-    version='0.2.0',
+    version='1.0.0',
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
-    keywords=['json', 'schema', 'object', 'generate', 'generator', 'builder',
+    keywords=['json', 'schema', 'json-schema', 'jsonschema', 'object',
+              'generate', 'generator', 'builder', 'merge',
               'draft 4', 'validate', 'validation'],
     url='https://github.com/wolverdude/genson/',
     download_url='https://github.com/wolverdude/GenSON/tarball/v0.2s.0',
     license='MIT',
     author='Jon Wolverton',
     author_email='wolverton' '.' 'jr' '@' 'gmail' '.' 'com',
-    # ^^^ Much like Mrs. Bun, I don't like spam.
     packages=['genson'],
     include_package_data=True,
     entry_points={'console_scripts': ['genson = genson.genson:main']},
@@ -47,6 +47,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities',
     ],
