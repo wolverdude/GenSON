@@ -2,6 +2,9 @@ from .base import SchemaGenerator
 
 
 class BaseArray(SchemaGenerator):
+    """
+    abstract array schema generator
+    """
     KEYWORDS = ('type', 'items')
 
     @staticmethod
@@ -17,7 +20,10 @@ class BaseArray(SchemaGenerator):
 
 
 class List(BaseArray):
-
+    """
+    generator for list-style array schemas. This is the default
+    generator for arrays.
+    """
     @staticmethod
     def match_schema(schema):
         return schema.get('type') == 'array' and isinstance(schema.get('items', {}), dict)
@@ -39,7 +45,10 @@ class List(BaseArray):
 
 
 class Tuple(BaseArray):
-
+    """
+    generator for tuple-style array schemas. These will always have
+    an items key to preserve the fact that it's a tuple.
+    """
     @staticmethod
     def match_schema(schema):
         return schema.get('type') == 'array' and isinstance(schema.get('items'), list)

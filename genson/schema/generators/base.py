@@ -3,6 +3,17 @@ from warnings import warn
 
 
 class SchemaGenerator(object):
+    """
+    base schema generator. This contains the common interface for
+    all subclasses:
+
+    * match_schema
+    * match_object
+    * init
+    * add_schema
+    * add_object
+    * to_schema
+    """
     KEYWORDS = ('type')
 
     @classmethod
@@ -43,8 +54,13 @@ class SchemaGenerator(object):
 
 
 class TypedSchemaGenerator(SchemaGenerator):
-    # JS_TYPE =
-    # PYTHON_TYPE =
+    """
+    base schema generator class for scalar types. Subclasses define
+    these two class constants:
+
+    * `JS_TYPE`: a valid value of the `type` keyword
+    * `PYTHON_TYPE`: Python type objects - can be a tuple of types
+    """
 
     @classmethod
     def match_schema(cls, schema):

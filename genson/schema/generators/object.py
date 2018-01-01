@@ -4,6 +4,9 @@ from .base import SchemaGenerator
 
 
 class Object(SchemaGenerator):
+    """
+    object schema generator
+    """
     KEYWORDS = ('type', 'properties', 'required')
 
     @staticmethod
