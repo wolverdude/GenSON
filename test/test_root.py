@@ -35,5 +35,16 @@ class TestMethods(base.SchemaRootTestCase):
 
     def test_to_json(self):
         self.assertEqual(
-            self._schema.to_schema(),
-            '{"$schema":"%s"}' % SchemaRoot.DEFAULT_URL)
+            self._schema.to_json(),
+            '{"$schema": "%s"}' % SchemaRoot.DEFAULT_URL)
+
+    def test_add_schema_with_url_default(self):
+        test_url = 'TEST_URL'
+        self.add_schema({"$schema": test_url, "type": "null"})
+        self.assertResult({"$schema": test_url, "type": "null"})
+
+    def test_add_schema_with_url_not_defuult(self):
+        test_url = 'TEST_URL'
+        self._schema = SchemaRoot(url=test_url)
+        self.add_schema({"$schema": 'BAD_URL', "type": "null"})
+        self.assertResult({"$schema": test_url, "type": "null"})

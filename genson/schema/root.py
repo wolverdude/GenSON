@@ -6,18 +6,23 @@ from .node import SchemaNode
 class SchemaRoot(object):
     DEFAULT_URL = 'http://json-schema.org/schema#'
 
-    def __init__(self, node_class=SchemaNode, url=DEFAULT_URL):
+    def __init__(self, node_class=SchemaNode, url=None):
         self._root_node = node_class()
         self._url = url
 
     def add_schema(self, schema):
+        if '$schema' in schema:
+            self._url = self._url or schema['$schema']
+            schema = dict(schema)
+            del schema['$schema']
         self._root_node.add_schema(schema)
 
     def add_object(self, obj):
         self._root_node.add_object(obj)
 
     def to_schema(self):
-        return self._root_node.to_schema()
+        return dict(**self._root_node.to_schema(),
+                    **{'$schema': self._url or self.DEFAULT_URL})
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '
