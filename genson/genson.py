@@ -30,9 +30,9 @@ def parse_args():
                         help='''set a delimiter - Use this option if the
                         input files contain multiple JSON objects/schemas.
                         You can pass any string. A few cases ('newline', 'tab',
-                        'space') will get converted to a whitespace character,
-                        and if empty string ('') is passed, the parser will
-                        try to auto-detect where the boundary is.''')
+                        'space') will get converted to a whitespace
+                        character. If this option is omitted, the parser
+                        will try to auto-detect boundaries''')
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
                         help='''pretty-print the output, indenting SPACES
                         spaces''')
@@ -91,9 +91,7 @@ def add_json_from_file(s, fp, delimiter, schema=False):
 
 
 def get_json_strings(raw_text, delim):
-    if delim is None:
-        json_strings = [raw_text]
-    elif delim == '':
+    if delim is None or delim == '':
         json_strings = detect_json_strings(raw_text)
     else:
         json_strings = raw_text.split(delim)
