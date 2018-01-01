@@ -10,6 +10,7 @@ class SchemaNode(object):
     Basic schema generator class. SchemaNode objects can be loaded
     up with existing schemas and objects before being serialized.
     """
+    generator_classes = GENERATORS
 
     def __init__(self):
         self._schema_generators = []
@@ -119,11 +120,11 @@ class SchemaNode(object):
                 return schema_generator
 
         # check all potential types
-        for schema_generator_class in GENERATORS:
+        for schema_generator_class in self.generator_classes:
             if getattr(schema_generator_class, 'match_' + kind)(schema_or_obj):
-                schema_generator = schema_generator_class(self)
+                schema_generator = schema_generator_class(type(self))
 
-                # subsume typeless generator if it exists
+                # incorporate typeless generator if it exists
                 if self._schema_generators and \
                         isinstance(self._schema_generators[-1], Typeless):
                     typeless = self._schema_generators.pop()

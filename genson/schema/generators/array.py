@@ -1,4 +1,3 @@
-from builtins import super
 from .base import SchemaGenerator
 
 
@@ -23,12 +22,11 @@ class List(BaseArray):
     def match_schema(schema):
         return schema.get('type') == 'array' and isinstance(schema.get('items', {}), dict)
 
-    def __init__(self, parent_node):
-        super().__init__(parent_node)
-        self._items = parent_node.__class__()
+    def init(self):
+        self._items = self.node_class()
 
     def add_schema(self, schema):
-        super().add_schema(schema)
+        self.add_extra_keywords(schema)
         if 'items' in schema:
             self._items.add_schema(schema['items'])
 
@@ -46,13 +44,11 @@ class Tuple(BaseArray):
     def match_schema(schema):
         return schema.get('type') == 'array' and isinstance(schema.get('items'), list)
 
-    def __init__(self, parent_node):
-        super().__init__(parent_node)
-        self._schema_node_class = parent_node.__class__
+    def init(self):
         self._items = []
 
     def add_schema(self, schema):
-        super().add_schema(schema)
+        self.add_extra_keywords(schema)
         if 'items' in schema:
             self._add(schema['items'], 'add_schema')
 
@@ -61,7 +57,7 @@ class Tuple(BaseArray):
 
     def _add(self, items, func):
         while len(self._items) < len(items):
-            self._items.append(self._schema_node_class())
+            self._items.append(self.node_class())
 
         for subschema, item in zip(self._items, items):
             getattr(subschema, func)(item)

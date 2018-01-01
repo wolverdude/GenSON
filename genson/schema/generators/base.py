@@ -14,8 +14,13 @@ class SchemaGenerator(object):
     def match_object(cls, obj):
         raise NotImplementedError("'match_object' not implemented")
 
-    def __init__(self, parent_node):
+    def __init__(self, node_class):
+        self.node_class = node_class
         self._extra_keywords = {}
+        self.init()
+
+    def init(self):
+        pass
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)

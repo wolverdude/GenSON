@@ -1,4 +1,3 @@
-from builtins import super
 from collections import defaultdict
 from re import search
 from .base import SchemaGenerator
@@ -15,15 +14,14 @@ class Object(SchemaGenerator):
     def match_object(obj):
         return isinstance(obj, dict)
 
-    def __init__(self, parent_node):
-        super().__init__(parent_node)
-        cls = parent_node.__class__
+    def init(self):
+        cls = self.node_class
         self._properties = defaultdict(lambda: cls())
         self._pattern_properties = defaultdict(lambda: cls())
         self._required = None
 
     def add_schema(self, schema):
-        super().add_schema(schema)
+        self.add_extra_keywords(schema)
         if 'properties' in schema:
             for prop, subschema in schema['properties'].items():
                 subnode = self._properties[prop]
