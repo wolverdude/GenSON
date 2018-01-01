@@ -1,13 +1,14 @@
 TODO
 ====
 
-* add base Schema class with header
 * additionalProperties & additionalItems
 * refactor generator interface & add API for custom generators
 * recognize every validation keyword and ignore any that don't apply
 * enum
 * set error level for mass add_object(s?)
 * ref to child, parent nodes
+* update bin options
+  * schema uri
 * update docs
 
 DOCS

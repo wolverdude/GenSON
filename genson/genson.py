@@ -2,7 +2,7 @@ import argparse
 import sys
 import re
 import json
-from . import SchemaNode
+from . import SchemaRoot
 
 DESCRIPTION = """
 Generate one, unified JSON Schema from one or more
@@ -14,7 +14,7 @@ JSON objects and/or JSON Schemas.
 def main():
     args = parse_args()
 
-    s = SchemaNode()
+    s = SchemaRoot()
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)

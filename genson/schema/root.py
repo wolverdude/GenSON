@@ -4,15 +4,15 @@ from .node import SchemaNode
 
 
 class SchemaRoot(object):
-    DEFAULT_URL = 'http://json-schema.org/schema#'
+    DEFAULT_URI = 'http://json-schema.org/schema#'
 
-    def __init__(self, node_class=SchemaNode, url=None):
+    def __init__(self, node_class=SchemaNode, schema_uri=None):
         self._root_node = node_class()
-        self._url = url
+        self._uri = schema_uri
 
     def add_schema(self, schema):
         if '$schema' in schema:
-            self._url = self._url or schema['$schema']
+            self._uri = self._uri or schema['$schema']
             schema = dict(schema)
             del schema['$schema']
         self._root_node.add_schema(schema)
@@ -22,7 +22,7 @@ class SchemaRoot(object):
 
     def to_schema(self):
         return dict(**self._root_node.to_schema(),
-                    **{'$schema': self._url or self.DEFAULT_URL})
+                    **{'$schema': self._uri or self.DEFAULT_URI})
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '

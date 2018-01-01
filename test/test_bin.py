@@ -1,6 +1,9 @@
 import unittest
 import json
 from subprocess import Popen, PIPE
+from genson import SchemaRoot
+
+BASE_SCHEMA = {"$schema": SchemaRoot.DEFAULT_URI}
 
 binpath = 'bin/genson.py'
 
@@ -28,35 +31,35 @@ class TestStdin(unittest.TestCase):
     def test_empty_input(self):
         (stdout, stderr) = run(stdin_data='')
         self.assertEqual(stderr, None)
-        self.assertEqual(json.loads(stdout), {})
+        self.assertEqual(json.loads(stdout), BASE_SCHEMA)
 
     def test_empty_object(self):
         (stdout, stderr) = run(stdin_data='{}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
-            {"type": "object"})
+            dict({"type": "object"}, **BASE_SCHEMA))
 
     def test_delim_newline(self):
         (stdout, stderr) = run(['-d', 'newline'], '{"hi":"there"}\n{"hi":5}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
-            {"required": ["hi"], "type": "object", "properties": {
-                "hi": {"type": ["integer", "string"]}}})
+            dict({"required": ["hi"], "type": "object", "properties": {
+                "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
 
     def test_delim_auto_empty(self):
         (stdout, stderr) = run(['-d', ''], '{"hi":"there"}{"hi":5}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
-            {"required": ["hi"], "type": "object", "properties": {
-                "hi": {"type": ["integer", "string"]}}})
+            dict({"required": ["hi"], "type": "object", "properties": {
+                "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
 
     def test_delim_auto_whitespace(self):
         (stdout, stderr) = run(['-d', ''], '{"hi":"there"} \n\t{"hi":5}')
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
-            {"required": ["hi"], "type": "object", "properties": {
-                "hi": {"type": ["integer", "string"]}}})
+            dict({"required": ["hi"], "type": "object", "properties": {
+                "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
