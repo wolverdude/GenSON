@@ -53,20 +53,14 @@ class SchemaRootTestCase(SchemaTestCase):
     CLASS = SchemaRoot
 
 
-# Python 2 compatibility
+# backwards compatibility
 
-if not hasattr(SchemaTestCase, 'assertWarns'):
-    import warnings
-    from contextlib import contextmanager
-
-    @contextmanager
-    def _assertWarns(self, warning):
-        """
-        Python 2.7 unittest has no assertWarns, so this is a no-op
-        dummy method that will allow the tests to pass.
-        """
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            yield
-
-    SchemaTestCase.assertWarns = _assertWarns
+def minimum_python(*version):
+    def handler(func):
+        from sys import version_info
+        if version_info >= version:
+            return func
+        else:
+            return unittest.skip('version under test less than %s'
+                                 % '.'.join(map(str, version)))(func)
+    return handler
