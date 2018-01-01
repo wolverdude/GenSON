@@ -1,8 +1,6 @@
 TODO
 ====
 
-* update bin options
-  * schema uri
 * tidy up major docstrings
 * regenrate Sphinx docs
 * add glossary of important terms
@@ -66,33 +64,32 @@ this functionality from the command line. For usage info, run with
 
 .. code-block:: none
 
-    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
 
-    Generate one, unified JSON Schema from one or more JSON objects and/or JSON
-    Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
+Generate one, unified JSON Schema from one or more JSON objects and/or JSON
+Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
 
-    positional arguments:
-      object                files containing JSON objects (defaults to stdin if no
-                            arguments are passed and the -s option is not present)
+positional arguments:
+  object                files containing JSON objects (defaults to stdin if no
+                        arguments are passed and the -s option is not present)
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      -a, --no-merge-arrays
-                            generate a different subschema for each element in an
-                            array rather than merging them all into one
-      -d DELIM, --delimiter DELIM
-                            set a delimiter - Use this option if the input files
-                            contain multiple JSON objects/schemas. You can pass
-                            any string. A few cases ('newline', 'tab', 'space')
-                            will get converted to a whitespace character, and if
-                            empty string ('') is passed, the parser will try to
-                            auto-detect where the boundary is.
-      -i SPACES, --indent SPACES
-                            pretty-print the output, indenting SPACES spaces
-      -s SCHEMA, --schema SCHEMA
-                            file containing a JSON Schema (can be specified
-                            multiple times to merge schemas)
-
+optional arguments:
+  -h, --help            show this help message and exit
+  -a, --no-merge-arrays
+                        generate a different subschema for each element in an
+                        array rather than merging them all into one
+  -d DELIM, --delimiter DELIM
+                        set a delimiter - Use this option if the input files
+                        contain multiple JSON objects/schemas. You can pass
+                        any string. A few cases ('newline', 'tab', 'space')
+                        will get converted to a whitespace character, and if
+                        empty string ('') is passed, the parser will try to
+                        auto-detect where the boundary is.
+  -i SPACES, --indent SPACES
+                        pretty-print the output, indenting SPACES spaces
+  -s SCHEMA, --schema SCHEMA
+                        file containing a JSON Schema (can be specified
+                        multiple times to merge schemas)
 
 GenSON Python API
 -----------------
