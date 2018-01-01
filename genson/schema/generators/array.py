@@ -26,7 +26,8 @@ class List(BaseArray):
     """
     @staticmethod
     def match_schema(schema):
-        return schema.get('type') == 'array' and isinstance(schema.get('items', {}), dict)
+        return schema.get('type') == 'array' \
+            and isinstance(schema.get('items', {}), dict)
 
     def init(self):
         self._items = self.node_class()
@@ -51,7 +52,8 @@ class Tuple(BaseArray):
     """
     @staticmethod
     def match_schema(schema):
-        return schema.get('type') == 'array' and isinstance(schema.get('items'), list)
+        return schema.get('type') == 'array' \
+            and isinstance(schema.get('items'), list)
 
     def init(self):
         self._items = [self.node_class()]
