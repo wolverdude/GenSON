@@ -9,7 +9,7 @@ class BaseArray(SchemaGenerator):
         return isinstance(obj, list)
 
     def to_schema(self):
-        schema = super().to_schema()
+        schema = super(BaseArray, self).to_schema()
         schema['type'] = 'array'
         if self._items:
             schema['items'] = self.items_to_schema()

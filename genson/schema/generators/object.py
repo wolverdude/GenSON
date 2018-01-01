@@ -67,7 +67,7 @@ class Object(SchemaGenerator):
             getattr(subschema, func)(item)
 
     def to_schema(self):
-        schema = super().to_schema()
+        schema = super(Object, self).to_schema()
         schema['type'] = 'object'
         if self._properties:
             schema['properties'] = self._properties_to_schema(

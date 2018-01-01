@@ -1,4 +1,3 @@
-from builtins import super
 from copy import copy
 from warnings import warn
 
@@ -56,6 +55,6 @@ class TypedSchemaGenerator(SchemaGenerator):
         return isinstance(obj, cls.PYTHON_TYPE)
 
     def to_schema(self):
-        schema = super().to_schema()
+        schema = super(TypedSchemaGenerator, self).to_schema()
         schema['type'] = self.JS_TYPE
         return schema

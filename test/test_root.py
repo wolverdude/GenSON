@@ -1,13 +1,18 @@
-from unittest.mock import MagicMock
 from . import base
 from genson import SchemaRoot
+
+try:
+    from mock import Mock
+except ImportError:
+    class Mock(object):
+        pass
 
 
 class TestParams(base.SchemaRootTestCase):
 
     def test_node_class(self):
-        mock_node = MagicMock()
-        mock_node.to_schema.return_value = {"type": "null"}
+        mock_node = Mock()
+        mock_node.to_schema = lambda: {"type": "null"}
         self._schema = SchemaRoot(node_class=lambda: mock_node)
         self.assertResult({
             "$schema": SchemaRoot.DEFAULT_URI,

@@ -1,4 +1,3 @@
-from builtins import super
 from .base import SchemaGenerator, TypedSchemaGenerator
 
 
@@ -40,12 +39,11 @@ class Number(SchemaGenerator):
     def match_object(cls, obj):
         return type(obj) in cls.PYTHON_TYPES
 
-    def __init__(self, parent_node):
-        super().__init__(parent_node)
+    def init(self):
         self._type = 'integer'
 
     def add_schema(self, schema):
-        super().add_schema(schema)
+        self.add_extra_keywords(schema)
         if schema.get('type') == 'number':
             self._type = 'number'
 
@@ -54,6 +52,6 @@ class Number(SchemaGenerator):
             self._type = 'number'
 
     def to_schema(self):
-        schema = super().to_schema()
+        schema = super(Number, self).to_schema()
         schema['type'] = self._type
         return schema
