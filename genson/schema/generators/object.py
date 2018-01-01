@@ -7,7 +7,7 @@ class Object(SchemaGenerator):
     """
     object schema generator
     """
-    KEYWORDS = ('type', 'properties', 'required')
+    KEYWORDS = ('type', 'properties', 'patternProperties', 'required')
 
     @staticmethod
     def match_schema(schema):

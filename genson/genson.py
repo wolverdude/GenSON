@@ -5,9 +5,8 @@ import json
 from . import SchemaRoot
 
 DESCRIPTION = """
-Generate one, unified JSON Schema from one or more
-JSON objects and/or JSON Schemas.
-(uses Draft 4 - http://json-schema.org/draft-04/schema)
+Generate one, unified JSON Schema from one or more JSON objects
+and/or JSON Schemas. It's compatible with Draft 4 and above.
 """
 
 
