@@ -22,9 +22,11 @@ class TestType(base.SchemaNodeTestCase):
     def test_typeless(self):
         schema1 = {"title": "ambiguous schema"}
         schema2 = {"grail": "We've already got one"}
+        result = dict(schema1)
+        result.update(schema2)
         self.add_schema(schema1)
         self.add_schema(schema2)
-        self.assertResult(dict(**schema1, **schema2))
+        self.assertResult(result)
 
     def test_typeless_incorporated(self):
         schema1 = {"title": "Gruyere"}

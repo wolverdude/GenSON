@@ -21,8 +21,9 @@ class SchemaRoot(object):
         self._root_node.add_object(obj)
 
     def to_schema(self):
-        return dict(**self._root_node.to_schema(),
-                    **{'$schema': self._uri or self.DEFAULT_URI})
+        schema = self._base_schema()
+        schema.update(self._root_node.to_schema())
+        return schema
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '
@@ -50,3 +51,6 @@ class SchemaRoot(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def _base_schema(self):
+        return {'$schema': self._uri or self.DEFAULT_URI}
