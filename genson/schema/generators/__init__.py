@@ -1,5 +1,5 @@
 from .scalar import (
-    NoType,
+    Typeless,
     Null,
     Boolean,
     Number,
@@ -9,7 +9,7 @@ from .array import List, Tuple
 from .object import Object
 
 GENERATORS = (
-    NoType,
+    Typeless,
     Null,
     Boolean,
     Number,

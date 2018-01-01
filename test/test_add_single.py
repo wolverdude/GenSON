@@ -13,7 +13,7 @@ class TestType(base.SchemaTestCase):
         self.add_schema(schema)
         self.assertResult(schema)
 
-    def test_no_type(self):
+    def test_typeless(self):
         schema = {}
         self.add_schema(schema)
         self.assertResult(schema)
@@ -80,7 +80,7 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
         self.add_schema(schema)
         self.assertResult(schema)
 
-    def test_no_type(self):
+    def test_typeless(self):
         schema = {'const': 5, 'myKeyword': True}
         self.add_schema(schema)
         self.assertResult(schema)

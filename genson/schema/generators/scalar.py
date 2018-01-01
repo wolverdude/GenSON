@@ -2,7 +2,7 @@ from builtins import super
 from .base import SchemaGenerator, TypedSchemaGenerator
 
 
-class NoType(SchemaGenerator):
+class Typeless(SchemaGenerator):
 
     @classmethod
     def match_schema(cls, schema):

@@ -19,14 +19,14 @@ class TestType(base.SchemaTestCase):
         self.add_schema({'type': 'number'})
         self.assertResult({'type': 'number'})
 
-    def test_no_type(self):
+    def test_typeless(self):
         schema1 = {"title": "ambiguous schema"}
         schema2 = {"grail": "We've already got one"}
         self.add_schema(schema1)
         self.add_schema(schema2)
         self.assertResult(dict(**schema1, **schema2))
 
-    def test_no_type_incorporated(self):
+    def test_typeless_incorporated(self):
         schema1 = {"title": "Gruyere"}
         schema2 = {"type": "boolean"}
         self.add_schema(schema1)
