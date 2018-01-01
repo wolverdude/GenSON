@@ -1,5 +1,4 @@
 from builtins import super
-from warnings import warn
 from .base import SchemaGenerator, TypedSchemaGenerator
 
 
@@ -12,13 +11,6 @@ class NoType(SchemaGenerator):
     @classmethod
     def match_object(cls, obj):
         return False
-
-    def add_schema(self, schema):
-        warn(('Schema with no type added. This may lead to an '
-              'incompletely-merged and over-permissive result schema. '
-              'schema: {!r}').format(schema))
-
-        super().add_schema(schema)
 
 
 class Null(TypedSchemaGenerator):

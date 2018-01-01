@@ -1,4 +1,3 @@
-import warnings
 from . import base
 
 
@@ -16,9 +15,7 @@ class TestType(base.SchemaTestCase):
 
     def test_no_type(self):
         schema = {}
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.add_schema(schema)
+        self.add_schema(schema)
         self.assertResult(schema)
 
     def test_array_type_no_items(self):
@@ -85,7 +82,5 @@ class TestPreserveExtraKeywords(base.SchemaTestCase):
 
     def test_no_type(self):
         schema = {'const': 5, 'myKeyword': True}
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.add_schema(schema)
+        self.add_schema(schema)
         self.assertResult(schema)
