@@ -75,90 +75,9 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can
-be loaded up with existing schemas and objects before being serialized.
-
-.. code-block:: python
-
-    >>> from genson import SchemaRoot
-
-    >>> s = SchemaRoot()
-    >>> s.add_schema({"type": "object", "properties": {}})
-    >>> s.add_object({"hi": "there"})
-    >>> s.add_object({"hi": 5})
-
-    >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'properties': {'hi': {'type': ['integer', 'string']}}, 'required': ['hi']}
-
-    >>> s.to_json()
-    '{"$schema": "http://json-schema.org/schema#", "type": "object", "properties": {"hi": {"type": ["integer", "string"]}}, "required": ["hi"]}'
-
-
-SchemaRoot Methods
-++++++++++++++++++
-
-``SchemaRoot(merge_arrays=True)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Builds a schema generator object.
-
-arguments:
-
-* `merge_arrays` (default `True`): Assume all array items share the same schema (as they should). The alternate behavior is to merge schemas based on position in the array.
-
-``add_schema(schema)``
-^^^^^^^^^^^^^^^^^^^^^^
-
-Merges in an existing schema. Take care here because there is no schema validation. If you pass in a bad schema, you'll get back a bad schema.
-
-arguments:
-
-* ``schema`` (required - ``dict`` or ``SchemaRoot``): an existing JSON Schema to merge.
-
-``add_object(obj)``
-^^^^^^^^^^^^^^^^^^^
-
-Modify the schema to accommodate an object.
-
-arguments:
-
-* ``obj`` (required - ``dict``): a JSON object to use in generating the schema.
-
-``to_dict()``
-^^^^^^^^^^^^^
-
-Convert the current schema to a ``dict``.
-
-``to_json()``
-^^^^^^^^^^^^^
-
-Convert the current schema directly to serialized JSON.
-
-SchemaRoot Interaction
-+++++++++++++++++++++++++
-
-Schema objects can also interact with each other:
-
-* You can pass one schema directly to another to merge them.
-* You can compare schema equality directly.
-
-.. code-block:: python
-
-    >>> from genson import SchemaRoot
-
-    >>> s1 = SchemaRoot()
-    >>> s1.add_schema({"type": "object", "properties": {"hi": {"type": "string"}}})
-    >>> s2 = SchemaRoot()
-    >>> s2.add_schema({"type": "object", "properties": {"hi": {"type": "integer"}}})
-    >>> s1 == s2
-    False
-
-    >>> s1.add_schema(s2)
-    >>> s2.add_schema(s1)
-    >>> s1 == s2
-    True
-    >>> s1.to_schema()
-    {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'properties': {'hi': {'type': ['integer', 'string']}}}
+.. autoclass:: genson.SchemaRoot
+    :members:
+    :special-members: __init__, __eq__
 
 
 Seed Schemas
@@ -177,17 +96,24 @@ For example, suppose you have a simple array with two items:
 
 There are always two ways for GenSON to interpret any array: List and Tuple. Lists have one schema for every item, whereas Tuples have a different schema for every array position. This is analogous to the (now deprecated) ``merge_arrays`` option from version 0. You can read more about JSON Schema `array validation here`_.
 
+List Validation
+^^^^^^^^^^^^^^^
+
 .. code-block:: json
 
     {
-      "list": {
-        "type": "array",
-        "items": {"type": ["integer", "string"]}
-      },
-      "tuple": {
-        "type": "array",
-        "items": [{"type": "integer"}, {"type": "string"}]
-      }
+      "type": "array",
+      "items": {"type": ["integer", "string"]}
+    }
+
+Tuple Validation
+^^^^^^^^^^^^^^^^
+
+.. code-block:: json
+
+    {
+      "type": "array",
+      "items": [{"type": "integer"}, {"type": "string"}]
     }
 
 By default, GenSON always interprets arrays using list validation, but you can tell it to use tuple validation by seeding it with a schema.
@@ -199,19 +125,23 @@ By default, GenSON always interprets arrays using list validation, but you can t
     >>> s = SchemaRoot()
     >>> s.add_object(['one', 1])
     >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#', 'type': 'array', 'items': {'type': ['integer', 'string']}}
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'array',
+     'items': {'type': ['integer', 'string']}}
 
     >>> s = SchemaRoot()
     >>> seed_schema = {'type': 'array', 'items': []}
     >>> s.add_schema(seed_schema)
     >>> s.add_object(['one', 1])
     >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#', 'type': 'array', 'items': [{'type': 'string'}, {'type': 'integer'}]}
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'array',
+     'items': [{'type': 'string'}, {'type': 'integer'}]}
 
 Note that in this case, the seed schema is actually invalid. You can't have an empty array as the value for an ``items`` keyword. But GenSON is a generator, not a validator, so you can fudge a little. GenSON will modify the generated schema so that it is valid, provided that there aren't invalid keywords beyond the ones it knows about.
 
-Seeding ``patternProperties``
-+++++++++++++++++++++++++++++
+Seeding patternProperties
++++++++++++++++++++++++++
 
 Support for patternProperties_ is new in version 1; however, since GenSON's default behavior is to only use ``properties``, this powerful keyword can only be utilized with seed schemas. You will need to supply an ``object`` schema with a ``patternProperties`` object whose keys are RegEx strings. Again, you can fudge here and set the values to null instead of creating valid subschemas.
 
@@ -300,6 +230,9 @@ The following are extra features under consideration.
   * ``format`` & ``pattern``
   * ``$ref`` & ``id``
 
+.. include:: AUTHORS.rst
+
+.. include:: HISTORY.rst
 
 .. _JSON Schema: http://json-schema.org/
 .. _Java Genson library: https://owlike.github.io/genson/

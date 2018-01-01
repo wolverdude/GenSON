@@ -5,29 +5,92 @@ from .node import SchemaNode
 
 class SchemaRoot(object):
     """
-    root schema object. It contains headers and some extra helper
-    methods, but delegates the real work to SchemaNode.
+    ``SchemaRoot`` is the basic schema generator class. ``SchemaRoot``
+    objects can be loaded up with existing schemas and objects before
+    being serialized.
+
+    .. code-block:: python
+
+        >>> from genson import SchemaRoot
+
+        >>> s = SchemaRoot()
+        >>> s.add_schema({"type": "object", "properties": {}})
+        >>> s.add_object({"hi": "there"})
+        >>> s.add_object({"hi": 5})
+
+        >>> s.to_schema()
+        {'$schema': 'http://json-schema.org/schema#',
+         'type': 'object',
+         'properties': {
+            'hi': {'type': ['integer', 'string']}},
+            'required': ['hi']}
+
+        >>> print(s.to_json(indent=2))
+        {
+          "$schema": "http://json-schema.org/schema#",
+          "type": "object",
+          "properties": {
+            "hi": {
+              "type": [
+                "integer",
+                "string"
+              ]
+            }
+          },
+          "required": [
+            "hi"
+          ]
+        }
+
+    Schema objects can also interact with each other:
+
+    * You can pass one schema directly to another to merge them.
+    * You can compare schema equality directly.
+
+    .. code-block:: python
+
+        >>> from genson import SchemaRoot
+
+        >>> s1 = SchemaRoot()
+        >>> s1.add_schema({"type": "object", "properties": {
+        ...   "hi": {"type": "string"}}})
+        >>> s2 = SchemaRoot()
+        >>> s2.add_schema({"type": "object", "properties": {
+        ...   "hi": {"type": "integer"}}})
+        >>> s1 == s2
+        False
+
+        >>> s1.add_schema(s2)
+        >>> s2.add_schema(s1)
+        >>> s1 == s2
+        True
+        >>> s1.to_schema()
+        {'$schema': 'http://json-schema.org/schema#',
+         'type': 'object',
+         'properties': {'hi': {'type': ['integer', 'string']}}}
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
 
     def __init__(self, schema_uri=None):
         """
-        arguments:
-        * `schema_uri` (optional - `str`):
-          value of the `$schema` keyword. If not given, it will use
-          the value of the first available `$schema` keyword on an added
-          schema or else the default: `'http://json-schema.org/schema#'`
+        :param schema_uri: description for value of the ``$schema``
+          keyword. If not given, it will use the value of the first
+          available ``$schema`` keyword on an added schema or else the
+          default: ``'http://json-schema.org/schema#'``
         """
         self._root_node = SchemaNode()
         self.schema_uri = schema_uri
 
     def add_schema(self, schema):
         """
-        Merges in an existing schema.
+        Merge in a JSON schema. This can be a ``dict`` or another
+        ``SchemaRoot``
 
-        arguments:
-        * `schema` (required - `dict` or `SchemaNode`):
-          an existing JSON Schema to merge.
+        :param schema: a JSON Schema
+
+        .. note::
+            There is no schema validation. If you pass in a bad schema,
+            you might get back a bad schema.
         """
         if isinstance(schema, SchemaRoot):
             schema_uri = schema.schema_uri
@@ -47,39 +110,39 @@ class SchemaRoot(object):
         """
         Modify the schema to accomodate an object.
 
-        arguments:
-        * `obj` (required - `dict`):
-          a JSON object to use in generating the schema.
+        :param obj: any object or scalar that can be serialized in JSON
         """
         self._root_node.add_object(obj)
 
     def to_schema(self):
         """
-        Convert the current schema to a `dict`.
+        Merges in an existing schema.
+
+        :rtype: ``dict``
         """
         schema = self._base_schema()
         schema.update(self._root_node.to_schema())
         return schema
 
-    def to_dict(self, recurse='DEPRECATED'):
-        warn('#to_dict is deprecated in v1.0, and it may be removed in '
-             'future versions. Use #to_schema instead.',
-             PendingDeprecationWarning)
-        if recurse != 'DEPRECATED':
-            warn('the `recurse` option for #to_dict does nothing in v1.0',
-                 DeprecationWarning)
-        return self.to_schema()
-
     def to_json(self, *args, **kwargs):
         """
-        Convert the current schema directly to serialized JSON.
+        Generate a schema and convert it directly to serialized JSON.
+
+        :rtype: ``str``
         """
         return json.dumps(self.to_schema(), *args, **kwargs)
 
     def __len__(self):
+        """
+        Number of ``SchemaGenerator`` s at the top level. This is used
+        mostly to check for emptiness.
+        """
         return len(self._root_node)
 
     def __eq__(self, other):
+        """
+        Check for equality with another SchemaRoot object.
+        """
         if self is other:
             return True
         if not isinstance(other, type(self)):
