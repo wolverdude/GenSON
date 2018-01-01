@@ -9,7 +9,6 @@ from .array import List, Tuple
 from .object import Object
 
 GENERATORS = (
-    Typeless,
     Null,
     Boolean,
     Number,

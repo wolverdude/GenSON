@@ -35,6 +35,13 @@ class TestType(base.SchemaNodeTestCase):
         self.add_schema(schema2)
         self.assertResult({"type": "boolean", "title": "Gruyere"})
 
+    def test_typeless_instantly_incorporated(self):
+        schema1 = {"type": "boolean"}
+        schema2 = {"title": "Gruyere"}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult({"type": "boolean", "title": "Gruyere"})
+
 
 class TestAnyOf(base.SchemaNodeTestCase):
 

@@ -133,6 +133,13 @@ class SchemaNode(object):
                 self._schema_generators.append(schema_generator)
                 return schema_generator
 
+        # no match found, if typeless add to first generator
+        if kind == 'schema' and Typeless.match_schema(schema_or_obj):
+            if not self._schema_generators:
+                self._schema_generators.append(Typeless(type(self)))
+            schema_generator = self._schema_generators[0]
+            return schema_generator
+
         # no match found, raise an error
         raise InvalidSchemaError(
             'Could not find matching type for {0}: {1!r}'.format(
