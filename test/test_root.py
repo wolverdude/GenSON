@@ -39,3 +39,31 @@ class TestMethods(base.SchemaRootTestCase):
         self._schema = SchemaRoot(schema_uri=test_uri)
         self.add_schema({"$schema": 'BAD_URI', "type": "null"})
         self.assertResult({"$schema": test_uri, "type": "null"})
+
+    def test_empty_falsy(self):
+        s = SchemaRoot()
+        self.assertIs(bool(s), False)
+
+    def test_full_truty(self):
+        s = SchemaRoot()
+        s.add_object(None)
+        self.assertIs(bool(s), True)
+
+
+class TestInteraction(base.SchemaRootTestCase):
+
+    def test_add_other(self):
+        other = SchemaRoot()
+        other.add_object(1)
+        self.add_object('one')
+        self.add_schema(other)
+        self.assertResult({
+            "$schema": SchemaRoot.DEFAULT_URI,
+            "type": ["integer", "string"]})
+
+    def test_eq(self):
+        s1 = SchemaRoot()
+        s1.add_object(1)
+        s2 = SchemaRoot()
+        s2.add_object(1)
+        self.assertEqual(s1, s2)
