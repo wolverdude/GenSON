@@ -1,34 +1,18 @@
-TODO
-====
-
-* tidy up major docstrings
-* regenrate Sphinx docs
-* add glossary of important terms
-
 GenSON
 ======
 
-**GenSON** is a powerful, user-friendly `JSON Schema`_ generator built
-in Python.
+**GenSON** is a powerful, user-friendly `JSON Schema`_ generator built in Python.
 
-(**Note**: This is not to be confused with the `Java Genson library`_.
-If you are coming from Java and looking for a Python equivalent, this is
-not it. You should instead look into `Python's builtin json library`_.)
+.. note::
+    This is *not* the Python equivalent of the `Java Genson library`_. If you are coming from Java need to create JSON objects in Python, you want `Python's builtin json library`_.)
 
-GenSON's core function is to take JSON objects and generate schemas that
-describe them, but it is unique in its ability to *merge* schemas. It
-was originally built to describe the common structure of a large number
-of JSON objects, and it uses its merging ability to generate a single
-schema from any number of JSON objects and/or schemas.
+GenSON's core function is to take JSON objects and generate schemas that describe them, but it is unique in its ability to *merge* schemas. It was originally built to describe the common structure of a large number of JSON objects, and it uses its merging ability to generate a single schema from any number of JSON objects and/or schemas.
 
 The generator follows these three rules:
 
 1. *Every* object it is given must validate under the generated schema.
-2. *Any* object that is valid under *any* schema it is given must also
-   validate under the generated schema. (there is one glaring exception
-   to this, detailed `below`_)
-3. The generated schema should be as strict as possible given the first
-   2 rules.
+2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema. (there is one glaring exception to this, detailed `below`_)
+3. The generated schema should be as strict as possible given the first 2 rules.
 
 
 JSON Schema Implementation
@@ -36,27 +20,23 @@ JSON Schema Implementation
 
 **GenSON** is compatible with JSON Schema Draft 4 and above.
 
-It is important to note that the generator uses only a subset of JSON
-Schema's capabilities. This is mainly because the generator doesn't know
-the specifics of your data model, and it tries to avoid guessing them.
-Its purpose is to generate the basic structure so that you can skip the
-boilerplate and focus on the details of the schema.
+It is important to note that the generator uses only a subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it tries to avoid guessing them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
-Currently, the generator only deals with 5 keywords: ``"type"``,
-``"items"``, ``"properties"``, ``"patternProperties"`` and
-``"required"``. You should be aware that this limited vocabulary could
-cause the generator to violate rules 1 and 2. If you feed it schemas
-with advanced keywords, it will just blindly pass them on to the final
-schema. Note that ``"$ref"`` and ``id`` are also not supported, so
-GenSON will not dereference linked nodes when building a schema.
+Currently, the generator only deals with 5 keywords:
+
+* ``"type"``
+* ``"items"``
+* ``"properties"``
+* ``"patternProperties"``
+* ``"required"``
+
+You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema. Note that ``"$ref"`` and ``id`` are also not supported, so GenSON will not dereference linked nodes when building a schema.
 
 
 CLI Tool
 --------
 
-The package includes a ``genson`` executable that allows you to access
-this functionality from the command line. For usage info, run with
-``--help``:
+The package includes a ``genson`` executable that allows you to access this functionality from the command line. For usage info, run with ``--help``:
 
 .. code-block:: bash
 
@@ -64,32 +44,33 @@ this functionality from the command line. For usage info, run with
 
 .. code-block:: none
 
-usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
 
-Generate one, unified JSON Schema from one or more JSON objects and/or JSON
-Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
+    Generate one, unified JSON Schema from one or more JSON objects and/or JSON
+    Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
 
-positional arguments:
-  object                files containing JSON objects (defaults to stdin if no
-                        arguments are passed and the -s option is not present)
+    positional arguments:
+      object                files containing JSON objects (defaults to stdin if no
+                            arguments are passed and the -s option is not present)
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -a, --no-merge-arrays
-                        generate a different subschema for each element in an
-                        array rather than merging them all into one
-  -d DELIM, --delimiter DELIM
-                        set a delimiter - Use this option if the input files
-                        contain multiple JSON objects/schemas. You can pass
-                        any string. A few cases ('newline', 'tab', 'space')
-                        will get converted to a whitespace character, and if
-                        empty string ('') is passed, the parser will try to
-                        auto-detect where the boundary is.
-  -i SPACES, --indent SPACES
-                        pretty-print the output, indenting SPACES spaces
-  -s SCHEMA, --schema SCHEMA
-                        file containing a JSON Schema (can be specified
-                        multiple times to merge schemas)
+    optional arguments:
+      -h, --help            show this help message and exit
+      -a, --no-merge-arrays
+                            generate a different subschema for each element in an
+                            array rather than merging them all into one
+      -d DELIM, --delimiter DELIM
+                            set a delimiter - Use this option if the input files
+                            contain multiple JSON objects/schemas. You can pass
+                            any string. A few cases ('newline', 'tab', 'space')
+                            will get converted to a whitespace character, and if
+                            empty string ('') is passed, the parser will try to
+                            auto-detect where the boundary is.
+      -i SPACES, --indent SPACES
+                            pretty-print the output, indenting SPACES spaces
+      -s SCHEMA, --schema SCHEMA
+                            file containing a JSON Schema (can be specified
+                            multiple times to merge schemas)
+
 
 GenSON Python API
 -----------------
@@ -114,24 +95,21 @@ be loaded up with existing schemas and objects before being serialized.
 
 
 SchemaRoot Methods
-+++++++++++++++++++++
+++++++++++++++++++
 
 ``SchemaRoot(merge_arrays=True)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Builds a schema generator object.
 
 arguments:
 
-* `merge_arrays` (default `True`): Assume all array items share the same
-  schema (as they should). The alternate behavior is to merge schemas
-  based on position in the array.
+* `merge_arrays` (default `True`): Assume all array items share the same schema (as they should). The alternate behavior is to merge schemas based on position in the array.
 
 ``add_schema(schema)``
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Merges in an existing schema. Take care here because there is no schema
-validation. If you pass in a bad schema, you'll get back a bad schema.
+Merges in an existing schema. Take care here because there is no schema validation. If you pass in a bad schema, you'll get back a bad schema.
 
 arguments:
 
@@ -186,27 +164,21 @@ Schema objects can also interact with each other:
 Seed Schemas
 ------------
 
-There are several cases where multiple valid schemas could be generated
-from the same object. GenSON makes a default choice in all these
-ambiguous cases, but if you want it to choose differently, you can tell
-it what to do using a *seed schema*.
+There are several cases where multiple valid schemas could be generated from the same object. GenSON makes a default choice in all these ambiguous cases, but if you want it to choose differently, you can tell it what to do using a *seed schema*.
 
 Seeding Arrays
 ++++++++++++++
 
-For example, suppose you have a
-simple array with two items:
+For example, suppose you have a simple array with two items:
 
 .. code-block:: python
+
     ['one', 1]
 
-There are always two ways for GenSON to interpret any array: List and
-Tuple. Lists have one schema for every item, whereas Tuples have a
-different schema for every array position. This is analogous to the (now
-deprecated) ``merge_arrays`` option from version 0. You can read more
-about JSON Schema `array validation here`_.
+There are always two ways for GenSON to interpret any array: List and Tuple. Lists have one schema for every item, whereas Tuples have a different schema for every array position. This is analogous to the (now deprecated) ``merge_arrays`` option from version 0. You can read more about JSON Schema `array validation here`_.
 
 .. code-block:: json
+
     {
       "list": {
         "type": "array",
@@ -218,69 +190,52 @@ about JSON Schema `array validation here`_.
       }
     }
 
-By default, GenSON always interprets arrays using list validation, but
-you can tell it to use tuple validation by seeding it with a schema.
+By default, GenSON always interprets arrays using list validation, but you can tell it to use tuple validation by seeding it with a schema.
 
 .. code-block:: python
+
+    >>> from genson import SchemaRoot
+
     >>> s = SchemaRoot()
     >>> s.add_object(['one', 1])
     >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#',
-     'type': 'array', 'items': {'type': ['integer', 'string']}}
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'array', 'items': {'type': ['integer', 'string']}}
+
     >>> s = SchemaRoot()
     >>> seed_schema = {'type': 'array', 'items': []}
     >>> s.add_schema(seed_schema)
     >>> s.add_object(['one', 1])
     >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#',
-     'type': 'array', 'items': [{'type': 'string'}, {'type': 'integer'}]}
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'array', 'items': [{'type': 'string'}, {'type': 'integer'}]}
 
-Note that in this case, the seed schema is actually invalid. You can't
-have an empty array as the value for an ``items`` keyword. But GenSON is
-a generator, not a validator, so you can fudge a little. GenSON will
-modify the generated schema so that it is valid, provided that there
-aren't invalid keywords beyond the ones it knows about.
+Note that in this case, the seed schema is actually invalid. You can't have an empty array as the value for an ``items`` keyword. But GenSON is a generator, not a validator, so you can fudge a little. GenSON will modify the generated schema so that it is valid, provided that there aren't invalid keywords beyond the ones it knows about.
 
 Seeding ``patternProperties``
 +++++++++++++++++++++++++++++
 
-Support for patternProperties_ is new in version 1; however, since
-GenSON's default behavior is to only use ``properties``, this powerful
-keyword can only be utilized with seed schemas. You will need to supply
-an ``object`` schema with a ``patternProperties`` object whose keys are
-RegEx strings. Again, you can fudge here and set the values to null
-instead of creating valid subschemas.
+Support for patternProperties_ is new in version 1; however, since GenSON's default behavior is to only use ``properties``, this powerful keyword can only be utilized with seed schemas. You will need to supply an ``object`` schema with a ``patternProperties`` object whose keys are RegEx strings. Again, you can fudge here and set the values to null instead of creating valid subschemas.
 
 .. code-block:: python
+
+    >>> from genson import SchemaRoot
+
     >>> s = SchemaRoot()
     >>> s.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
     >>> s.add_object({'1': 1, '2': 2, '3': 3})
     >>> s.to_schema()
-    {'$schema': 'http://json-schema.org/schema#',
-     'type': 'object', 'patternProperties':  {'^\\d+$': {'type': 'integer'}}}
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'patternProperties':  {'^\\d+$': {'type': 'integer'}}}
 
 There are a few gotchas you should be aware of here:
 
 * GenSON is written in Python, so it uses the `Python flavor of RegEx`_.
-* GenSON still prefers ``properties`` to ``patternProperties`` if a
-  property already exists that matches one of your patterns, the normal
-  property will be updated, *not* the pattern property.
-* If a key matches multiple patterns, there is *no guarantee* of which
-  one will be updated.
-* The patternProperties_ docs themselves have some more useful
-  pointers that can save you time.
+* GenSON still prefers ``properties`` to ``patternProperties`` if a property already exists that matches one of your patterns, the normal property will be updated, *not* the pattern property.
+* If a key matches multiple patterns, there is *no guarantee* of which one will be updated.
+* The patternProperties_ docs themselves have some more useful pointers that can save you time.
 
 Typeless Schemas
 ++++++++++++++++
 
-In version 0, GenSON did not accept a schema without a type, but in
-order to be flexible in the support of seed schemas, support was added
-for version 1. However, GenSON violates rule #2 in its handling of
-typeless schemas. Any object will validate under an empty schema, but
-GenSON incorporates typeless schemas into the first-available typed
-schema, and since typed schemas are stricter than typless ones, so
-objects that would validate under an added schema will not validate
-under the result.
+In version 0, GenSON did not accept a schema without a type, but in order to be flexible in the support of seed schemas, support was added for version 1. However, GenSON violates rule #2 in its handling of typeless schemas. Any object will validate under an empty schema, but GenSON incorporates typeless schemas into the first-available typed schema, and since typed schemas are stricter than typless ones, so objects that would validate under an added schema will not validate under the result.
 
 Compatibility
 -------------
@@ -308,8 +263,7 @@ When contributing, please follow these steps:
 Tests
 +++++
 
-Tests are written in ``unittest``. You can run them all easily with the
-included executable ``bin/test.py``.
+Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
 
 .. code-block:: bash
 
@@ -323,14 +277,19 @@ You can also invoke individual test suites:
 
 
 Potential Future Features
-++++
++++++++++++++++++++++++++
 
-* exectuable
+The following are extra features under consideration.
+
+* exectuable script improvements
+
   * option to set error level
   * custom serializer plugins
+
 * recognize every validation keyword and ignore any that don't apply
 * open up generator API for custom schema generator classes
-* add logical support for other keywords:
+* logical support for more keywords:
+
   * ``enum``
   * ``min``/``max``
   * ``minLength``/``maxLength``
@@ -348,5 +307,5 @@ Potential Future Features
 .. _Flake8: https://pypi.python.org/pypi/flake8
 .. _below: #typeless-schemas
 .. _array validation here: https://spacetelescope.github.io/understanding-json-schema/reference/array.html#items
-.. _``patternProperties``: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
+.. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
 .. _`Python flavor of RegEx`: https://docs.python.org/3.6/library/re.html
