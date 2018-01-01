@@ -94,29 +94,29 @@ optional arguments:
 GenSON Python API
 -----------------
 
-``Schema`` is the basic schema generator class. ``Schema`` objects can
+``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can
 be loaded up with existing schemas and objects before being serialized.
 
 .. code-block:: python
 
-    import genson
+    >>> from genson import SchemaRoot
 
-    s = genson.Schema()
-    s.add_schema({"type": "object", "properties": {}})
-    s.add_object({"hi": "there"})
-    s.add_object({"hi": 5})
+    >>> s = SchemaRoot()
+    >>> s.add_schema({"type": "object", "properties": {}})
+    >>> s.add_object({"hi": "there"})
+    >>> s.add_object({"hi": 5})
 
-    s.to_dict()
-    #=> {"type": "object", "properties": {"hi": {"type": ["integer", "string"]}}}
+    >>> s.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'properties': {'hi': {'type': ['integer', 'string']}}, 'required': ['hi']}
 
-    s.to_json()
-    #=> "{\"type\": \"object\", \"properties\": {\"hi\": {\"type\": [\"integer\", \"string\"]}}}"
+    >>> s.to_json()
+    '{"$schema": "http://json-schema.org/schema#", "type": "object", "properties": {"hi": {"type": ["integer", "string"]}}, "required": ["hi"]}'
 
 
-Schema Object Methods
+SchemaRoot Methods
 +++++++++++++++++++++
 
-``Schema(merge_arrays=True)``
+``SchemaRoot(merge_arrays=True)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Builds a schema generator object.
@@ -135,7 +135,7 @@ validation. If you pass in a bad schema, you'll get back a bad schema.
 
 arguments:
 
-* ``schema`` (required - ``dict`` or ``Schema``): an existing JSON Schema to merge.
+* ``schema`` (required - ``dict`` or ``SchemaRoot``): an existing JSON Schema to merge.
 
 ``add_object(obj)``
 ^^^^^^^^^^^^^^^^^^^
@@ -156,7 +156,7 @@ Convert the current schema to a ``dict``.
 
 Convert the current schema directly to serialized JSON.
 
-Schema Object Interaction
+SchemaRoot Interaction
 +++++++++++++++++++++++++
 
 Schema objects can also interact with each other:
@@ -166,25 +166,21 @@ Schema objects can also interact with each other:
 
 .. code-block:: python
 
-    import genson
+    >>> from genson import SchemaRoot
 
-    s1 = genson.Schema()
-    s1.add_schema({"type": "object", "properties": {"hi": {"type": "string"}}})
+    >>> s1 = SchemaRoot()
+    >>> s1.add_schema({"type": "object", "properties": {"hi": {"type": "string"}}})
+    >>> s2 = SchemaRoot()
+    >>> s2.add_schema({"type": "object", "properties": {"hi": {"type": "integer"}}})
+    >>> s1 == s2
+    False
 
-    s2 = genson.Schema()
-    s2.add_schema({"type": "object", "properties": {"hi": {"type": "integer"}}})
-
-    s1 == s2
-    #=> False
-
-    s1.add_schema(s2)
-    s2.add_schema(s1)
-
-    s1 == s2
-    #=> True
-
-    s1.to_dict()
-    #=> {"type": "object", "properties": {"hi": {"type": ["integer", "string"]}}}
+    >>> s1.add_schema(s2)
+    >>> s2.add_schema(s1)
+    >>> s1 == s2
+    True
+    >>> s1.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'properties': {'hi': {'type': ['integer', 'string']}}}
 
 
 Seed Schemas
