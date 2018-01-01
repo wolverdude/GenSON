@@ -29,6 +29,14 @@ class SchemaRoot(object):
         * `schema` (required - `dict` or `SchemaNode`):
           an existing JSON Schema to merge.
         """
+        if isinstance(schema, SchemaRoot):
+            schema_uri = schema.schema_uri
+            schema = schema.to_schema()
+            if schema_uri is None:
+                del schema['$schema']
+        elif isinstance(schema, SchemaNode):
+            schema = schema.to_schema()
+
         if '$schema' in schema:
             self.schema_uri = self.schema_uri or schema['$schema']
             schema = dict(schema)
@@ -72,6 +80,8 @@ class SchemaRoot(object):
         return len(self._root_node)
 
     def __eq__(self, other):
+        if self is other:
+            return True
         if not isinstance(other, type(self)):
             return False
 

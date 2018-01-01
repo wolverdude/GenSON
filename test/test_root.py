@@ -53,12 +53,24 @@ class TestMethods(base.SchemaRootTestCase):
 class TestInteraction(base.SchemaRootTestCase):
 
     def test_add_other(self):
-        other = SchemaRoot()
+        test_uri = 'TEST_URI'
+        other = SchemaRoot(schema_uri=test_uri)
         other.add_object(1)
         self.add_object('one')
         self.add_schema(other)
         self.assertResult({
-            "$schema": SchemaRoot.DEFAULT_URI,
+            "$schema": test_uri,
+            "type": ["integer", "string"]})
+
+    def test_add_other_no_uri_overwrite(self):
+        test_uri = 'TEST_URI'
+        other = SchemaRoot()
+        other.add_object(1)
+        self.add_object('one')
+        self.add_schema(other)
+        self.add_schema({'$schema': test_uri})
+        self.assertResult({
+            "$schema": test_uri,
             "type": ["integer", "string"]})
 
     def test_eq(self):

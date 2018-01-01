@@ -85,7 +85,7 @@ class SchemaNode(object):
 
     def __eq__(self, other):
         # TODO: find a more optimal way to do this
-        if self == other:
+        if self is other:
             return True
         if not isinstance(other, type(self)):
             return False
