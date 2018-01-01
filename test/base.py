@@ -61,6 +61,6 @@ def minimum_python(*version):
         if version_info >= version:
             return func
         else:
-            return unittest.skip('version under test less than %s'
+            return unittest.skip('Python version under test less than %s'
                                  % '.'.join(map(str, version)))(func)
     return handler
