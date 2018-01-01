@@ -1,9 +1,7 @@
 TODO
 ====
 
-* don't include properties by default
 * add base Schema class with header
-* patternProperties
 * additionalProperties & additionalItems
 * refactor generator interface & add API for custom generators
 * recognize every validation keyword and ignore any that don't apply
@@ -18,6 +16,7 @@ DOCS
   * preserves existing keys first
   * uses Python regex, so beware
   * no guarantees for overlapping regexes
+* typeless schemas automatically incorporated into first typed schema
 
 
 GenSON

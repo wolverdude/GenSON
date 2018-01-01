@@ -1,6 +1,6 @@
 import json
 from warnings import warn
-from .generators import GENERATORS
+from .generators import GENERATORS, NoType
 
 
 class InvalidSchemaError(RuntimeError):
@@ -139,6 +139,13 @@ class SchemaNode(object):
         for schema_generator_class in GENERATORS:
             if getattr(schema_generator_class, 'match_' + kind)(schema_or_obj):
                 schema_generator = schema_generator_class(self)
+
+                # subsume no-type generator if it exists
+                if self._schema_generators and \
+                        isinstance(self._schema_generators[-1], NoType):
+                    no_type = self._schema_generators.pop()
+                    schema_generator.add_schema(no_type.to_schema())
+
                 self._schema_generators.append(schema_generator)
                 return schema_generator
 

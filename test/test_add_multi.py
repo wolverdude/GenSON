@@ -29,6 +29,15 @@ class TestType(base.SchemaTestCase):
             self.add_schema(schema2)
         self.assertResult(dict(**schema1, **schema2))
 
+    def test_no_type_incorporated(self):
+        schema1 = {"title": "Gruyere"}
+        schema2 = {"type": "boolean"}
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.add_schema(schema1)
+            self.add_schema(schema2)
+        self.assertResult({"type": "boolean", "title": "Gruyere"})
+
 
 class TestAnyOf(base.SchemaTestCase):
 
