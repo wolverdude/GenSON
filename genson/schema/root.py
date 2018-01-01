@@ -1,5 +1,4 @@
 import json
-from warnings import warn
 from .node import SchemaNode
 
 
@@ -8,66 +7,6 @@ class SchemaRoot(object):
     ``SchemaRoot`` is the basic schema generator class. ``SchemaRoot``
     objects can be loaded up with existing schemas and objects before
     being serialized.
-
-    .. code-block:: python
-
-        >>> from genson import SchemaRoot
-
-        >>> s = SchemaRoot()
-        >>> s.add_schema({"type": "object", "properties": {}})
-        >>> s.add_object({"hi": "there"})
-        >>> s.add_object({"hi": 5})
-
-        >>> s.to_schema()
-        {'$schema': 'http://json-schema.org/schema#',
-         'type': 'object',
-         'properties': {
-            'hi': {'type': ['integer', 'string']}},
-            'required': ['hi']}
-
-        >>> print(s.to_json(indent=2))
-        {
-          "$schema": "http://json-schema.org/schema#",
-          "type": "object",
-          "properties": {
-            "hi": {
-              "type": [
-                "integer",
-                "string"
-              ]
-            }
-          },
-          "required": [
-            "hi"
-          ]
-        }
-
-    Schema objects can also interact with each other:
-
-    * You can pass one schema directly to another to merge them.
-    * You can compare schema equality directly.
-
-    .. code-block:: python
-
-        >>> from genson import SchemaRoot
-
-        >>> s1 = SchemaRoot()
-        >>> s1.add_schema({"type": "object", "properties": {
-        ...   "hi": {"type": "string"}}})
-        >>> s2 = SchemaRoot()
-        >>> s2.add_schema({"type": "object", "properties": {
-        ...   "hi": {"type": "integer"}}})
-        >>> s1 == s2
-        False
-
-        >>> s1.add_schema(s2)
-        >>> s2.add_schema(s1)
-        >>> s1 == s2
-        True
-        >>> s1.to_schema()
-        {'$schema': 'http://json-schema.org/schema#',
-         'type': 'object',
-         'properties': {'hi': {'type': ['integer', 'string']}}}
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
 
@@ -142,6 +81,9 @@ class SchemaRoot(object):
     def __eq__(self, other):
         """
         Check for equality with another SchemaRoot object.
+
+        :param other: another SchemaRoot object. Other types are
+          accepted, but will always return ``False``
         """
         if self is other:
             return True

@@ -75,9 +75,111 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-.. autoclass:: genson.SchemaRoot
-    :members:
-    :special-members: __init__, __eq__
+.. class:: SchemaRoot(schema_uri=None)
+
+    ``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can be loaded up with existing schemas and objects before being serialized.
+
+    :param schema_uri: description for value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``
+
+    .. function:: add_schema(schema)
+
+        Merge in a JSON schema. This can be a ``dict`` or another ``SchemaRoot``
+
+        :param schema: a JSON Schema
+
+        .. note::
+            There is no schema validation. If you pass in a bad schema,
+            you might get back a bad schema.
+
+    .. function:: add_object(obj)
+
+        Modify the schema to accomodate an object.
+
+        :param obj: any object or scalar that can be serialized in JSON
+
+    .. function:: to_schema()
+
+        Merges in an existing schema.
+
+        :rtype: ``dict``
+
+    .. function:: to_json()
+
+        Generate a schema and convert it directly to serialized JSON.
+
+        :rtype: ``str``
+
+    .. function:: __eq__(other)
+
+        Check for equality with another SchemaRoot object.
+
+        :param other: another SchemaRoot object. Other types are accepted, but will always return ``False``
+
+API Usage Example
++++++++++++++++++
+
+.. code-block:: python
+
+    >>> from genson import SchemaRoot
+
+    >>> s = SchemaRoot()
+    >>> s.add_schema({"type": "object", "properties": {}})
+    >>> s.add_object({"hi": "there"})
+    >>> s.add_object({"hi": 5})
+
+    >>> s.to_schema()
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'object',
+     'properties': {
+        'hi': {'type': ['integer', 'string']}},
+        'required': ['hi']}
+
+    >>> print(s.to_json(indent=2))
+    {
+      "$schema": "http://json-schema.org/schema#",
+      "type": "object",
+      "properties": {
+        "hi": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      },
+      "required": [
+        "hi"
+      ]
+    }
+
+SchemaRoot object interaction
++++++++++++++++++++++++++++++
+
+``SchemaRoot`` objects can also interact with each other:
+
+* You can pass one schema directly to another to merge them.
+* You can compare schema equality directly.
+
+.. code-block:: python
+
+    >>> from genson import SchemaRoot
+
+    >>> s1 = SchemaRoot()
+    >>> s1.add_schema({"type": "object", "properties": {
+    ...   "hi": {"type": "string"}}})
+    >>> s2 = SchemaRoot()
+    >>> s2.add_schema({"type": "object", "properties": {
+    ...   "hi": {"type": "integer"}}})
+    >>> s1 == s2
+    False
+
+    >>> s1.add_schema(s2)
+    >>> s2.add_schema(s1)
+    >>> s1 == s2
+    True
+    >>> s1.to_schema()
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'object',
+     'properties': {'hi': {'type': ['integer', 'string']}}}
 
 
 Seed Schemas
@@ -229,10 +331,6 @@ The following are extra features under consideration.
   * ``additionalProperties``
   * ``format`` & ``pattern``
   * ``$ref`` & ``id``
-
-.. include:: AUTHORS.rst
-
-.. include:: HISTORY.rst
 
 .. _JSON Schema: http://json-schema.org/
 .. _Java Genson library: https://owlike.github.io/genson/
