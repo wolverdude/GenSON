@@ -89,16 +89,13 @@ class TestArrayList(base.SchemaNodeTestCase):
 
 class TestArrayTuple(base.SchemaNodeTestCase):
 
-    def setUp(self):
-        base.SchemaNodeTestCase.setUp(self)
-
     def test_empty(self):
         self.add_schema({"type": "array", "items": []})
 
         self.add_object([])
         self.add_object([])
 
-        self.assertResult({"type": "array"})
+        self.assertResult({"type": "array", "items": [{}]})
 
     def test_multitype(self):
         self.add_schema({"type": "array", "items": []})

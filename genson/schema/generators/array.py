@@ -45,7 +45,7 @@ class Tuple(BaseArray):
         return schema.get('type') == 'array' and isinstance(schema.get('items'), list)
 
     def init(self):
-        self._items = []
+        self._items = [self.node_class()]
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)

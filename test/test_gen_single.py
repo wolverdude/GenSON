@@ -74,7 +74,13 @@ class TestArrayTuple(base.SchemaNodeTestCase):
         self.add_schema({"type": "array", "items": []})
 
         self.add_object([])
-        self.assertResult({"type": "array"})
+        self.assertResult({"type": "array", "items": [{}]})
+
+    def test_empty_schema(self):
+        self.add_schema({"type": "array", "items": [{}]})
+
+        self.add_object([])
+        self.assertResult({"type": "array", "items": [{}]})
 
     def test_multitype(self):
         self.add_schema({"type": "array", "items": []})

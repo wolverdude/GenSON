@@ -18,7 +18,8 @@ DOCS
   * uses Python regex, so beware
   * no guarantees for overlapping regexes
 * typeless schemas automatically incorporated into first typed schema
-
+* glossary of important terms
+* tidy up major docstrings
 
 GenSON
 ======
