@@ -10,7 +10,7 @@ class SchemaRoot(object):
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
 
-    def __init__(self, node_class=SchemaNode, schema_uri=None):
+    def __init__(self, schema_uri=None):
         """
         arguments:
         * `schema_uri` (optional - `str`):
@@ -18,7 +18,7 @@ class SchemaRoot(object):
           the value of the first available `$schema` keyword on an added
           schema or else the default: `'http://json-schema.org/schema#'`
         """
-        self._root_node = node_class()
+        self._root_node = SchemaNode()
         self.schema_uri = schema_uri
 
     def add_schema(self, schema):
