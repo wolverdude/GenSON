@@ -54,33 +54,33 @@ The package includes a ``genson`` executable that allows you to access this func
 
 .. code-block::
 
-    usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
+    usage: genson.py [-h] [-d DELIM] [-i SPACES] [-s SCHEMA] [-$ URI] ...
 
     Generate one, unified JSON Schema from one or more JSON objects and/or JSON
-    Schemas. (uses Draft 4 - http://json-schema.org/draft-04/schema)
+    Schemas. It's compatible with Draft 4 and above.
 
     positional arguments:
       object                files containing JSON objects (defaults to stdin if no
-                            arguments are passed and the -s option is not present)
+                            arguments are passed)
 
     optional arguments:
       -h, --help            show this help message and exit
-      -a, --no-merge-arrays
-                            generate a different subschema for each element in an
-                            array rather than merging them all into one
       -d DELIM, --delimiter DELIM
                             set a delimiter - Use this option if the input files
                             contain multiple JSON objects/schemas. You can pass
                             any string. A few cases ('newline', 'tab', 'space')
-                            will get converted to a whitespace character, and if
-                            empty string ('') is passed, the parser will try to
-                            auto-detect where the boundary is.
+                            will get converted to a whitespace character. If this
+                            option is omitted, the parser will try to auto-detect
+                            boundaries
       -i SPACES, --indent SPACES
                             pretty-print the output, indenting SPACES spaces
       -s SCHEMA, --schema SCHEMA
                             file containing a JSON Schema (can be specified
                             multiple times to merge schemas)
-
+      -$ URI, --schema-uri URI
+                            the value of the '$schema' keyword (defaults to
+                            'http://json-schema.org/schema#' or can be specified
+                            in a schema with the -s option)
 
 GenSON Python API
 -----------------
@@ -138,19 +138,19 @@ API Usage Example
 
     >>> from genson import Genson
 
-    >>> s = Genson()
-    >>> s.add_schema({"type": "object", "properties": {}})
-    >>> s.add_object({"hi": "there"})
-    >>> s.add_object({"hi": 5})
+    >>> g = Genson()
+    >>> g.add_schema({"type": "object", "properties": {}})
+    >>> g.add_object({"hi": "there"})
+    >>> g.add_object({"hi": 5})
 
-    >>> s.to_schema()
+    >>> g.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'object',
      'properties': {
         'hi': {'type': ['integer', 'string']}},
         'required': ['hi']}
 
-    >>> print(s.to_json(indent=2))
+    >>> print(g.to_json(indent=2))
     {
       "$schema": "http://json-schema.org/schema#",
       "type": "object",
@@ -240,18 +240,18 @@ By default, GenSON always interprets arrays using list validation, but you can t
 
     >>> from genson import Genson
 
-    >>> s = Genson()
-    >>> s.add_object(['one', 1])
-    >>> s.to_schema()
+    >>> g = Genson()
+    >>> g.add_object(['one', 1])
+    >>> g.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'array',
      'items': {'type': ['integer', 'string']}}
 
-    >>> s = Genson()
+    >>> g = Genson()
     >>> seed_schema = {'type': 'array', 'items': []}
-    >>> s.add_schema(seed_schema)
-    >>> s.add_object(['one', 1])
-    >>> s.to_schema()
+    >>> g.add_schema(seed_schema)
+    >>> g.add_object(['one', 1])
+    >>> g.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'array',
      'items': [{'type': 'string'}, {'type': 'integer'}]}
@@ -267,10 +267,10 @@ Support for patternProperties_ is new in version 1; however, since GenSON's defa
 
     >>> from genson import Genson
 
-    >>> s = Genson()
-    >>> s.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
-    >>> s.add_object({'1': 1, '2': 2, '3': 3})
-    >>> s.to_schema()
+    >>> g = Genson()
+    >>> g.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
+    >>> g.add_object({'1': 1, '2': 2, '3': 3})
+    >>> g.to_schema()
     {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'patternProperties':  {'^\\d+$': {'type': 'integer'}}}
 
 There are a few gotchas you should be aware of here:
@@ -331,13 +331,10 @@ Potential Future Features
 
 The following are extra features under consideration.
 
-* exectuable script improvements
-
-  * option to set error level
-  * custom serializer plugins
-
 * recognize every validation keyword and ignore any that don't apply
 * open up generator API for custom schema generator classes
+* option to set error level
+* custom serializer plugins
 * logical support for more keywords:
 
   * ``enum``

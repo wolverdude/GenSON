@@ -6,30 +6,30 @@ from genson import SchemaNode, Genson
 class SchemaTestCase(unittest.TestCase):
 
     def setUp(self):
-        self._schema = self.CLASS()
+        self.genson = self.CLASS()
         self._objects = []
         self._schemas = []
 
     def set_schema_options(self, **options):
-        self._schema = SchemaNode(**options)
+        self.genson = SchemaNode(**options)
 
     def add_object(self, obj):
-        self._schema.add_object(obj)
+        self.genson.add_object(obj)
         self._objects.append(obj)
 
     def add_schema(self, schema):
-        self._schema.add_schema(schema)
+        self.genson.add_schema(schema)
         self._schemas.append(schema)
 
     def assertObjectValidates(self, obj):
-        jsonschema.Draft4Validator(self._schema.to_schema()).validate(obj)
+        jsonschema.Draft4Validator(self.genson.to_schema()).validate(obj)
 
     def assertObjectDoesNotValidate(self, obj):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
-            jsonschema.Draft4Validator(self._schema.to_schema()).validate(obj)
+            jsonschema.Draft4Validator(self.genson.to_schema()).validate(obj)
 
     def assertResult(self, expected):
-        self.assertEqual(self._schema.to_schema(), expected)
+        self.assertEqual(self.genson.to_schema(), expected)
         self.assertUserContract()
 
     def assertUserContract(self):
@@ -37,10 +37,10 @@ class SchemaTestCase(unittest.TestCase):
         self._assertComponentObjectsValidate()
 
     def _assertSchemaIsValid(self):
-        jsonschema.Draft4Validator.check_schema(self._schema.to_schema())
+        jsonschema.Draft4Validator.check_schema(self.genson.to_schema())
 
     def _assertComponentObjectsValidate(self):
-        compiled_schema = self._schema.to_schema()
+        compiled_schema = self.genson.to_schema()
         for obj in self._objects:
             jsonschema.Draft4Validator(compiled_schema).validate(obj)
 

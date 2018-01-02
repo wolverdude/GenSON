@@ -6,11 +6,11 @@ class TestParams(base.GensonTestCase):
 
     def test_uri(self):
         test_uri = 'TEST_URI'
-        self._schema = Genson(schema_uri=test_uri)
+        self.genson = Genson(schema_uri=test_uri)
         self.assertResult({"$schema": test_uri})
 
     def test_null_uri(self):
-        self._schema = Genson(schema_uri=None)
+        self.genson = Genson(schema_uri=None)
         self.assertResult({})
 
 
@@ -30,7 +30,7 @@ class TestMethods(base.GensonTestCase):
 
     def test_to_json(self):
         self.assertEqual(
-            self._schema.to_json(),
+            self.genson.to_json(),
             '{"$schema": "%s"}' % Genson.DEFAULT_URI)
 
     def test_add_schema_with_uri_default(self):
@@ -40,7 +40,7 @@ class TestMethods(base.GensonTestCase):
 
     def test_add_schema_with_uri_not_defuult(self):
         test_uri = 'TEST_URI'
-        self._schema = Genson(schema_uri=test_uri)
+        self.genson = Genson(schema_uri=test_uri)
         self.add_schema({"$schema": 'BAD_URI', "type": "null"})
         self.assertResult({"$schema": test_uri, "type": "null"})
 
