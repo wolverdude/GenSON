@@ -1,9 +1,9 @@
 import unittest
 import json
 from subprocess import Popen, PIPE
-from genson import Genson
+from genson import SchemaBuilder
 
-BASE_SCHEMA = {"$schema": Genson.DEFAULT_URI}
+BASE_SCHEMA = {"$schema": SchemaBuilder.DEFAULT_URI}
 
 binpath = 'bin/genson.py'
 

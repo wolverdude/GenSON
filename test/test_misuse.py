@@ -11,17 +11,17 @@ class TestMisuse(base.GensonTestCase):
     @base.minimum_python(3, 3)
     def test_to_dict_pending_deprecation_warning(self):
         with self.assertWarns(PendingDeprecationWarning):
-            s = Schema()
+            builder = Schema()
         with self.assertWarns(PendingDeprecationWarning):
-            s.add_object('I fart in your general direction!')
-            s.to_dict()
+            builder.add_object('I fart in your general direction!')
+            builder.to_dict()
 
     @base.minimum_python(3, 3)
     def test_recurse_deprecation_warning(self):
         with self.assertWarns(DeprecationWarning):
-            s = Schema()
-            s.add_object('Go away or I shall taunt you a second time!')
-            s.to_dict(recurse=True)
+            builder = Schema()
+            builder.add_object('Go away or I shall taunt you a second time!')
+            builder.to_dict(recurse=True)
 
     @base.minimum_python(3, 3)
     def test_incompatible_schema_warning(self):

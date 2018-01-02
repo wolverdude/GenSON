@@ -2,7 +2,7 @@ import argparse
 import sys
 import re
 import json
-from . import Genson
+from . import SchemaBuilder
 
 DESCRIPTION = """
 Generate one, unified JSON Schema from one or more JSON objects
@@ -14,17 +14,17 @@ def main():
     args = parse_args()
 
     if args.schema_uri:
-        s = Genson(schema_uri=args.schema_uri)
+        builder = SchemaBuilder(schema_uri=args.schema_uri)
     else:
-        s = Genson()
+        builder = SchemaBuilder()
 
     for schema_file in args.schema:
-        add_json_from_file(s, schema_file, args.delimiter, schema=True)
+        add_json_from_file(builder, schema_file, args.delimiter, schema=True)
 
     for object_file in args.object:
-        add_json_from_file(s, object_file, args.delimiter)
+        add_json_from_file(builder, object_file, args.delimiter)
 
-    print(s.to_json(indent=args.indent))
+    print(builder.to_json(indent=args.indent))
 
 
 def parse_args():
@@ -46,7 +46,7 @@ def parse_args():
     parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
                         help='''the value of the '$schema' keyword (defaults
                         to %r or can be specified in a schema with the -s
-                        option)''' % Genson.DEFAULT_URI)
+                        option)''' % SchemaBuilder.DEFAULT_URI)
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
@@ -83,8 +83,8 @@ def get_delim(delim):
     return delim
 
 
-def add_json_from_file(s, fp, delimiter, schema=False):
-    method = getattr(s, 'add_schema' if schema else 'add_object')
+def add_json_from_file(builder, fp, delimiter, schema=False):
+    method = getattr(builder, 'add_schema' if schema else 'add_object')
 
     raw_text = fp.read().strip()
     fp.close()

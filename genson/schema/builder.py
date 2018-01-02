@@ -3,11 +3,11 @@ from warnings import warn
 from .node import SchemaNode
 
 
-class Genson(object):
+class SchemaBuilder(object):
     """
-    ``Genson`` is the basic schema generator class. ``Genson``
-    objects can be loaded up with existing schemas and objects before
-    being serialized.
+    ``SchemaBuilder`` is the basic schema generator class.
+    ``SchemaBuilder`` objects can be loaded up with existing schemas and
+    objects before being serialized.
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
@@ -33,7 +33,7 @@ class Genson(object):
     def add_schema(self, schema):
         """
         Merge in a JSON schema. This can be a ``dict`` or another
-        ``Genson``
+        ``SchemaBuilder``
 
         :param schema: a JSON Schema
 
@@ -41,7 +41,7 @@ class Genson(object):
             There is no schema validation. If you pass in a bad schema,
             you might get back a bad schema.
         """
-        if isinstance(schema, Genson):
+        if isinstance(schema, SchemaBuilder):
             schema_uri = schema.schema_uri
             schema = schema.to_schema()
             if schema_uri is None:
@@ -83,21 +83,21 @@ class Genson(object):
 
     def __len__(self):
         """
-        Number of ``SchemaGenerator`` s at the top level. This is used
+        Number of ``SchemaGenerator``s at the top level. This is used
         mostly to check for emptiness.
         """
         return len(self._root_node)
 
     def __eq__(self, other):
         """
-        Check for equality with another Genson object.
+        Check for equality with another ``SchemaBuilder`` object.
 
-        :param other: another Genson object. Other types are
+        :param other: another ``SchemaBuilder`` object. Other types are
           accepted, but will always return ``False``
         """
         if self is other:
             return True
-        if not isinstance(other, Genson):
+        if not isinstance(other, SchemaBuilder):
             return False
 
         return self._root_node == other._root_node
@@ -112,13 +112,14 @@ class Genson(object):
             return {'$schema': self.schema_uri or self.DEFAULT_URI}
 
 
-class Schema(Genson):
+class Schema(SchemaBuilder):
 
     def __init__(self):
         warn('genson.Schema is deprecated in v1.0, and it may be '
-             'removed in future versions. Use genson.Genson instead.',
+             'removed in future versions. Use genson.SchemaBuilder'
+             'instead.',
              PendingDeprecationWarning)
-        super(Schema, self).__init__(schema_uri=Genson.NULL_URI)
+        super(Schema, self).__init__(schema_uri=SchemaBuilder.NULL_URI)
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '

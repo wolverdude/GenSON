@@ -38,10 +38,10 @@ Interface Changes
 
 There has also been an interface change:
 
-* ``Genson`` is the new ``Schema``
+* ``SchemaBuilder`` is the new ``Schema``
 * ``to_dict()`` is now called ``to_schema()``
 
-To make the transition easier, there is still a ``Schema`` class that wraps ``Genson`` with a backwards-compatibility layer, but you will trigger a ``PendingDeprecationWarning`` if you use it.
+To make the transition easier, there is still a ``Schema`` class that wraps ``SchemaBuilder`` with a backwards-compatibility layer, but you will trigger a ``PendingDeprecationWarning`` if you use it.
 
 Seed Schemas
 ++++++++++++

@@ -1,3 +1,3 @@
-from .schema.builder import Genson, Schema
+from .schema.builder import SchemaBuilder, Schema
 from .schema.node import SchemaNode, SchemaGenerationError
-__all__ = ['Genson', 'SchemaNode', 'SchemaGenerationError', 'Schema']
+__all__ = ['SchemaBuilder', 'SchemaNode', 'SchemaGenerationError', 'Schema']

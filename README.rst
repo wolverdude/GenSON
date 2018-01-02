@@ -85,17 +85,17 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-``Genson`` is the basic schema generator class. ``Genson`` objects can be loaded up with existing schemas and objects before being serialized.
+``SchemaBuilder`` is the basic schema generator class. ``SchemaBuilder`` objects can be loaded up with existing schemas and objects before being serialized.
 
-Genson.__init__(schema_uri=None)
-++++++++++++++++++++++++++++++++++++
+SchemaBuilder.__init__(schema_uri=None)
++++++++++++++++++++++++++++++++++++++++
 
 :param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``. A value of ``False`` or ``None`` will direct Genson to leave out the ``"$schema"`` keyword.
 
-Genson.add_schema(schema)
-+++++++++++++++++++++++++++++
+SchemaBuilder.add_schema(schema)
+++++++++++++++++++++++++++++++++
 
-Merge in a JSON schema. This can be a ``dict`` or another ``Genson``
+Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder``
 
 :param schema: a JSON Schema
 
@@ -103,54 +103,54 @@ Merge in a JSON schema. This can be a ``dict`` or another ``Genson``
     There is no schema validation. If you pass in a bad schema,
     you might get back a bad schema.
 
-Genson.add_object(obj)
-++++++++++++++++++++++++++
+SchemaBuilder.add_object(obj)
++++++++++++++++++++++++++++++
 
 Modify the schema to accomodate an object.
 
 :param obj: any object or scalar that can be serialized in JSON
 
-Genson.to_schema()
-++++++++++++++++++++++
+SchemaBuilder.to_schema()
++++++++++++++++++++++++++
 
 Merges in an existing schema.
 
 :rtype: ``dict``
 
-Genson.to_json()
-++++++++++++++++++++
+SchemaBuilder.to_json()
++++++++++++++++++++++++
 
 Generate a schema and convert it directly to serialized JSON.
 
 :rtype: ``str``
 
-Genson.__eq__(other)
-++++++++++++++++++++++++
+SchemaBuilder.__eq__(other)
++++++++++++++++++++++++++++
 
-Check for equality with another Genson object.
+Check for equality with another ``SchemaBuilder`` object.
 
-:param other: another Genson object. Other types are accepted, but will always return ``False``
+:param other: another ``SchemaBuilder`` object. Other types are accepted, but will always return ``False``
 
 API Usage Example
 +++++++++++++++++
 
 .. code-block:: python
 
-    >>> from genson import Genson
+    >>> from genson import SchemaBuilder
 
-    >>> g = Genson()
-    >>> g.add_schema({"type": "object", "properties": {}})
-    >>> g.add_object({"hi": "there"})
-    >>> g.add_object({"hi": 5})
+    >>> builder = SchemaBuilder()
+    >>> builder.add_schema({"type": "object", "properties": {}})
+    >>> builder.add_object({"hi": "there"})
+    >>> builder.add_object({"hi": 5})
 
-    >>> g.to_schema()
+    >>> builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'object',
      'properties': {
         'hi': {'type': ['integer', 'string']}},
         'required': ['hi']}
 
-    >>> print(g.to_json(indent=2))
+    >>> print(builder.to_json(indent=2))
     {
       "$schema": "http://json-schema.org/schema#",
       "type": "object",
@@ -167,32 +167,32 @@ API Usage Example
       ]
     }
 
-Genson object interaction
-+++++++++++++++++++++++++++++
+SchemaBuilder object interaction
+++++++++++++++++++++++++++++++++
 
-``Genson`` objects can also interact with each other:
+``SchemaBuilder`` objects can also interact with each other:
 
 * You can pass one schema directly to another to merge them.
 * You can compare schema equality directly.
 
 .. code-block:: python
 
-    >>> from genson import Genson
+    >>> from genson import SchemaBuilder
 
-    >>> s1 = Genson()
-    >>> s1.add_schema({"type": "object", "properties": {
+    >>> b1 = SchemaBuilder()
+    >>> b1.add_schema({"type": "object", "properties": {
     ...   "hi": {"type": "string"}}})
-    >>> s2 = Genson()
-    >>> s2.add_schema({"type": "object", "properties": {
+    >>> b2 = SchemaBuilder()
+    >>> b2.add_schema({"type": "object", "properties": {
     ...   "hi": {"type": "integer"}}})
-    >>> s1 == s2
+    >>> b1 == b2
     False
 
-    >>> s1.add_schema(s2)
-    >>> s2.add_schema(s1)
-    >>> s1 == s2
+    >>> b1.add_schema(b2)
+    >>> b2.add_schema(b1)
+    >>> b1 == b2
     True
-    >>> s1.to_schema()
+    >>> b1.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'object',
      'properties': {'hi': {'type': ['integer', 'string']}}}
@@ -238,20 +238,20 @@ By default, GenSON always interprets arrays using list validation, but you can t
 
 .. code-block:: python
 
-    >>> from genson import Genson
+    >>> from genson import SchemaBuilder
 
-    >>> g = Genson()
-    >>> g.add_object(['one', 1])
-    >>> g.to_schema()
+    >>> builder = SchemaBuilder()
+    >>> builder.add_object(['one', 1])
+    >>> builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'array',
      'items': {'type': ['integer', 'string']}}
 
-    >>> g = Genson()
+    >>> builder = SchemaBuilder()
     >>> seed_schema = {'type': 'array', 'items': []}
-    >>> g.add_schema(seed_schema)
-    >>> g.add_object(['one', 1])
-    >>> g.to_schema()
+    >>> builder.add_schema(seed_schema)
+    >>> builder.add_object(['one', 1])
+    >>> builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'array',
      'items': [{'type': 'string'}, {'type': 'integer'}]}
@@ -265,12 +265,12 @@ Support for patternProperties_ is new in version 1; however, since GenSON's defa
 
 .. code-block:: python
 
-    >>> from genson import Genson
+    >>> from genson import SchemaBuilder
 
-    >>> g = Genson()
-    >>> g.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
-    >>> g.add_object({'1': 1, '2': 2, '3': 3})
-    >>> g.to_schema()
+    >>> builder = SchemaBuilder()
+    >>> builder.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
+    >>> builder.add_object({'1': 1, '2': 2, '3': 3})
+    >>> builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#', 'type': 'object', 'patternProperties':  {'^\\d+$': {'type': 'integer'}}}
 
 There are a few gotchas you should be aware of here:
