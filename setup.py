@@ -10,13 +10,7 @@ def get_long_docs(*filenames):
         with open(filename, 'r') as f:
             docs.append(f.read())
 
-    return pypi_safe("\n\n".join(docs))
-
-
-def pypi_safe(rst):
-    """ PyPI is using an unpatched version of Python that doesn't like
-        code-block directives: http://bugs.python.org/issue23063 """
-    return sub('\.\. code-block::.*\n', '::\n', rst)
+    return "\n\n".join(docs)
 
 
 setup(

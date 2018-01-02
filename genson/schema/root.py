@@ -12,10 +12,10 @@ class SchemaRoot(object):
 
     def __init__(self, schema_uri=None):
         """
-        :param schema_uri: description for value of the ``$schema``
-          keyword. If not given, it will use the value of the first
-          available ``$schema`` keyword on an added schema or else the
-          default: ``'http://json-schema.org/schema#'``
+        :param schema_uri: value of the ``$schema`` keyword. If not
+          given, it will use the value of the first available
+          ``$schema`` keyword on an added schema or else the default:
+          ``'http://json-schema.org/schema#'``
         """
         self._root_node = SchemaNode()
         self.schema_uri = schema_uri

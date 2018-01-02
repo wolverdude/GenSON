@@ -42,7 +42,7 @@ The package includes a ``genson`` executable that allows you to access this func
 
     $ genson --help
 
-.. code-block:: none
+.. code-block::
 
     usage: genson [-h] [-a] [-d DELIM] [-i SPACES] [-s SCHEMA] ...
 
@@ -75,45 +75,51 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-.. class:: SchemaRoot(schema_uri=None)
+``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can be loaded up with existing schemas and objects before being serialized.
 
-    ``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can be loaded up with existing schemas and objects before being serialized.
+SchemaRoot.__init__(schema_uri=None)
+++++++++++++++++++++++++++++++++++++
 
-    :param schema_uri: description for value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``
+:param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``
 
-    .. function:: add_schema(schema)
+SchemaRoot.add_schema(schema)
++++++++++++++++++++++++++++++
 
-        Merge in a JSON schema. This can be a ``dict`` or another ``SchemaRoot``
+Merge in a JSON schema. This can be a ``dict`` or another ``SchemaRoot``
 
-        :param schema: a JSON Schema
+:param schema: a JSON Schema
 
-        .. note::
-            There is no schema validation. If you pass in a bad schema,
-            you might get back a bad schema.
+.. note::
+    There is no schema validation. If you pass in a bad schema,
+    you might get back a bad schema.
 
-    .. function:: add_object(obj)
+SchemaRoot.add_object(obj)
+++++++++++++++++++++++++++
 
-        Modify the schema to accomodate an object.
+Modify the schema to accomodate an object.
 
-        :param obj: any object or scalar that can be serialized in JSON
+:param obj: any object or scalar that can be serialized in JSON
 
-    .. function:: to_schema()
+SchemaRoot.to_schema()
+++++++++++++++++++++++
 
-        Merges in an existing schema.
+Merges in an existing schema.
 
-        :rtype: ``dict``
+:rtype: ``dict``
 
-    .. function:: to_json()
+SchemaRoot.to_json()
+++++++++++++++++++++
 
-        Generate a schema and convert it directly to serialized JSON.
+Generate a schema and convert it directly to serialized JSON.
 
-        :rtype: ``str``
+:rtype: ``str``
 
-    .. function:: __eq__(other)
+SchemaRoot.__eq__(other)
+++++++++++++++++++++++++
 
-        Check for equality with another SchemaRoot object.
+Check for equality with another SchemaRoot object.
 
-        :param other: another SchemaRoot object. Other types are accepted, but will always return ``False``
+:param other: another SchemaRoot object. Other types are accepted, but will always return ``False``
 
 API Usage Example
 +++++++++++++++++
@@ -289,8 +295,9 @@ When contributing, please follow these steps:
 2. Make sure your code has test cases written against it.
 3. Make sure all the tests pass.
 4. Lint your code with `Flake8`_.
-5. Add your name to the list of contributers.
-6. Submit a Pull Request.
+5. Ensure the docs are accurate.
+6. Add your name to the list of contributers.
+7. Submit a Pull Request.
 
 Tests
 +++++
