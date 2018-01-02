@@ -12,16 +12,23 @@ class Genson(object):
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
 
-    def __init__(self, schema_uri=None):
+    def __init__(self, schema_uri='DEFAULT'):
         """
         :param schema_uri: value of the ``$schema`` keyword. If not
           given, it will use the value of the first available
           ``$schema`` keyword on an added schema or else the default:
-          ``'http://json-schema.org/schema#'``
+          ``'http://json-schema.org/schema#'``. A value of ``False`` or
+          ``None`` will direct Genson to leave out the ``"$schema"``
+          keyword.
         """
+        if schema_uri is None or schema_uri is False:
+            self.schema_uri = self.NULL_URI
+        elif schema_uri == 'DEFAULT':
+            self.schema_uri = None
+        else:
+            self.schema_uri = schema_uri
 
         self._root_node = SchemaNode()
-        self.schema_uri = schema_uri
 
     def add_schema(self, schema):
         """

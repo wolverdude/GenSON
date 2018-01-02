@@ -13,7 +13,10 @@ and/or JSON Schemas. It's compatible with Draft 4 and above.
 def main():
     args = parse_args()
 
-    s = Genson(schema_uri=args.schema_uri)
+    if args.schema_uri:
+        s = Genson(schema_uri=args.schema_uri)
+    else:
+        s = Genson()
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)

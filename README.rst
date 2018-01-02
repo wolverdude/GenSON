@@ -90,7 +90,7 @@ GenSON Python API
 Genson.__init__(schema_uri=None)
 ++++++++++++++++++++++++++++++++++++
 
-:param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``
+:param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``. A value of ``False`` or ``None`` will direct Genson to leave out the ``"$schema"`` keyword.
 
 Genson.add_schema(schema)
 +++++++++++++++++++++++++++++

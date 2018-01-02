@@ -9,6 +9,10 @@ class TestParams(base.GensonTestCase):
         self._schema = Genson(schema_uri=test_uri)
         self.assertResult({"$schema": test_uri})
 
+    def test_null_uri(self):
+        self._schema = Genson(schema_uri=None)
+        self.assertResult({})
+
 
 class TestMethods(base.GensonTestCase):
 
