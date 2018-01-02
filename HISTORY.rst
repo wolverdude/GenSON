@@ -57,6 +57,7 @@ Other Changes
 * accept schemas without ``"type"`` keyword
 * use ``"anyOf"`` keyword to help combine schemas
 * add ``SchemaGenerationError`` for better error handling
+* empty ``"properties"`` and ``"items"`` are not included in generated schemas
 * ``genson`` executable
 
   * new ``--schema-uri`` option

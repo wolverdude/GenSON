@@ -8,7 +8,7 @@ GenSON
 
 GenSON's core function is to take JSON objects and generate schemas that describe them, but it is unique in its ability to *merge* schemas. It was originally built to describe the common structure of a large number of JSON objects, and it uses its merging ability to generate a single schema from any number of JSON objects and/or schemas.
 
-The generator follows these three rules:
+GenSON's schema builder follows these three rules:
 
 1. *Every* object it is given must validate under the generated schema.
 2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema. (there is one glaring exception to this, detailed `below`_)
@@ -20,9 +20,9 @@ JSON Schema Implementation
 
 **GenSON** is compatible with JSON Schema Draft 4 and above.
 
-It is important to note that the generator uses only a subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it tries to avoid guessing them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
+It is important to note that GenSON uses only a subset of JSON Schema's capabilities. This is mainly because it doesn't know the specifics of your data model, and it tries to avoid guessing them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
-Currently, the generator only deals with these keywords:
+Currently, GenSON only deals with these keywords:
 
 * ``"$schema"``
 * ``"type"``
@@ -32,7 +32,7 @@ Currently, the generator only deals with these keywords:
 * ``"required"``
 * ``"anyOf"``
 
-You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema. Note that ``"$ref"`` and ``id`` are also not supported, so GenSON will not dereference linked nodes when building a schema.
+You should be aware that this limited vocabulary could cause GenSON to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema. Note that ``"$ref"`` and ``id`` are also not supported, so GenSON will not dereference linked nodes when building a schema.
 
 
 Installation
@@ -80,7 +80,9 @@ The package includes a ``genson`` executable that allows you to access this func
       -$ URI, --schema-uri URI
                             the value of the '$schema' keyword (defaults to
                             'http://json-schema.org/schema#' or can be specified
-                            in a schema with the -s option)
+                            in a schema with the -s option). If 'NULL' is passed,
+                            the "$schema" keyword will not be included in the
+                            result.
 
 GenSON Python API
 -----------------
@@ -90,7 +92,7 @@ GenSON Python API
 SchemaBuilder.__init__(schema_uri=None)
 +++++++++++++++++++++++++++++++++++++++
 
-:param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``. A value of ``False`` or ``None`` will direct Genson to leave out the ``"$schema"`` keyword.
+:param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``. A value of ``False`` or ``None`` will direct GenSON to leave out the ``"$schema"`` keyword.
 
 SchemaBuilder.add_schema(schema)
 ++++++++++++++++++++++++++++++++

@@ -18,7 +18,7 @@ class SchemaBuilder(object):
           given, it will use the value of the first available
           ``$schema`` keyword on an added schema or else the default:
           ``'http://json-schema.org/schema#'``. A value of ``False`` or
-          ``None`` will direct Genson to leave out the ``"$schema"``
+          ``None`` will direct GenSON to leave out the ``"$schema"``
           keyword.
         """
         if schema_uri is None or schema_uri is False:

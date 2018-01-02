@@ -44,9 +44,13 @@ def parse_args():
                         help='''file containing a JSON Schema (can be
                         specified multiple times to merge schemas)''')
     parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
+
                         help='''the value of the '$schema' keyword (defaults
-                        to %r or can be specified in a schema with the -s
-                        option)''' % SchemaBuilder.DEFAULT_URI)
+                        to {default!r} or can be specified in a schema with
+                        the -s option). If {null!r} is passed, the "$schema"
+                        keyword will not be included in the result.'''.format(
+                            default=SchemaBuilder.DEFAULT_URI,
+                            null=SchemaBuilder.NULL_URI))
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
