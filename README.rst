@@ -1,3 +1,11 @@
+TODO
+====
+
+* Rename ``SchemaRoot`` => ``Genson``
+* Add ``Schema`` for backwards compatibility
+* Rename ``InvalidSchemaError`` => ``SchemaGenerationError``
+
+
 GenSON
 ======
 
@@ -22,13 +30,15 @@ JSON Schema Implementation
 
 It is important to note that the generator uses only a subset of JSON Schema's capabilities. This is mainly because the generator doesn't know the specifics of your data model, and it tries to avoid guessing them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
-Currently, the generator only deals with 5 keywords:
+Currently, the generator only deals with these keywords:
 
+* ``"$schema"``
 * ``"type"``
 * ``"items"``
 * ``"properties"``
 * ``"patternProperties"``
 * ``"required"``
+* ``"anyOf"``
 
 You should be aware that this limited vocabulary could cause the generator to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema. Note that ``"$ref"`` and ``id`` are also not supported, so GenSON will not dereference linked nodes when building a schema.
 
