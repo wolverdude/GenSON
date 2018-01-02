@@ -2,9 +2,9 @@ import json
 from .node import SchemaNode
 
 
-class SchemaRoot(object):
+class Genson(object):
     """
-    ``SchemaRoot`` is the basic schema generator class. ``SchemaRoot``
+    ``Genson`` is the basic schema generator class. ``Genson``
     objects can be loaded up with existing schemas and objects before
     being serialized.
     """
@@ -23,7 +23,7 @@ class SchemaRoot(object):
     def add_schema(self, schema):
         """
         Merge in a JSON schema. This can be a ``dict`` or another
-        ``SchemaRoot``
+        ``Genson``
 
         :param schema: a JSON Schema
 
@@ -31,7 +31,7 @@ class SchemaRoot(object):
             There is no schema validation. If you pass in a bad schema,
             you might get back a bad schema.
         """
-        if isinstance(schema, SchemaRoot):
+        if isinstance(schema, Genson):
             schema_uri = schema.schema_uri
             schema = schema.to_schema()
             if schema_uri is None:
@@ -80,9 +80,9 @@ class SchemaRoot(object):
 
     def __eq__(self, other):
         """
-        Check for equality with another SchemaRoot object.
+        Check for equality with another Genson object.
 
-        :param other: another SchemaRoot object. Other types are
+        :param other: another Genson object. Other types are
           accepted, but will always return ``False``
         """
         if self is other:

@@ -1,7 +1,7 @@
 TODO
 ====
 
-* Rename ``SchemaRoot`` => ``Genson``
+* Rename ``Genson`` => ``Genson``
 * Add ``Schema`` for backwards compatibility
 * Rename ``InvalidSchemaError`` => ``SchemaGenerationError``
 
@@ -93,17 +93,17 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-``SchemaRoot`` is the basic schema generator class. ``SchemaRoot`` objects can be loaded up with existing schemas and objects before being serialized.
+``Genson`` is the basic schema generator class. ``Genson`` objects can be loaded up with existing schemas and objects before being serialized.
 
-SchemaRoot.__init__(schema_uri=None)
+Genson.__init__(schema_uri=None)
 ++++++++++++++++++++++++++++++++++++
 
 :param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``
 
-SchemaRoot.add_schema(schema)
+Genson.add_schema(schema)
 +++++++++++++++++++++++++++++
 
-Merge in a JSON schema. This can be a ``dict`` or another ``SchemaRoot``
+Merge in a JSON schema. This can be a ``dict`` or another ``Genson``
 
 :param schema: a JSON Schema
 
@@ -111,42 +111,42 @@ Merge in a JSON schema. This can be a ``dict`` or another ``SchemaRoot``
     There is no schema validation. If you pass in a bad schema,
     you might get back a bad schema.
 
-SchemaRoot.add_object(obj)
+Genson.add_object(obj)
 ++++++++++++++++++++++++++
 
 Modify the schema to accomodate an object.
 
 :param obj: any object or scalar that can be serialized in JSON
 
-SchemaRoot.to_schema()
+Genson.to_schema()
 ++++++++++++++++++++++
 
 Merges in an existing schema.
 
 :rtype: ``dict``
 
-SchemaRoot.to_json()
+Genson.to_json()
 ++++++++++++++++++++
 
 Generate a schema and convert it directly to serialized JSON.
 
 :rtype: ``str``
 
-SchemaRoot.__eq__(other)
+Genson.__eq__(other)
 ++++++++++++++++++++++++
 
-Check for equality with another SchemaRoot object.
+Check for equality with another Genson object.
 
-:param other: another SchemaRoot object. Other types are accepted, but will always return ``False``
+:param other: another Genson object. Other types are accepted, but will always return ``False``
 
 API Usage Example
 +++++++++++++++++
 
 .. code-block:: python
 
-    >>> from genson import SchemaRoot
+    >>> from genson import Genson
 
-    >>> s = SchemaRoot()
+    >>> s = Genson()
     >>> s.add_schema({"type": "object", "properties": {}})
     >>> s.add_object({"hi": "there"})
     >>> s.add_object({"hi": 5})
@@ -175,22 +175,22 @@ API Usage Example
       ]
     }
 
-SchemaRoot object interaction
+Genson object interaction
 +++++++++++++++++++++++++++++
 
-``SchemaRoot`` objects can also interact with each other:
+``Genson`` objects can also interact with each other:
 
 * You can pass one schema directly to another to merge them.
 * You can compare schema equality directly.
 
 .. code-block:: python
 
-    >>> from genson import SchemaRoot
+    >>> from genson import Genson
 
-    >>> s1 = SchemaRoot()
+    >>> s1 = Genson()
     >>> s1.add_schema({"type": "object", "properties": {
     ...   "hi": {"type": "string"}}})
-    >>> s2 = SchemaRoot()
+    >>> s2 = Genson()
     >>> s2.add_schema({"type": "object", "properties": {
     ...   "hi": {"type": "integer"}}})
     >>> s1 == s2
@@ -246,16 +246,16 @@ By default, GenSON always interprets arrays using list validation, but you can t
 
 .. code-block:: python
 
-    >>> from genson import SchemaRoot
+    >>> from genson import Genson
 
-    >>> s = SchemaRoot()
+    >>> s = Genson()
     >>> s.add_object(['one', 1])
     >>> s.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'array',
      'items': {'type': ['integer', 'string']}}
 
-    >>> s = SchemaRoot()
+    >>> s = Genson()
     >>> seed_schema = {'type': 'array', 'items': []}
     >>> s.add_schema(seed_schema)
     >>> s.add_object(['one', 1])
@@ -273,9 +273,9 @@ Support for patternProperties_ is new in version 1; however, since GenSON's defa
 
 .. code-block:: python
 
-    >>> from genson import SchemaRoot
+    >>> from genson import Genson
 
-    >>> s = SchemaRoot()
+    >>> s = Genson()
     >>> s.add_schema({'type': 'object', 'patternProperties': {r'^\d+$': None}})
     >>> s.add_object({'1': 1, '2': 2, '3': 3})
     >>> s.to_schema()

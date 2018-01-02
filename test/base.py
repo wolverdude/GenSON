@@ -1,6 +1,6 @@
 import unittest
 import jsonschema
-from genson import SchemaNode, SchemaRoot
+from genson import SchemaNode, Genson
 
 
 class SchemaTestCase(unittest.TestCase):
@@ -49,8 +49,8 @@ class SchemaNodeTestCase(SchemaTestCase):
     CLASS = SchemaNode
 
 
-class SchemaRootTestCase(SchemaTestCase):
-    CLASS = SchemaRoot
+class GensonTestCase(SchemaTestCase):
+    CLASS = Genson
 
 
 # backwards compatibility

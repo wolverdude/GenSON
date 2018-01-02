@@ -27,7 +27,7 @@ setup(
     author_email='wolverton' '.' 'jr' '@' 'gmail' '.' 'com',
     packages=['genson'],
     include_package_data=True,
-    entry_points={'console_scripts': ['genson = genson.genson:main']},
+    entry_points={'console_scripts': ['genson = genson.cli:main']},
     zip_safe=True,
     classifiers=[
         'Development Status :: 4 - Beta',

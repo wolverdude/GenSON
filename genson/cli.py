@@ -2,7 +2,7 @@ import argparse
 import sys
 import re
 import json
-from . import SchemaRoot
+from . import Genson
 
 DESCRIPTION = """
 Generate one, unified JSON Schema from one or more JSON objects
@@ -13,7 +13,7 @@ and/or JSON Schemas. It's compatible with Draft 4 and above.
 def main():
     args = parse_args()
 
-    s = SchemaRoot(schema_uri=args.schema_uri)
+    s = Genson(schema_uri=args.schema_uri)
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)
@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
                         help='''the value of the '$schema' keyword (defaults
                         to %r or can be specified in a schema with the -s
-                        option)''' % SchemaRoot.DEFAULT_URI)
+                        option)''' % Genson.DEFAULT_URI)
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
