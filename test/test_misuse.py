@@ -1,11 +1,11 @@
 from . import base
-from genson import InvalidSchemaError
+from genson import SchemaGenerationError
 
 
 class TestMisuse(base.GensonTestCase):
 
     def test_schema_with_bad_type_error(self):
-        with self.assertRaises(InvalidSchemaError):
+        with self.assertRaises(SchemaGenerationError):
             self.add_schema({'type': 'african swallow'})
 
     @base.minimum_python(3, 3)

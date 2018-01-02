@@ -1,9 +1,7 @@
 TODO
 ====
 
-* Rename ``Genson`` => ``Genson``
 * Add ``Schema`` for backwards compatibility
-* Rename ``InvalidSchemaError`` => ``SchemaGenerationError``
 
 
 GenSON

@@ -1,7 +1,7 @@
 from .generators import GENERATORS, Typeless
 
 
-class InvalidSchemaError(RuntimeError):
+class SchemaGenerationError(RuntimeError):
     pass
 
 
@@ -141,6 +141,6 @@ class SchemaNode(object):
             return schema_generator
 
         # no match found, raise an error
-        raise InvalidSchemaError(
+        raise SchemaGenerationError(
             'Could not find matching type for {0}: {1!r}'.format(
                 kind, schema_or_obj))

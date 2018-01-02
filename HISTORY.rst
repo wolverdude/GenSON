@@ -56,6 +56,7 @@ Other Changes
 * include ``"$schema"`` keyword
 * accept schemas without ``"type"`` keyword
 * use ``"anyOf"`` keyword to help combine schemas
+* add ``SchemaGenerationError`` for better error handling
 * ``genson`` executable
 
   * new ``--schema-uri`` option
