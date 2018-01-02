@@ -1,7 +1,7 @@
 from . import base
 
 
-class TestBasicTypes(base.SchemaTestCase):
+class TestBasicTypes(base.SchemaNodeTestCase):
 
     def test_no_object(self):
         self.assertResult({})
@@ -27,15 +27,14 @@ class TestBasicTypes(base.SchemaTestCase):
         self.assertResult({"type": "null"})
 
 
-class TestArrayMerge(base.SchemaTestCase):
+class TestArrayList(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
-        self.set_schema_options(merge_arrays=True)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
         self.add_object([])
-        self.assertResult({"type": "array", "items": {}})
+        self.assertResult({"type": "array"})
 
     def test_monotype(self):
         self.add_object(["spam", "spam", "spam", "eggs", "spam"])
@@ -66,17 +65,26 @@ class TestArrayMerge(base.SchemaTestCase):
         })
 
 
-class TestArrayPositional(base.SchemaTestCase):
+class TestArrayTuple(base.SchemaNodeTestCase):
 
     def setUp(self):
-        base.SchemaTestCase.setUp(self)
-        self.set_schema_options(merge_arrays=False)
+        base.SchemaNodeTestCase.setUp(self)
 
     def test_empty(self):
+        self.add_schema({"type": "array", "items": []})
+
         self.add_object([])
-        self.assertResult({"type": "array"})
+        self.assertResult({"type": "array", "items": [{}]})
+
+    def test_empty_schema(self):
+        self.add_schema({"type": "array", "items": [{}]})
+
+        self.add_object([])
+        self.assertResult({"type": "array", "items": [{}]})
 
     def test_multitype(self):
+        self.add_schema({"type": "array", "items": []})
+
         self.add_object([1, "2", "3", None, False])
 
         self.assertResult({
@@ -91,6 +99,9 @@ class TestArrayPositional(base.SchemaTestCase):
         self.assertObjectDoesNotValidate([1, 2, "3", None, False])
 
     def test_nested(self):
+        self.add_schema(
+            {"type": "array", "items": {"type": "array", "items": []}})
+
         self.add_object([
             ["surprise"],
             ["fear", "surprise"],
@@ -100,46 +111,23 @@ class TestArrayPositional(base.SchemaTestCase):
         ])
         self.assertResult({
             "type": "array",
-            "items": [
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"}
-                    ]
-                },
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"},
-                        {"type": "string"}
-                    ]
-                },
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"}
-                    ]
-                },
-                {
-                    "type": "array",
-                    "items": [
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"},
-                        {"type": "string"}
-                    ]
-                },
-            ]
+            "items": {
+                "type": "array",
+                "items": [
+                    {"type": "string"},
+                    {"type": "string"},
+                    {"type": "string"},
+                    {"type": "string"}
+                ]
+            }
         })
 
 
-class TestObject(base.SchemaTestCase):
+class TestObject(base.SchemaNodeTestCase):
 
     def test_empty_object(self):
         self.add_object({})
-        self.assertResult({"type": "object", "properties": {}})
+        self.assertResult({"type": "object"})
 
     def test_basic_object(self):
         self.add_object({
@@ -157,7 +145,7 @@ class TestObject(base.SchemaTestCase):
         })
 
 
-class TestComplex(base.SchemaTestCase):
+class TestComplex(base.SchemaNodeTestCase):
 
     def test_array_in_object(self):
         self.add_object({"a": "b", "c": [1, 2, 3]})

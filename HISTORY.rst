@@ -6,7 +6,6 @@ History
 
 * Initial release.
 
-
 0.2.0
 -----
 
@@ -38,3 +37,12 @@ History
 0.2.3
 -----
 * **Docs**: add installation instructions
+
+1.0.0
+-----
+
+* rename ``Schema`` => ``SchemaRoot``
+* ``to_dict`` => ``to_schema``
+* Remove `merge_arrays` option in favor of list/tuple matching
+* Refactor of the generator engine to use the strategy pattern
+* remove `recurse` option

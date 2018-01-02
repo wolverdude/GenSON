@@ -2,19 +2,18 @@ import argparse
 import sys
 import re
 import json
-from .generator import Schema
+from . import SchemaRoot
 
 DESCRIPTION = """
-Generate one, unified JSON Schema from one or more
-JSON objects and/or JSON Schemas.
-(uses Draft 4 - http://json-schema.org/draft-04/schema)
+Generate one, unified JSON Schema from one or more JSON objects
+and/or JSON Schemas. It's compatible with Draft 4 and above.
 """
 
 
 def main():
     args = parse_args()
 
-    s = Schema(merge_arrays=args.no_merge_arrays)
+    s = SchemaRoot(schema_uri=args.schema_uri)
 
     for schema_file in args.schema:
         add_json_from_file(s, schema_file, args.delimiter, schema=True)
@@ -27,16 +26,13 @@ def main():
 
 def parse_args():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-a', '--no-merge-arrays', action='store_false',
-                        help='''generate a different subschema for each element
-                        in an array rather than merging them all into one''')
     parser.add_argument('-d', '--delimiter', metavar='DELIM',
                         help='''set a delimiter - Use this option if the
                         input files contain multiple JSON objects/schemas.
                         You can pass any string. A few cases ('newline', 'tab',
-                        'space') will get converted to a whitespace character,
-                        and if empty string ('') is passed, the parser will
-                        try to auto-detect where the boundary is.''')
+                        'space') will get converted to a whitespace
+                        character. If this option is omitted, the parser
+                        will try to auto-detect boundaries''')
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
                         help='''pretty-print the output, indenting SPACES
                         spaces''')
@@ -44,18 +40,28 @@ def parse_args():
                         type=argparse.FileType('r'),
                         help='''file containing a JSON Schema (can be
                         specified multiple times to merge schemas)''')
+    parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
+                        help='''the value of the '$schema' keyword (defaults
+                        to %r or can be specified in a schema with the -s
+                        option)''' % SchemaRoot.DEFAULT_URI)
     parser.add_argument('object', nargs=argparse.REMAINDER,
                         type=argparse.FileType('r'), help='''files containing
                         JSON objects (defaults to stdin if no arguments
-                        are passed and the -s option is not present)''')
+                        are passed)''')
 
     args = parser.parse_args()
 
     args.delimiter = get_delim(args.delimiter)
 
     # default to stdin if no objects or schemas
-    if not args.object and not args.schema:
-        args.object.append(get_stdin())
+    if not args.object and not sys.stdin.isatty():
+        args.object.append(sys.stdin)
+
+    if not args.schema and not args.object:
+        print('GenSON: noting to do - no schemas or objects given\n')
+
+        parser.print_help()
+        sys.exit(1)
 
     return args
 
@@ -74,15 +80,6 @@ def get_delim(delim):
     return delim
 
 
-def get_stdin():
-    """
-    Grab stdin, printing simple instructions if it's interactive.
-    """
-    if sys.stdin.isatty():
-        print('Enter a JSON object, then press ctrl-D')
-    return sys.stdin
-
-
 def add_json_from_file(s, fp, delimiter, schema=False):
     method = getattr(s, 'add_schema' if schema else 'add_object')
 
@@ -94,9 +91,7 @@ def add_json_from_file(s, fp, delimiter, schema=False):
 
 
 def get_json_strings(raw_text, delim):
-    if delim is None:
-        json_strings = [raw_text]
-    elif delim == '':
+    if delim is None or delim == '':
         json_strings = detect_json_strings(raw_text)
     else:
         json_strings = raw_text.split(delim)
@@ -113,12 +108,10 @@ def detect_json_strings(raw_text):
     """
     strings = re.split('}\s*(?={)', raw_text)
 
-    json_strings = []
-    for string in strings:
-        # put back the stripped character
-        json_strings.append(string + '}')
+    # put back the stripped character
+    json_strings = [string + '}' for string in strings[:-1]]
 
     # the last one doesn't need to be modified
-    json_strings[-1] = strings[-1]
+    json_strings.append(strings[-1])
 
     return json_strings
