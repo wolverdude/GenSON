@@ -1,4 +1,5 @@
 import json
+from warnings import warn
 from .node import SchemaNode
 
 
@@ -9,6 +10,7 @@ class Genson(object):
     being serialized.
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
+    NULL_URI = 'NULL'
 
     def __init__(self, schema_uri=None):
         """
@@ -17,6 +19,7 @@ class Genson(object):
           ``$schema`` keyword on an added schema or else the default:
           ``'http://json-schema.org/schema#'``
         """
+
         self._root_node = SchemaNode()
         self.schema_uri = schema_uri
 
@@ -87,7 +90,7 @@ class Genson(object):
         """
         if self is other:
             return True
-        if not isinstance(other, type(self)):
+        if not isinstance(other, Genson):
             return False
 
         return self._root_node == other._root_node
@@ -96,4 +99,25 @@ class Genson(object):
         return not self.__eq__(other)
 
     def _base_schema(self):
-        return {'$schema': self.schema_uri or self.DEFAULT_URI}
+        if self.schema_uri == self.NULL_URI:
+            return {}
+        else:
+            return {'$schema': self.schema_uri or self.DEFAULT_URI}
+
+
+class Schema(Genson):
+
+    def __init__(self):
+        warn('genson.Schema is deprecated in v1.0, and it may be '
+             'removed in future versions. Use genson.Genson instead.',
+             PendingDeprecationWarning)
+        super(Schema, self).__init__(schema_uri=Genson.NULL_URI)
+
+    def to_dict(self, recurse='DEPRECATED'):
+        warn('#to_dict is deprecated in v1.0, and it may be removed in '
+             'future versions. Use #to_schema instead.',
+             PendingDeprecationWarning)
+        if recurse != 'DEPRECATED':
+            warn('the `recurse` option for #to_dict does nothing in v1.0',
+                 DeprecationWarning)
+        return self.to_schema()

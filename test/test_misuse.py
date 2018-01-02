@@ -1,5 +1,5 @@
 from . import base
-from genson import SchemaGenerationError
+from genson import Schema, SchemaGenerationError
 
 
 class TestMisuse(base.GensonTestCase):
@@ -11,14 +11,17 @@ class TestMisuse(base.GensonTestCase):
     @base.minimum_python(3, 3)
     def test_to_dict_pending_deprecation_warning(self):
         with self.assertWarns(PendingDeprecationWarning):
-            self.add_object('I fart in your general direction!')
-            self._schema.to_dict()
+            s = Schema()
+        with self.assertWarns(PendingDeprecationWarning):
+            s.add_object('I fart in your general direction!')
+            s.to_dict()
 
     @base.minimum_python(3, 3)
     def test_recurse_deprecation_warning(self):
         with self.assertWarns(DeprecationWarning):
-            self.add_object('Go away or I shall taunt you a second time!')
-            self._schema.to_dict(recurse=True)
+            s = Schema()
+            s.add_object('Go away or I shall taunt you a second time!')
+            s.to_dict(recurse=True)
 
     @base.minimum_python(3, 3)
     def test_incompatible_schema_warning(self):

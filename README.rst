@@ -1,9 +1,3 @@
-TODO
-====
-
-* Add ``Schema`` for backwards compatibility
-
-
 GenSON
 ======
 
