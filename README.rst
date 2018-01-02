@@ -89,6 +89,39 @@ GenSON Python API
 
 ``SchemaBuilder`` is the basic schema generator class. ``SchemaBuilder`` objects can be loaded up with existing schemas and objects before being serialized.
 
+.. code-block:: python
+
+    >>> from genson import SchemaBuilder
+
+    >>> builder = SchemaBuilder()
+    >>> builder.add_schema({"type": "object", "properties": {}})
+    >>> builder.add_object({"hi": "there"})
+    >>> builder.add_object({"hi": 5})
+
+    >>> builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'object',
+     'properties': {
+        'hi': {'type': ['integer', 'string']}},
+        'required': ['hi']}
+
+    >>> print(builder.to_json(indent=2))
+    {
+      "$schema": "http://json-schema.org/schema#",
+      "type": "object",
+      "properties": {
+        "hi": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      },
+      "required": [
+        "hi"
+      ]
+    }
+
 SchemaBuilder.__init__(schema_uri=None)
 +++++++++++++++++++++++++++++++++++++++
 
@@ -132,42 +165,6 @@ SchemaBuilder.__eq__(other)
 Check for equality with another ``SchemaBuilder`` object.
 
 :param other: another ``SchemaBuilder`` object. Other types are accepted, but will always return ``False``
-
-API Usage Example
-+++++++++++++++++
-
-.. code-block:: python
-
-    >>> from genson import SchemaBuilder
-
-    >>> builder = SchemaBuilder()
-    >>> builder.add_schema({"type": "object", "properties": {}})
-    >>> builder.add_object({"hi": "there"})
-    >>> builder.add_object({"hi": 5})
-
-    >>> builder.to_schema()
-    {'$schema': 'http://json-schema.org/schema#',
-     'type': 'object',
-     'properties': {
-        'hi': {'type': ['integer', 'string']}},
-        'required': ['hi']}
-
-    >>> print(builder.to_json(indent=2))
-    {
-      "$schema": "http://json-schema.org/schema#",
-      "type": "object",
-      "properties": {
-        "hi": {
-          "type": [
-            "integer",
-            "string"
-          ]
-        }
-      },
-      "required": [
-        "hi"
-      ]
-    }
 
 SchemaBuilder object interaction
 ++++++++++++++++++++++++++++++++
