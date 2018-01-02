@@ -3,7 +3,7 @@ import jsonschema
 from genson import SchemaNode, SchemaBuilder
 
 
-class GensonTestCase(unittest.TestCase):
+class SchemaBuilderTestCase(unittest.TestCase):
 
     def setUp(self):
         self.builder = self.CLASS()
@@ -45,11 +45,11 @@ class GensonTestCase(unittest.TestCase):
             jsonschema.Draft4Validator(compiled_schema).validate(obj)
 
 
-class SchemaNodeTestCase(GensonTestCase):
+class SchemaNodeTestCase(SchemaBuilderTestCase):
     CLASS = SchemaNode
 
 
-class SchemaBuilderTestCase(GensonTestCase):
+class SchemaBuilderTestCase(SchemaBuilderTestCase):
     CLASS = SchemaBuilder
 
 
