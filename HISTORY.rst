@@ -31,12 +31,14 @@ History
 1.0.0
 -----
 
-This version was a total overhaul. The main change was to split ``Schema`` into two separate classes: ``SchemaNode`` to manage the tree structure and ``SchemaGenerator`` for the schema generation logic. This makes it simpler to add more complicated functionality by having different types of ``SchemaGenerator`` to handle the different kinds of schemas.
+This version was a total overhaul. The main change was to split Schema into three separate classes, making it simpler to add more complicated functionality by having different generator types to handle the different schema types.
+
+1. ``SchemaNode`` to manage the tree structure
+2. ``SchemaGenerator`` for the schema generation logic
+3. ``SchemaBuilder`` to manage the public API
 
 Interface Changes
 +++++++++++++++++
-
-There has also been an interface change:
 
 * ``SchemaBuilder`` is the new ``Schema``
 * ``to_dict()`` is now called ``to_schema()``
