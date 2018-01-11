@@ -6,8 +6,8 @@ from .node import SchemaNode
 class SchemaBuilder(object):
     """
     ``SchemaBuilder`` is the basic schema generator class.
-    ``SchemaBuilder`` objects can be loaded up with existing schemas and
-    objects before being serialized.
+    ``SchemaBuilder`` instances can be loaded up with existing schemas
+    and objects before being serialized.
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
@@ -65,7 +65,7 @@ class SchemaBuilder(object):
 
     def to_schema(self):
         """
-        Merges in an existing schema.
+        Generate a schema based on previous inputs.
 
         :rtype: ``dict``
         """

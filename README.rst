@@ -87,7 +87,7 @@ The package includes a ``genson`` executable that allows you to access this func
 GenSON Python API
 -----------------
 
-``SchemaBuilder`` is the basic schema generator class. ``SchemaBuilder`` objects can be loaded up with existing schemas and objects before being serialized.
+``SchemaBuilder`` is the basic schema generator class. ``SchemaBuilder`` instances can be loaded up with existing schemas and objects before being serialized.
 
 .. code-block:: python
 
@@ -148,7 +148,7 @@ Modify the schema to accomodate an object.
 SchemaBuilder.to_schema()
 +++++++++++++++++++++++++
 
-Merges in an existing schema.
+Generate a schema based on previous inputs.
 
 :rtype: ``dict``
 
