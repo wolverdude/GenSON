@@ -43,6 +43,26 @@ class TestType(base.SchemaNodeTestCase):
         self.assertResult({"type": "boolean", "title": "Gruyere"})
 
 
+class TestRequired(base.SchemaNodeTestCase):
+
+    def test_combines(self):
+        schema1 = {"type": "object", "required": [
+            "series of statements", "definite proposition"]}
+        schema2 = {"type": "object", "required": ["definite proposition"]}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult({"type": "object", "required": [
+            "definite proposition"]})
+
+    def test_no_first(self):
+        schema1 = {"type": "object"}
+        schema2 = {"type": "object", "required": ["definite proposition"]}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult({"type": "object", "required": [
+            "definite proposition"]})
+
+
 class TestAnyOf(base.SchemaNodeTestCase):
 
     def test_multi_type(self):
