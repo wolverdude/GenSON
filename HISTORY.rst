@@ -64,3 +64,9 @@ Other Changes
 
   * new ``--schema-uri`` option
   * auto-detect object boundaries by default
+
+1.0.1
+-----
+
+* **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error.
+* **Docs**: fix mislabeled method
