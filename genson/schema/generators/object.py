@@ -36,7 +36,10 @@ class Object(SchemaGenerator):
                 if subschema is not None:
                     subnode.add_schema(subschema)
         if 'required' in schema:
-            self._required &= set(schema['required'])
+            if self._required is None:
+                self._required = set(schema['required'])
+            else:
+                self._required &= set(schema['required'])
 
     def add_object(self, obj):
         properties = set()
@@ -52,10 +55,10 @@ class Object(SchemaGenerator):
                 properties.add(prop)
                 self._properties[prop].add_object(subobj)
 
-        if self._required:
-            self._required &= properties
-        else:
+        if self._required is None:
             self._required = properties
+        else:
+            self._required &= properties
 
     def _matching_pattern(self, prop):
         for pattern in self._pattern_properties.keys():
