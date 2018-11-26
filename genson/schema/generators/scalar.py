@@ -47,8 +47,8 @@ class Number(SchemaGenerator):
     converts from `integer` to `number` when a float object or a
     number schema is added
     """
-    JS_TYPES = ('integer', 'number')
-    PYTHON_TYPES = (int, float)
+    JS_TYPES = ('integer', 'number', 'number')
+    PYTHON_TYPES = (int, float, long)
 
     @classmethod
     def match_schema(cls, schema):
