@@ -27,6 +27,14 @@ class TestBasicTypes(base.SchemaNodeTestCase):
         self.assertResult({"type": "null"})
 
 
+class TestPython27Long(TestBasicTypes):
+    def test_long(self):
+        import sys
+        if (sys.version_info < (3,)):
+            self.add_object(1l)
+            self.assertResult({"type": "integer"})
+
+
 class TestArrayList(base.SchemaNodeTestCase):
 
     def setUp(self):
