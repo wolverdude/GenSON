@@ -1,3 +1,4 @@
+import sys
 from .base import SchemaGenerator, TypedSchemaGenerator
 
 
@@ -47,9 +48,7 @@ class Number(SchemaGenerator):
     converts from `integer` to `number` when a float object or a
     number schema is added
     """
-    import sys
-    JS_TYPES = ('integer', 'number', 'integer')
-    if (sys.version_info < (3,)):
+    if sys.version_info < (3,):
         JS_TYPES = ('integer', 'number', 'integer')
         PYTHON_TYPES = (int, float, long)
     else:
