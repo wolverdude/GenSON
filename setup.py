@@ -14,7 +14,7 @@ def get_long_docs(*filenames):
 
 setup(
     name='genson',
-    version='1.0.1',
+    version='1.0.2',
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
     keywords=['json', 'schema', 'json-schema', 'jsonschema', 'object',

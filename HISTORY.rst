@@ -70,3 +70,9 @@ Other Changes
 
 * **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error.
 * **Docs**: fix mislabeled method
+
+1.0.2
+-----
+
+* add support for ``long`` integers in Python 2.7.
+* updated test-skipping decorator to use standard version requirement strings.
