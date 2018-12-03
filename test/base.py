@@ -1,6 +1,10 @@
+import sys
+from pkg_resources import Requirement
 import unittest
 import jsonschema
 from genson import SchemaNode, SchemaBuilder
+
+PYTHON_VERSION = sys.version[:sys.version.find(' ')]
 
 
 class SchemaBuilderTestCase(unittest.TestCase):
@@ -55,12 +59,12 @@ class SchemaBuilderTestCase(SchemaBuilderTestCase):
 
 # backwards compatibility
 
-def minimum_python(*version):
+def only_for_python_version(version_specifier):
+    req = Requirement.parse('python%s' % version_specifier)
     def handler(func):
-        from sys import version_info
-        if version_info >= version:
+        if PYTHON_VERSION in req:
             return func
         else:
-            return unittest.skip('Python version under test less than %s'
-                                 % '.'.join(map(str, version)))(func)
+            return unittest.skip('Python version %s does not match: %s'
+                                 % (PYTHON_VERSION, req))(func)
     return handler
