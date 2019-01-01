@@ -50,7 +50,7 @@ class Number(SchemaGenerator):
     """
     if sys.version_info < (3,):
         JS_TYPES = ('integer', 'number', 'integer')
-        PYTHON_TYPES = (int, float, long)
+        PYTHON_TYPES = (int, float, long)  # noqa
     else:
         JS_TYPES = ('integer', 'number')
         PYTHON_TYPES = (int, float)
