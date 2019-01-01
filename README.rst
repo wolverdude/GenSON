@@ -282,7 +282,7 @@ There are a few gotchas you should be aware of here:
 Typeless Schemas
 ++++++++++++++++
 
-In version 0, GenSON did not accept a schema without a type, but in order to be flexible in the support of seed schemas, support was added for version 1. However, GenSON violates rule #2 in its handling of typeless schemas. Any object will validate under an empty schema, but GenSON incorporates typeless schemas into the first-available typed schema, and since typed schemas are stricter than typless ones, so objects that would validate under an added schema will not validate under the result.
+In version 0, GenSON did not accept a schema without a type, but in order to be flexible in the support of seed schemas, support was added for version 1. However, GenSON violates rule #2 in its handling of typeless schemas. Any object will validate under an empty schema, but GenSON incorporates typeless schemas into the first-available typed schema, and since typed schemas are stricter than typless ones, objects that would validate under an added schema will not validate under the result.
 
 Compatibility
 -------------
