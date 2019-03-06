@@ -61,7 +61,8 @@ class Number(SchemaGenerator):
 
     @classmethod
     def match_object(cls, obj):
-        return isinstance(obj, cls.PYTHON_TYPES)
+        # cannot use isinstance() because boolean is a subtype of int
+        return type(obj) in cls.PYTHON_TYPES
 
     def __init__(self, node_class):
         super(__class__, self).__init__(node_class)
