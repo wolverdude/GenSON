@@ -7,7 +7,7 @@ from genson import SchemaNode, SchemaBuilder
 PYTHON_VERSION = sys.version[:sys.version.find(' ')]
 
 
-class _BaseTestCase(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
         self.builder = self.CLASS()
@@ -49,11 +49,11 @@ class _BaseTestCase(unittest.TestCase):
             jsonschema.Draft7Validator(compiled_schema).validate(obj)
 
 
-class SchemaNodeTestCase(_BaseTestCase):
+class SchemaNodeTestCase(BaseTestCase):
     CLASS = SchemaNode
 
 
-class SchemaBuilderTestCase(_BaseTestCase):
+class SchemaBuilderTestCase(BaseTestCase):
     CLASS = SchemaBuilder
 
 

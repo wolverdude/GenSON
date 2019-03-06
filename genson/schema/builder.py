@@ -140,4 +140,6 @@ def custom_schema_builder(custom_generators):
         GENERATORS = tuple(list(custom_generators) + list(SchemaNode.GENERATORS))
 
     class _CustomSchemaBuilder(SchemaBuilder):
-        NODE_CLASS = SchemaNode
+        NODE_CLASS = _CustomSchemaNode
+
+    return _CustomSchemaBuilder
