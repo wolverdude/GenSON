@@ -14,12 +14,12 @@ def get_long_docs(*filenames):
 
 setup(
     name='genson',
-    version='1.0.2',
+    version='1.1.0',
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
     keywords=['json', 'schema', 'json-schema', 'jsonschema', 'object',
               'generate', 'generator', 'builder', 'merge',
-              'draft 4', 'validate', 'validation'],
+              'draft 7', 'validate', 'validation'],
     url='https://github.com/wolverdude/genson/',
     download_url='https://github.com/wolverdude/GenSON/tarball/v0.2s.0',
     license='MIT',
@@ -49,7 +49,7 @@ setup(
         'Topic :: Utilities',
     ],
     tests_require=[
-        'jsonschema>=2.5.1',
+        'jsonschema>=3.0.1',
     ],
     test_suite='test',
 )

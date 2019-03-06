@@ -26,11 +26,11 @@ class _BaseTestCase(unittest.TestCase):
         self._schemas.append(schema)
 
     def assertObjectValidates(self, obj):
-        jsonschema.Draft4Validator(self.builder.to_schema()).validate(obj)
+        jsonschema.Draft7Validator(self.builder.to_schema()).validate(obj)
 
     def assertObjectDoesNotValidate(self, obj):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
-            jsonschema.Draft4Validator(self.builder.to_schema()).validate(obj)
+            jsonschema.Draft7Validator(self.builder.to_schema()).validate(obj)
 
     def assertResult(self, expected):
         self.assertEqual(self.builder.to_schema(), expected)
@@ -41,12 +41,12 @@ class _BaseTestCase(unittest.TestCase):
         self._assertComponentObjectsValidate()
 
     def _assertSchemaIsValid(self):
-        jsonschema.Draft4Validator.check_schema(self.builder.to_schema())
+        jsonschema.Draft7Validator.check_schema(self.builder.to_schema())
 
     def _assertComponentObjectsValidate(self):
         compiled_schema = self.builder.to_schema()
         for obj in self._objects:
-            jsonschema.Draft4Validator(compiled_schema).validate(obj)
+            jsonschema.Draft7Validator(compiled_schema).validate(obj)
 
 
 class SchemaNodeTestCase(_BaseTestCase):
