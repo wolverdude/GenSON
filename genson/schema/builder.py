@@ -11,6 +11,7 @@ class SchemaBuilder(object):
     """
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
+    NODE_CLASS = SchemaNode
 
     def __init__(self, schema_uri='DEFAULT'):
         """
@@ -28,7 +29,10 @@ class SchemaBuilder(object):
         else:
             self.schema_uri = schema_uri
 
-        self._root_node = SchemaNode()
+        if not issubclass(self.NODE_CLASS, SchemaNode):
+            raise TypeError("NODE_CLASS %r is not a subclass of SchemaNode"
+                            % self.NODE_CLASS)
+        self._root_node = self.NODE_CLASS()
 
     def add_schema(self, schema):
         """
@@ -129,3 +133,11 @@ class Schema(SchemaBuilder):
             warn('the `recurse` option for #to_dict does nothing in v1.0',
                  DeprecationWarning)
         return self.to_schema()
+
+
+def custom_schema_builder(custom_generators):
+    class _CustomSchemaNode(SchemaNode):
+        GENERATORS = tuple(list(custom_generators) + list(SchemaNode.GENERATORS))
+
+    class _CustomSchemaBuilder(SchemaBuilder):
+        NODE_CLASS = SchemaNode
