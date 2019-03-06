@@ -61,9 +61,10 @@ class Number(SchemaGenerator):
 
     @classmethod
     def match_object(cls, obj):
-        return type(obj) in cls.PYTHON_TYPES
+        return isinstance(obj, cls.PYTHON_TYPES)
 
-    def init(self):
+    def __init__(self, node_class):
+        super(__class__, self).__init__(node_class)
         self._type = 'integer'
 
     def add_schema(self, schema):

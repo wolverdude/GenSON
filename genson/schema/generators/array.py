@@ -29,8 +29,9 @@ class List(BaseArray):
         return schema.get('type') == 'array' \
             and isinstance(schema.get('items', {}), dict)
 
-    def init(self):
-        self._items = self.node_class()
+    def __init__(self, node_class):
+        super(__class__, self).__init__(node_class)
+        self._items = node_class()
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)
@@ -55,8 +56,9 @@ class Tuple(BaseArray):
         return schema.get('type') == 'array' \
             and isinstance(schema.get('items'), list)
 
-    def init(self):
-        self._items = [self.node_class()]
+    def __init__(self, node_class):
+        super(__class__, self).__init__(node_class)
+        self._items = [node_class()]
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)

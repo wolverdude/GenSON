@@ -17,10 +17,11 @@ class Object(SchemaGenerator):
     def match_object(obj):
         return isinstance(obj, dict)
 
-    def init(self):
-        cls = self.node_class
-        self._properties = defaultdict(cls)
-        self._pattern_properties = defaultdict(cls)
+    def __init__(self, node_class):
+        super(__class__, self).__init__(node_class)
+
+        self._properties = defaultdict(node_class)
+        self._pattern_properties = defaultdict(node_class)
         self._required = None
         self._include_empty_required = False
 

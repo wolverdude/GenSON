@@ -9,7 +9,7 @@ class SchemaGenerator(object):
 
     * match_schema
     * match_object
-    * init
+    * __init__
     * add_schema
     * add_object
     * to_schema
@@ -27,10 +27,6 @@ class SchemaGenerator(object):
     def __init__(self, node_class):
         self.node_class = node_class
         self._extra_keywords = {}
-        self.init()
-
-    def init(self):
-        pass
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)
