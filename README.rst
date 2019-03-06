@@ -18,7 +18,7 @@ GenSON's schema builder follows these three rules:
 JSON Schema Implementation
 --------------------------
 
-**GenSON** is compatible with JSON Schema Draft 4 and above.
+**GenSON** is compatible with JSON Schema Draft 6 and above.
 
 It is important to note that GenSON uses only a subset of JSON Schema's capabilities. This is mainly because it doesn't know the specifics of your data model, and it tries to avoid guessing them. Its purpose is to generate the basic structure so that you can skip the boilerplate and focus on the details of the schema.
 
@@ -57,7 +57,7 @@ The package includes a ``genson`` executable that allows you to access this func
     usage: genson.py [-h] [-d DELIM] [-i SPACES] [-s SCHEMA] [-$ URI] ...
 
     Generate one, unified JSON Schema from one or more JSON objects and/or JSON
-    Schemas. It's compatible with Draft 4 and above.
+    Schemas. It's compatible with Draft 6 and above.
 
     positional arguments:
       object                files containing JSON objects (defaults to stdin if no
