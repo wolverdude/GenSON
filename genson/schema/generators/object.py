@@ -18,7 +18,7 @@ class Object(SchemaGenerator):
         return isinstance(obj, dict)
 
     def __init__(self, node_class):
-        super(__class__, self).__init__(node_class)
+        super(Object, self).__init__(node_class)
 
         self._properties = defaultdict(node_class)
         self._pattern_properties = defaultdict(node_class)

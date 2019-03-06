@@ -30,7 +30,7 @@ class List(BaseArray):
             and isinstance(schema.get('items', {}), dict)
 
     def __init__(self, node_class):
-        super(__class__, self).__init__(node_class)
+        super(List, self).__init__(node_class)
         self._items = node_class()
 
     def add_schema(self, schema):
@@ -57,7 +57,7 @@ class Tuple(BaseArray):
             and isinstance(schema.get('items'), list)
 
     def __init__(self, node_class):
-        super(__class__, self).__init__(node_class)
+        super(Tuple, self).__init__(node_class)
         self._items = [node_class()]
 
     def add_schema(self, schema):
