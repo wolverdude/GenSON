@@ -1,6 +1,12 @@
 History
 =======
 
+1.1.0
+-----
+
+* preserve empty ``required`` arrays (see issue #25).
+* drop support for JSON-Schma Draft 4 because it doesn't allow empty ``required`` arrays.
+
 1.0.2
 -----
 
