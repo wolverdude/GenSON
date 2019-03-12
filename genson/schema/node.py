@@ -84,13 +84,7 @@ class SchemaNode(object):
         return len(self._schema_generators)
 
     def __eq__(self, other):
-        # TODO: find a more optimal way to do this
-        if self is other:
-            return True
-        if not isinstance(other, type(self)):
-            return False
-
-        return self.to_schema() == other.to_schema()
+        return (isinstance(other, self.__class__) and self.__dict__ == other.__dict__)
 
     def __ne__(self, other):
         return not self.__eq__(other)
