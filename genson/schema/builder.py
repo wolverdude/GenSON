@@ -95,12 +95,7 @@ class SchemaBuilder(object):
         :param other: another ``SchemaBuilder`` object. Other types are
           accepted, but will always return ``False``
         """
-        if self is other:
-            return True
-        if not isinstance(other, SchemaBuilder):
-            return False
-
-        return self._root_node == other._root_node
+        return (isinstance(other, self.__class__) and self.__dict__ == other.__dict__)
 
     def __ne__(self, other):
         return not self.__eq__(other)
