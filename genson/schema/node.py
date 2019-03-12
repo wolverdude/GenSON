@@ -38,7 +38,7 @@ class SchemaNode(object):
 
     def add_object(self, obj):
         """
-        Modify the schema to accomodate an object.
+        Modify the schema to accommodate an object.
 
         arguments:
         * `obj` (required - `dict`):
