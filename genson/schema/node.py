@@ -1,4 +1,4 @@
-from .generators import GENERATORS, Typeless
+from .generators import BASIC_SCHEMA_TYPES, Typeless
 
 
 class SchemaGenerationError(RuntimeError):
@@ -10,10 +10,10 @@ class SchemaNode(object):
     Basic schema generator class. SchemaNode objects can be loaded
     up with existing schemas and objects before being serialized.
     """
-    GENERATORS = GENERATORS
+    SCHEMA_TYPES = BASIC_SCHEMA_TYPES
 
     def __init__(self):
-        self._schema_generators = []
+        self._active_schema_types = []
 
     def add_schema(self, schema):
         """
@@ -30,8 +30,8 @@ class SchemaNode(object):
 
         for subschema in self._get_subschemas(schema):
             # delegate to SchemaType object
-            schema_generator = self._get_generator_for_schema(subschema)
-            schema_generator.add_schema(subschema)
+            active_schema_type = self._get_schema_type_for_schema(subschema)
+            active_schema_type.add_schema(subschema)
 
         # return self for easy method chaining
         return self
@@ -46,8 +46,8 @@ class SchemaNode(object):
         """
 
         # delegate to SchemaType object
-        schema_generator = self._get_generator_for_object(obj)
-        schema_generator.add_object(obj)
+        active_schema_type = self._get_schema_type_for_object(obj)
+        active_schema_type.add_object(obj)
 
         # return self for easy method chaining
         return self
@@ -58,8 +58,8 @@ class SchemaNode(object):
         """
         types = set()
         generated_schemas = []
-        for schema_generator in self._schema_generators:
-            generated_schema = schema_generator.to_schema()
+        for active_schema_type in self._active_schema_types:
+            generated_schema = active_schema_type.to_schema()
             if len(generated_schema) == 1 and 'type' in generated_schema:
                 types.add(generated_schema['type'])
             else:
@@ -81,7 +81,7 @@ class SchemaNode(object):
         return result_schema
 
     def __len__(self):
-        return len(self._schema_generators)
+        return len(self._active_schema_types)
 
     def __eq__(self, other):
         # TODO: find a more optimal way to do this
@@ -107,40 +107,40 @@ class SchemaNode(object):
         else:
             return [schema]
 
-    def _get_generator_for_schema(self, schema):
-        return self._get_generator_for_('schema', schema)
+    def _get_schema_type_for_schema(self, schema):
+        return self._get_schema_type_for_('schema', schema)
 
-    def _get_generator_for_object(self, obj):
-        return self._get_generator_for_('object', obj)
+    def _get_schema_type_for_object(self, obj):
+        return self._get_schema_type_for_('object', obj)
 
-    def _get_generator_for_(self, kind, schema_or_obj):
+    def _get_schema_type_for_(self, kind, schema_or_obj):
         # check existing types
-        for schema_generator in self._schema_generators:
-            if getattr(schema_generator, 'match_' + kind)(schema_or_obj):
-                return schema_generator
+        for active_schema_type in self._active_schema_types:
+            if getattr(active_schema_type, 'match_' + kind)(schema_or_obj):
+                return active_schema_type
 
         # check all potential types
-        for schema_generator_class in self.GENERATORS:
-            if getattr(schema_generator_class, 'match_' + kind)(schema_or_obj):
-                schema_generator = schema_generator_class(type(self))
+        for schema_type in self.SCHEMA_TYPES:
+            if getattr(schema_type, 'match_' + kind)(schema_or_obj):
+                active_schema_type = schema_type(self.__class__)
 
                 # incorporate typeless generator if it exists
-                if self._schema_generators and \
-                        isinstance(self._schema_generators[-1], Typeless):
-                    typeless = self._schema_generators.pop()
-                    schema_generator.add_schema(typeless.to_schema())
+                if self._active_schema_types and \
+                        isinstance(self._active_schema_types[-1], Typeless):
+                    typeless = self._active_schema_types.pop()
+                    active_schema_type.add_schema(typeless.to_schema())
 
-                self._schema_generators.append(schema_generator)
-                return schema_generator
+                self._active_schema_types.append(active_schema_type)
+                return active_schema_type
 
         # no match found, if typeless add to first generator
         if kind == 'schema' and Typeless.match_schema(schema_or_obj):
-            if not self._schema_generators:
-                self._schema_generators.append(Typeless(type(self)))
-            schema_generator = self._schema_generators[0]
-            return schema_generator
+            if not self._active_schema_types:
+                self._active_schema_types.append(Typeless(self.__class__))
+            active_schema_type = self._active_schema_types[0]
+            return active_schema_type
 
         # no match found, raise an error
         raise SchemaGenerationError(
-            'Could not find matching type for {0}: {1!r}'.format(
+            'Could not find matching schema type for {0}: {1!r}'.format(
                 kind, schema_or_obj))

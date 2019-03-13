@@ -14,7 +14,7 @@ class SchemaGenerator(object):
     * add_object
     * to_schema
     """
-    KEYWORDS = ('type')
+    KEYWORDS = ('type',)
 
     @classmethod
     def match_schema(cls, schema):

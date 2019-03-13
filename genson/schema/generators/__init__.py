@@ -8,7 +8,7 @@ from .scalar import (
 from .array import List, Tuple
 from .object import Object
 
-GENERATORS = (
+BASIC_SCHEMA_TYPES = (
     Null,
     Boolean,
     Number,
@@ -18,4 +18,14 @@ GENERATORS = (
     Object
 )
 
-__all__ = tuple(list(GENERATORS) + [Typeless, GENERATORS])
+__all__ = (
+    'Null',
+    'Boolean',
+    'Number',
+    'String',
+    'List',
+    'Tuple',
+    'Object',
+    'Typeless',
+    'BASIC_SCHEMA_TYPES'
+)
