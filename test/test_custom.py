@@ -1,4 +1,4 @@
-from genson import custom_schema_builder
+from genson import SchemaBuilder
 from genson.schema.generators import Number
 from . import base
 
@@ -11,7 +11,8 @@ class MaxTenGenerator(Number):
         return schema
 
 
-MaxTenSchemaBuilder = custom_schema_builder([MaxTenGenerator])
+class MaxTenSchemaBuilder(SchemaBuilder):
+    SCHEMA_TYPES = (MaxTenGenerator,)
 
 
 class TestBasicTypes(base.SchemaNodeTestCase):

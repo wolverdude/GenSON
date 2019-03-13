@@ -1,6 +1,7 @@
 import json
 from warnings import warn
 from .node import SchemaNode
+from .generators import BASIC_SCHEMA_TYPES
 
 
 class SchemaBuilder(object):
@@ -12,6 +13,7 @@ class SchemaBuilder(object):
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
     NODE_CLASS = SchemaNode
+    SCHEMA_TYPES = BASIC_SCHEMA_TYPES
 
     def __init__(self, schema_uri='DEFAULT'):
         """
@@ -116,6 +118,29 @@ class SchemaBuilder(object):
             return {'$schema': self.schema_uri or self.DEFAULT_URI}
 
 
+class _MetaSchemaBuilder(type):
+    def __init__(cls, name, bases, attrs):
+        super(_MetaSchemaBuilder, cls).__init__(name, bases, attrs)
+
+        if 'SCHEMA_TYPES' in attrs:
+            schema_types = list(attrs['SCHEMA_TYPES'])
+            for base in bases:
+                schema_types += list(getattr(base, 'SCHEMA_TYPES', []))
+
+            unique_schema_types = []
+            for schema_type in schema_types:
+                if schema_type not in unique_schema_types:
+                    unique_schema_types.append(schema_type)
+
+            cls.SCHEMA_TYPES = tuple(unique_schema_types)
+            cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
+                                  {'SCHEMA_TYPES': cls.SCHEMA_TYPES})
+
+
+# apply metaclass in python 2/3 compatible manner
+SchemaBuilder = _MetaSchemaBuilder('SchemaBuilder', (SchemaBuilder,), {})
+
+
 class Schema(SchemaBuilder):
 
     def __init__(self):
@@ -133,13 +158,3 @@ class Schema(SchemaBuilder):
             warn('the `recurse` option for #to_dict does nothing in v1.0',
                  DeprecationWarning)
         return self.to_schema()
-
-
-def custom_schema_builder(custom_generators):
-    class _CustomSchemaNode(SchemaNode):
-        GENERATORS = tuple(list(custom_generators) + list(SchemaNode.GENERATORS))
-
-    class _CustomSchemaBuilder(SchemaBuilder):
-        NODE_CLASS = _CustomSchemaNode
-
-    return _CustomSchemaBuilder
