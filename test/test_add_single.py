@@ -50,6 +50,21 @@ class TestAnyOf(base.SchemaNodeTestCase):
         self.add_schema(schema)
         self.assertResult(schema)
 
+    def test_recursive(self):
+        schema = {"anyOf": [
+            {"type": ["integer", "string"]},
+            {"anyOf": [
+                {"type": "null"},
+                {"type": "boolean", "title": "Gruyere"}
+            ]}
+        ]}
+        self.add_schema(schema)
+        # recursive anyOf will be flattened
+        self.assertResult({"anyOf": [
+            {"type": ["integer", "null", "string"]},
+            {"type": "boolean", "title": "Gruyere"}
+        ]})
+
 
 class TestRequired(base.SchemaNodeTestCase):
 

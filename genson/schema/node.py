@@ -99,7 +99,8 @@ class SchemaNode(object):
 
     def _get_subschemas(self, schema):
         if 'anyOf' in schema:
-            return schema['anyOf']
+            return [subschema for anyof in schema['anyOf']
+                    for subschema in self._get_subschemas(anyof)]
         elif isinstance(schema.get('type'), list):
             other_keys = dict(schema)
             del other_keys['type']
