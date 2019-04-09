@@ -57,7 +57,7 @@ class SchemaBuilder(object):
 
     def add_object(self, obj):
         """
-        Modify the schema to accomodate an object.
+        Modify the schema to accommodate an object.
 
         :param obj: any object or scalar that can be serialized in JSON
         """

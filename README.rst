@@ -141,7 +141,7 @@ Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder``
 SchemaBuilder.add_object(obj)
 +++++++++++++++++++++++++++++
 
-Modify the schema to accomodate an object.
+Modify the schema to accommodate an object.
 
 :param obj: any object or scalar that can be serialized in JSON
 
