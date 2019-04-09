@@ -54,13 +54,28 @@ class TestRequired(base.SchemaNodeTestCase):
         self.assertResult({"type": "object", "required": [
             "definite proposition"]})
 
-    def test_no_first(self):
+    def test_ignores_missing(self):
         schema1 = {"type": "object"}
         schema2 = {"type": "object", "required": ["definite proposition"]}
         self.add_schema(schema1)
         self.add_schema(schema2)
         self.assertResult({"type": "object", "required": [
             "definite proposition"]})
+
+    def test_omits_all_missing(self):
+        schema1 = {"type": "object", "properties": {"spam": {}}}
+        schema2 = {"type": "object", "properties": {"eggs": {}}}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult(
+            {"type": "object", "properties": {"spam": {}, "eggs": {}}})
+
+    def test_maintains_empty(self):
+        schema1 = {"type": "object", "required": ["series of statements"]}
+        schema2 = {"type": "object", "required": ["definite proposition"]}
+        self.add_schema(schema1)
+        self.add_schema(schema2)
+        self.assertResult({"type": "object", "required": []})
 
 
 class TestAnyOf(base.SchemaNodeTestCase):

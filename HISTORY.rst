@@ -1,32 +1,23 @@
 History
 =======
 
-0.1.0 (2014-11-29)
-------------------
-
-* Initial release.
-
-0.2.0
+1.1.0
 -----
 
-* **Bugfix**: Options were not propagated down to subschemas.
-* **Bugfix**: Empty arrays resulted in invalid schemas because it still included an ``items`` property.
-* **Bugfix**: ``items`` was being set to a list even when ``merge_arrays`` was set to ``True``. This resulted in overly permissive schemas because ``items`` are matched optionally by default.
-* **Improvement**: Positional Array Matching - In order to be more consistent with the way JSON Schema works, the alternate to ``merge_arrays`` is no longer never to merge list items, but instead to merge them based on their position in the list.
-* **Improvement**: Schema Incompatibility Warning - A schema incompatibility used to cause a fatal error with a nondescript warning. The message has been improved and it has been reduced to a warning.
+* preserve empty ``required`` arrays (see issue #25).
+* drop support for JSON-Schma Draft 4 because it doesn't allow empty ``required`` arrays.
 
-0.2.1
+1.0.2
 -----
-* **Bugfix**: ``add_schema`` failed when adding list-style array schemas.
-* **Bugfix**: typo in readme
 
-0.2.2
------
-* **Docs**: Python 3.6 is now explicitly tested and listed as compatible.
+* add support for ``long`` integers in Python 2.7.
+* updated test-skipping decorator to use standard version requirement strings.
 
-0.2.3
+1.0.1
 -----
-* **Docs**: add installation instructions
+
+* **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error.
+* **Docs**: fix mislabeled method
 
 1.0.0
 -----
@@ -65,14 +56,29 @@ Other Changes
   * new ``--schema-uri`` option
   * auto-detect object boundaries by default
 
-1.0.1
+0.2.3
+-----
+* **Docs**: add installation instructions
+
+0.2.2
+-----
+* **Docs**: Python 3.6 is now explicitly tested and listed as compatible.
+
+0.2.1
+-----
+* **Bugfix**: ``add_schema`` failed when adding list-style array schemas.
+* **Bugfix**: typo in readme
+
+0.2.0
 -----
 
-* **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error.
-* **Docs**: fix mislabeled method
+* **Bugfix**: Options were not propagated down to subschemas.
+* **Bugfix**: Empty arrays resulted in invalid schemas because it still included an ``items`` property.
+* **Bugfix**: ``items`` was being set to a list even when ``merge_arrays`` was set to ``True``. This resulted in overly permissive schemas because ``items`` are matched optionally by default.
+* **Improvement**: Positional Array Matching - In order to be more consistent with the way JSON Schema works, the alternate to ``merge_arrays`` is no longer never to merge list items, but instead to merge them based on their position in the list.
+* **Improvement**: Schema Incompatibility Warning - A schema incompatibility used to cause a fatal error with a nondescript warning. The message has been improved and it has been reduced to a warning.
 
-1.0.2
------
+0.1.0 (2014-11-29)
+------------------
 
-* add support for ``long`` integers in Python 2.7.
-* updated test-skipping decorator to use standard version requirement strings.
+* Initial release.

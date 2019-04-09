@@ -51,6 +51,14 @@ class TestAnyOf(base.SchemaNodeTestCase):
         self.assertResult(schema)
 
 
+class TestRequired(base.SchemaNodeTestCase):
+
+    def test_preserves_empty_required(self):
+        schema = {'type': 'object', 'required': []}
+        self.add_schema(schema)
+        self.assertResult(schema)
+
+
 class TestPreserveExtraKeywords(base.SchemaNodeTestCase):
 
     def test_basic_type(self):

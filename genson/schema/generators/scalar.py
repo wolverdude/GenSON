@@ -61,9 +61,11 @@ class Number(SchemaGenerator):
 
     @classmethod
     def match_object(cls, obj):
+        # cannot use isinstance() because boolean is a subtype of int
         return type(obj) in cls.PYTHON_TYPES
 
-    def init(self):
+    def __init__(self, node_class):
+        super(Number, self).__init__(node_class)
         self._type = 'integer'
 
     def add_schema(self, schema):

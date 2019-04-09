@@ -17,11 +17,13 @@ class Object(SchemaGenerator):
     def match_object(obj):
         return isinstance(obj, dict)
 
-    def init(self):
-        cls = self.node_class
-        self._properties = defaultdict(lambda: cls())
-        self._pattern_properties = defaultdict(lambda: cls())
+    def __init__(self, node_class):
+        super(Object, self).__init__(node_class)
+
+        self._properties = defaultdict(node_class)
+        self._pattern_properties = defaultdict(node_class)
         self._required = None
+        self._include_empty_required = False
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)
@@ -36,6 +38,7 @@ class Object(SchemaGenerator):
                 if subschema is not None:
                     subnode.add_schema(subschema)
         if 'required' in schema:
+            self._include_empty_required = True
             if self._required is None:
                 self._required = set(schema['required'])
             else:
@@ -81,7 +84,7 @@ class Object(SchemaGenerator):
         if self._pattern_properties:
             schema['patternProperties'] = self._properties_to_schema(
                 self._pattern_properties)
-        if self._required:
+        if self._required or self._include_empty_required:
             schema['required'] = sorted(self._required)
         return schema
 
