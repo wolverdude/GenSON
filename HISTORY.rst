@@ -4,8 +4,9 @@ History
 1.1.0
 -----
 
-* preserve empty ``required`` arrays (see issue #25).
-* drop support for JSON-Schma Draft 4 because it doesn't allow empty ``required`` arrays.
+* drop support for JSON-Schma Draft 4 (because it doesn't allow empty ``required`` arrays).
+* **Bugfix**: preserve empty ``required`` arrays (fixes #25).
+* **Bugfix**: handle nested ``anyOf`` keywords (fixes #35).
 
 1.0.2
 -----
