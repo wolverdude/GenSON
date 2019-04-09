@@ -4,20 +4,22 @@ History
 1.1.0
 -----
 
-* drop support for JSON-Schma Draft 4 (because it doesn't allow empty ``required`` arrays).
-* **Bugfix**: preserve empty ``required`` arrays (fixes #25).
-* **Bugfix**: handle nested ``anyOf`` keywords (fixes #35).
+* add support for Python 3.7
+* drop support for Python 3.3
+* drop support for JSON-Schema Draft 4 (because it doesn't allow empty ``required`` arrays)
+* **Bugfix**: preserve empty ``required`` arrays (fixes #25)
+* **Bugfix**: handle nested ``anyOf`` keywords (fixes #35)
 
 1.0.2
 -----
 
-* add support for ``long`` integers in Python 2.7.
-* updated test-skipping decorator to use standard version requirement strings.
+* add support for ``long`` integers in Python 2.7
+* update test-skipping decorator to use standard version requirement strings
 
 1.0.1
 -----
 
-* **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error.
+* **Bugfix**: seeding an object schema with a ``"required"`` keyword caused an error
 * **Docs**: fix mislabeled method
 
 1.0.0
@@ -67,7 +69,7 @@ Other Changes
 
 0.2.1
 -----
-* **Bugfix**: ``add_schema`` failed when adding list-style array schemas.
+* **Bugfix**: ``add_schema`` failed when adding list-style array schemas
 * **Bugfix**: typo in readme
 
 0.2.0
@@ -82,4 +84,4 @@ Other Changes
 0.1.0 (2014-11-29)
 ------------------
 
-* Initial release.
+* Initial release
