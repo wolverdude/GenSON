@@ -3,7 +3,7 @@ from .base import SchemaStrategy
 
 class BaseArray(SchemaStrategy):
     """
-    abstract array schema generator
+    abstract array schema strategy
     """
     KEYWORDS = ('type', 'items')
 
@@ -21,8 +21,8 @@ class BaseArray(SchemaStrategy):
 
 class List(BaseArray):
     """
-    generator for list-style array schemas. This is the default
-    generator for arrays.
+    strategy for list-style array schemas. This is the default
+    strategy for arrays.
     """
     @staticmethod
     def match_schema(schema):
@@ -48,7 +48,7 @@ class List(BaseArray):
 
 class Tuple(BaseArray):
     """
-    generator for tuple-style array schemas. These will always have
+    strategy for tuple-style array schemas. These will always have
     an items key to preserve the fact that it's a tuple.
     """
     @staticmethod

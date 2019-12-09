@@ -4,7 +4,7 @@ from warnings import warn
 
 class SchemaStrategy(object):
     """
-    base schema generator. This contains the common interface for
+    base schema strategy. This contains the common interface for
     all subclasses:
 
     * match_schema
@@ -57,7 +57,7 @@ class SchemaStrategy(object):
 
 class TypedSchemaStrategy(SchemaStrategy):
     """
-    base schema generator class for scalar types. Subclasses define
+    base schema strategy class for scalar types. Subclasses define
     these two class constants:
 
     * `JS_TYPE`: a valid value of the `type` keyword

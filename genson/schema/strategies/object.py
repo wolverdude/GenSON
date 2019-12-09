@@ -5,7 +5,7 @@ from .base import SchemaStrategy
 
 class Object(SchemaStrategy):
     """
-    object schema generator
+    object schema strategy
     """
     KEYWORDS = ('type', 'properties', 'patternProperties', 'required')
 

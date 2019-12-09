@@ -4,9 +4,9 @@ from .base import SchemaStrategy, TypedSchemaStrategy
 
 class Typeless(SchemaStrategy):
     """
-    schema generator for schemas with no type. This is only used when
-    there is no other active generator, and it will be merged into the
-    first typed generator that gets added.
+    schema strategy for schemas with no type. This is only used when
+    there is no other active strategy, and it will be merged into the
+    first typed strategy that gets added.
     """
 
     @classmethod
@@ -20,7 +20,7 @@ class Typeless(SchemaStrategy):
 
 class Null(TypedSchemaStrategy):
     """
-    generator for null schemas
+    strategy for null schemas
     """
     JS_TYPE = 'null'
     PYTHON_TYPE = type(None)
@@ -28,7 +28,7 @@ class Null(TypedSchemaStrategy):
 
 class Boolean(TypedSchemaStrategy):
     """
-    generator for boolean schemas
+    strategy for boolean schemas
     """
     JS_TYPE = 'boolean'
     PYTHON_TYPE = bool
@@ -36,7 +36,7 @@ class Boolean(TypedSchemaStrategy):
 
 class String(TypedSchemaStrategy):
     """
-    generator for string schemas - works for ascii and unicode strings
+    strategy for string schemas - works for ascii and unicode strings
     """
     JS_TYPE = 'string'
     PYTHON_TYPE = (str, type(u''))
@@ -44,7 +44,7 @@ class String(TypedSchemaStrategy):
 
 class Number(SchemaStrategy):
     """
-    generator for integer and number schemas. It automatically
+    strategy for integer and number schemas. It automatically
     converts from `integer` to `number` when a float object or a
     number schema is added
     """
