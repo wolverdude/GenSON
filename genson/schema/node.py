@@ -84,10 +84,9 @@ class SchemaNode(object):
         return len(self._active_strategies)
 
     def __eq__(self, other):
-        return (isinstance(other, self.__class__) and self.__dict__ == other.__dict__)
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        """ Required for SchemaBuilder.__eq__ to work properly """
+        return (isinstance(other, self.__class__)
+                and self.__dict__ == other.__dict__)
 
     # private methods
 

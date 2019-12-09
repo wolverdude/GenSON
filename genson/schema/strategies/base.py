@@ -13,6 +13,7 @@ class SchemaStrategy(object):
     * add_schema
     * add_object
     * to_schema
+    * __eq__
     """
     KEYWORDS = ('type',)
 
@@ -47,6 +48,11 @@ class SchemaStrategy(object):
 
     def to_schema(self):
         return copy(self._extra_keywords)
+
+    def __eq__(self, other):
+        """ Required for SchemaBuilder.__eq__ to work properly """
+        return (isinstance(other, self.__class__)
+                and self.__dict__ == other.__dict__)
 
 
 class TypedSchemaStrategy(SchemaStrategy):

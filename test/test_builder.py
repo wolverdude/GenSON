@@ -81,3 +81,10 @@ class TestInteraction(base.SchemaBuilderTestCase):
         b2 = SchemaBuilder()
         b2.add_object(1)
         self.assertEqual(b1, b2)
+
+    def test_ne(self):
+        b1 = SchemaBuilder()
+        b1.add_object(1)
+        b2 = SchemaBuilder()
+        b2.add_object('one')
+        self.assertNotEqual(b1, b2)
