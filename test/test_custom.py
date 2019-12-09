@@ -2,17 +2,17 @@ from genson import SchemaBuilder
 from genson.schema.generators import Number
 from . import base
 
-class MaxTenGenerator(Number):
+class MaxTenStrategy(Number):
     KEYWORDS = tuple(list(Number.KEYWORDS) + ['maximum'])
 
     def to_schema(self):
-        schema = super(MaxTenGenerator, self).to_schema()
+        schema = super(MaxTenStrategy, self).to_schema()
         schema['maximum'] = 10
         return schema
 
 
 class MaxTenSchemaBuilder(SchemaBuilder):
-    SCHEMA_TYPES = (MaxTenGenerator,)
+    STRATEGIES = (MaxTenStrategy,)
 
 
 class TestBasicTypes(base.SchemaNodeTestCase):

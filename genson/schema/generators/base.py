@@ -2,7 +2,7 @@ from copy import copy
 from warnings import warn
 
 
-class SchemaGenerator(object):
+class SchemaStrategy(object):
     """
     base schema generator. This contains the common interface for
     all subclasses:
@@ -49,7 +49,7 @@ class SchemaGenerator(object):
         return copy(self._extra_keywords)
 
 
-class TypedSchemaGenerator(SchemaGenerator):
+class TypedSchemaStrategy(SchemaStrategy):
     """
     base schema generator class for scalar types. Subclasses define
     these two class constants:
@@ -67,6 +67,6 @@ class TypedSchemaGenerator(SchemaGenerator):
         return isinstance(obj, cls.PYTHON_TYPE)
 
     def to_schema(self):
-        schema = super(TypedSchemaGenerator, self).to_schema()
+        schema = super(TypedSchemaStrategy, self).to_schema()
         schema['type'] = self.JS_TYPE
         return schema

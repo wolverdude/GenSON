@@ -1,7 +1,7 @@
 import json
 from warnings import warn
 from .node import SchemaNode
-from .generators import BASIC_SCHEMA_TYPES
+from .generators import BASIC_SCHEMA_STRATEGIES
 
 
 class SchemaBuilder(object):
@@ -13,7 +13,7 @@ class SchemaBuilder(object):
     DEFAULT_URI = 'http://json-schema.org/schema#'
     NULL_URI = 'NULL'
     NODE_CLASS = SchemaNode
-    SCHEMA_TYPES = BASIC_SCHEMA_TYPES
+    STRATEGIES = BASIC_SCHEMA_STRATEGIES
 
     def __init__(self, schema_uri='DEFAULT'):
         """
@@ -89,7 +89,7 @@ class SchemaBuilder(object):
 
     def __len__(self):
         """
-        Number of ``SchemaGenerator``s at the top level. This is used
+        Number of ``SchemaStrategy``s at the top level. This is used
         mostly to check for emptiness.
         """
         return len(self._root_node)
@@ -122,19 +122,19 @@ class _MetaSchemaBuilder(type):
     def __init__(cls, name, bases, attrs):
         super(_MetaSchemaBuilder, cls).__init__(name, bases, attrs)
 
-        if 'SCHEMA_TYPES' in attrs:
-            schema_types = list(attrs['SCHEMA_TYPES'])
+        if 'STRATEGIES' in attrs:
+            schema_types = list(attrs['STRATEGIES'])
             for base in bases:
-                schema_types += list(getattr(base, 'SCHEMA_TYPES', []))
+                schema_types += list(getattr(base, 'STRATEGIES', []))
 
             unique_schema_types = []
             for schema_type in schema_types:
                 if schema_type not in unique_schema_types:
                     unique_schema_types.append(schema_type)
 
-            cls.SCHEMA_TYPES = tuple(unique_schema_types)
+            cls.STRATEGIES = tuple(unique_schema_types)
             cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
-                                  {'SCHEMA_TYPES': cls.SCHEMA_TYPES})
+                                  {'STRATEGIES': cls.STRATEGIES})
 
 
 # apply metaclass in python 2/3 compatible manner

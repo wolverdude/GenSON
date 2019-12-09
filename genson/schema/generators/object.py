@@ -1,9 +1,9 @@
 from collections import defaultdict
 from re import search
-from .base import SchemaGenerator
+from .base import SchemaStrategy
 
 
-class Object(SchemaGenerator):
+class Object(SchemaStrategy):
     """
     object schema generator
     """

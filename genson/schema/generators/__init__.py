@@ -8,7 +8,7 @@ from .scalar import (
 from .array import List, Tuple
 from .object import Object
 
-BASIC_SCHEMA_TYPES = (
+BASIC_SCHEMA_STRATEGIES = (
     Null,
     Boolean,
     Number,
@@ -27,5 +27,5 @@ __all__ = (
     'Tuple',
     'Object',
     'Typeless',
-    'BASIC_SCHEMA_TYPES'
+    'BASIC_SCHEMA_STRATEGIES'
 )

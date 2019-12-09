@@ -1,7 +1,7 @@
-from .base import SchemaGenerator
+from .base import SchemaStrategy
 
 
-class BaseArray(SchemaGenerator):
+class BaseArray(SchemaStrategy):
     """
     abstract array schema generator
     """

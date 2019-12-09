@@ -1,8 +1,8 @@
 import sys
-from .base import SchemaGenerator, TypedSchemaGenerator
+from .base import SchemaStrategy, TypedSchemaStrategy
 
 
-class Typeless(SchemaGenerator):
+class Typeless(SchemaStrategy):
     """
     schema generator for schemas with no type. This is only used when
     there is no other active generator, and it will be merged into the
@@ -18,7 +18,7 @@ class Typeless(SchemaGenerator):
         return False
 
 
-class Null(TypedSchemaGenerator):
+class Null(TypedSchemaStrategy):
     """
     generator for null schemas
     """
@@ -26,7 +26,7 @@ class Null(TypedSchemaGenerator):
     PYTHON_TYPE = type(None)
 
 
-class Boolean(TypedSchemaGenerator):
+class Boolean(TypedSchemaStrategy):
     """
     generator for boolean schemas
     """
@@ -34,7 +34,7 @@ class Boolean(TypedSchemaGenerator):
     PYTHON_TYPE = bool
 
 
-class String(TypedSchemaGenerator):
+class String(TypedSchemaStrategy):
     """
     generator for string schemas - works for ascii and unicode strings
     """
@@ -42,7 +42,7 @@ class String(TypedSchemaGenerator):
     PYTHON_TYPE = (str, type(u''))
 
 
-class Number(SchemaGenerator):
+class Number(SchemaStrategy):
     """
     generator for integer and number schemas. It automatically
     converts from `integer` to `number` when a float object or a

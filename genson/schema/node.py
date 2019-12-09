@@ -1,4 +1,4 @@
-from .generators import BASIC_SCHEMA_TYPES, Typeless
+from .generators import BASIC_SCHEMA_STRATEGIES, Typeless
 
 
 class SchemaGenerationError(RuntimeError):
@@ -10,10 +10,10 @@ class SchemaNode(object):
     Basic schema generator class. SchemaNode objects can be loaded
     up with existing schemas and objects before being serialized.
     """
-    SCHEMA_TYPES = BASIC_SCHEMA_TYPES
+    STRATEGIES = BASIC_SCHEMA_STRATEGIES
 
     def __init__(self):
-        self._active_schema_types = []
+        self._active_strategies = []
 
     def add_schema(self, schema):
         """
@@ -30,8 +30,8 @@ class SchemaNode(object):
 
         for subschema in self._get_subschemas(schema):
             # delegate to SchemaType object
-            active_schema_type = self._get_schema_type_for_schema(subschema)
-            active_schema_type.add_schema(subschema)
+            active_strategy = self._get_strategy_for_schema(subschema)
+            active_strategy.add_schema(subschema)
 
         # return self for easy method chaining
         return self
@@ -46,8 +46,8 @@ class SchemaNode(object):
         """
 
         # delegate to SchemaType object
-        active_schema_type = self._get_schema_type_for_object(obj)
-        active_schema_type.add_object(obj)
+        active_strategy = self._get_strategy_for_object(obj)
+        active_strategy.add_object(obj)
 
         # return self for easy method chaining
         return self
@@ -58,8 +58,8 @@ class SchemaNode(object):
         """
         types = set()
         generated_schemas = []
-        for active_schema_type in self._active_schema_types:
-            generated_schema = active_schema_type.to_schema()
+        for active_strategy in self._active_strategies:
+            generated_schema = active_strategy.to_schema()
             if len(generated_schema) == 1 and 'type' in generated_schema:
                 types.add(generated_schema['type'])
             else:
@@ -81,7 +81,7 @@ class SchemaNode(object):
         return result_schema
 
     def __len__(self):
-        return len(self._active_schema_types)
+        return len(self._active_strategies)
 
     def __eq__(self, other):
         # TODO: find a more optimal way to do this
@@ -108,38 +108,38 @@ class SchemaNode(object):
         else:
             return [schema]
 
-    def _get_schema_type_for_schema(self, schema):
-        return self._get_schema_type_for_('schema', schema)
+    def _get_strategy_for_schema(self, schema):
+        return self._get_strategy_for_('schema', schema)
 
-    def _get_schema_type_for_object(self, obj):
-        return self._get_schema_type_for_('object', obj)
+    def _get_strategy_for_object(self, obj):
+        return self._get_strategy_for_('object', obj)
 
-    def _get_schema_type_for_(self, kind, schema_or_obj):
+    def _get_strategy_for_(self, kind, schema_or_obj):
         # check existing types
-        for active_schema_type in self._active_schema_types:
-            if getattr(active_schema_type, 'match_' + kind)(schema_or_obj):
-                return active_schema_type
+        for active_strategy in self._active_strategies:
+            if getattr(active_strategy, 'match_' + kind)(schema_or_obj):
+                return active_strategy
 
         # check all potential types
-        for schema_type in self.SCHEMA_TYPES:
-            if getattr(schema_type, 'match_' + kind)(schema_or_obj):
-                active_schema_type = schema_type(self.__class__)
+        for strategy in self.STRATEGIES:
+            if getattr(strategy, 'match_' + kind)(schema_or_obj):
+                active_strategy = strategy(self.__class__)
 
                 # incorporate typeless generator if it exists
-                if self._active_schema_types and \
-                        isinstance(self._active_schema_types[-1], Typeless):
-                    typeless = self._active_schema_types.pop()
-                    active_schema_type.add_schema(typeless.to_schema())
+                if self._active_strategies and \
+                        isinstance(self._active_strategies[-1], Typeless):
+                    typeless = self._active_strategies.pop()
+                    active_strategy.add_schema(typeless.to_schema())
 
-                self._active_schema_types.append(active_schema_type)
-                return active_schema_type
+                self._active_strategies.append(active_strategy)
+                return active_strategy
 
         # no match found, if typeless add to first generator
         if kind == 'schema' and Typeless.match_schema(schema_or_obj):
-            if not self._active_schema_types:
-                self._active_schema_types.append(Typeless(self.__class__))
-            active_schema_type = self._active_schema_types[0]
-            return active_schema_type
+            if not self._active_strategies:
+                self._active_strategies.append(Typeless(self.__class__))
+            active_strategy = self._active_strategies[0]
+            return active_strategy
 
         # no match found, raise an error
         raise SchemaGenerationError(
