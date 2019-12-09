@@ -2,6 +2,7 @@ from genson import SchemaBuilder
 from genson.schema.strategies import Number
 from . import base
 
+
 class MaxTenStrategy(Number):
     KEYWORDS = tuple(list(Number.KEYWORDS) + ['maximum'])
 
