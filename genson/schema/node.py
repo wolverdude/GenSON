@@ -1,4 +1,4 @@
-from .generators import BASIC_SCHEMA_STRATEGIES, Typeless
+from .strategies import BASIC_SCHEMA_STRATEGIES, Typeless
 
 
 class SchemaGenerationError(RuntimeError):

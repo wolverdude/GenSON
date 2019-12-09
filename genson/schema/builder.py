@@ -1,7 +1,7 @@
 import json
 from warnings import warn
 from .node import SchemaNode
-from .generators import BASIC_SCHEMA_STRATEGIES
+from .strategies import BASIC_SCHEMA_STRATEGIES
 
 
 class SchemaBuilder(object):

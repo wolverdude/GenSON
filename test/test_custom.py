@@ -1,5 +1,5 @@
 from genson import SchemaBuilder
-from genson.schema.generators import Number
+from genson.schema.strategies import Number
 from . import base
 
 class MaxTenStrategy(Number):
