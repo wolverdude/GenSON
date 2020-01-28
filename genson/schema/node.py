@@ -36,18 +36,21 @@ class SchemaNode(object):
         # return self for easy method chaining
         return self
 
-    def add_object(self, obj):
+    def add_object(self, obj, examples=False):
         """
         Modify the schema to accommodate an object.
 
         arguments:
         * `obj` (required - `dict`):
           a JSON object to use in generating the schema.
+        * `examples` (optional - `bbool`):
+          whether or not to include examples values from the
+          given object.
         """
 
         # delegate to SchemaType object
         active_strategy = self._get_strategy_for_object(obj)
-        active_strategy.add_object(obj)
+        active_strategy.add_object(obj, examples)
 
         # return self for easy method chaining
         return self

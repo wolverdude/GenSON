@@ -17,8 +17,8 @@ class BaseTestCase(unittest.TestCase):
     def set_schema_options(self, **options):
         self.builder = SchemaNode(**options)
 
-    def add_object(self, obj):
-        self.builder.add_object(obj)
+    def add_object(self, obj, examples=False):
+        self.builder.add_object(obj, examples)
         self._objects.append(obj)
 
     def add_schema(self, schema):

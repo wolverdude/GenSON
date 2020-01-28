@@ -41,6 +41,10 @@ class String(TypedSchemaStrategy):
     JS_TYPE = 'string'
     PYTHON_TYPE = (str, type(u''))
 
+    def add_object(self, obj, examples=False):
+        if examples:
+            self.add_example(obj)
+
 
 class Number(SchemaStrategy):
     """
@@ -73,9 +77,11 @@ class Number(SchemaStrategy):
         if schema.get('type') == 'number':
             self._type = 'number'
 
-    def add_object(self, obj):
+    def add_object(self, obj, examples=False):
         if isinstance(obj, float):
             self._type = 'number'
+        if examples:
+            self.add_example(obj)
 
     def to_schema(self):
         schema = super(Number, self).to_schema()

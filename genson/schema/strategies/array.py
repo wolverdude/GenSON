@@ -38,9 +38,9 @@ class List(BaseArray):
         if 'items' in schema:
             self._items.add_schema(schema['items'])
 
-    def add_object(self, obj):
+    def add_object(self, obj, examples=False):
         for item in obj:
-            self._items.add_object(item)
+            self._items.add_object(item, examples)
 
     def items_to_schema(self):
         return self._items.to_schema()
@@ -63,17 +63,17 @@ class Tuple(BaseArray):
     def add_schema(self, schema):
         self.add_extra_keywords(schema)
         if 'items' in schema:
-            self._add(schema['items'], 'add_schema')
+            self._add(schema['items'], lambda s, i: s.add_schema(i))
 
-    def add_object(self, obj):
-        self._add(obj, 'add_object')
+    def add_object(self, obj, examples=False):
+        self._add(obj, lambda s, i: s.add_object(i, examples))
 
     def _add(self, items, func):
         while len(self._items) < len(items):
             self._items.append(self.node_class())
 
         for subschema, item in zip(self._items, items):
-            getattr(subschema, func)(item)
+            func(subschema, item)
 
     def items_to_schema(self):
         return [item.to_schema() for item in self._items]

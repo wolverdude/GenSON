@@ -28,6 +28,7 @@ class SchemaStrategy(object):
     def __init__(self, node_class):
         self.node_class = node_class
         self._extra_keywords = {}
+        self._examples = []
 
     def add_schema(self, schema):
         self.add_extra_keywords(schema)
@@ -43,11 +44,18 @@ class SchemaStrategy(object):
                       'values ({1!r} vs. {2!r}). Using {1!r}').format(
                           keyword, self._extra_keywords[keyword], value))
 
-    def add_object(self, obj):
+    def add_example(self, example):
+        if example not in self._examples:
+            self._examples.append(example)
+
+    def add_object(self, obj, examples=False):
         pass
 
     def to_schema(self):
-        return copy(self._extra_keywords)
+        schema = copy(self._extra_keywords)
+        if len(self._examples) > 0:
+            schema["examples"] = copy(self._examples)
+        return schema
 
     def __eq__(self, other):
         """ Required for SchemaBuilder.__eq__ to work properly """

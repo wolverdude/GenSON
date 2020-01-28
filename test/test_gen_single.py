@@ -36,6 +36,7 @@ class TestArrayList(base.SchemaNodeTestCase):
 
     def setUp(self):
         base.SchemaNodeTestCase.setUp(self)
+        self.maxDiff = None
 
     def test_empty(self):
         self.add_object([])
@@ -207,5 +208,70 @@ class TestComplex(base.SchemaNodeTestCase):
                         }
                     }
                 }
+            }
+        })
+
+
+class TestExamples(base.SchemaNodeTestCase):
+
+    def setUp(self):
+        base.SchemaNodeTestCase.setUp(self)
+
+    def test_empty_examples(self):
+        self.add_object({}, examples=True)
+        self.assertResult({"type": "object"})
+
+    def test_no_examples(self):
+        self.add_object(1, examples=False)
+        self.assertResult({"type": "integer"})
+
+    def test_integer(self):
+        self.add_object(1, examples=True)
+        self.add_object(2, examples=True)
+        self.assertResult({"type": "integer", "examples": [1, 2]})
+
+    def test_string(self):
+        self.add_object("foo", examples=True)
+        self.add_object("bar", examples=True)
+        self.assertResult({"type": "string", "examples": ["foo", "bar"]})
+
+    def test_bool(self):
+        self.add_object(True, examples=True)
+        self.assertResult({"type": "boolean"})
+
+    def test_array(self):
+        self.add_object(["spam", "spam", "eggs", "spam"], examples=True)
+        self.assertResult({"type": "array", "items": {
+            "type": "string", "examples": ["spam", "eggs"]}
+        })
+
+    def test_tuple(self):
+        self.add_schema({'type': 'array', 'items': [
+            {"type": "string"},
+            {"type": "integer"},
+            {"type": "boolean"}
+        ]})
+        self.add_object(["one", 2, False], examples=True)
+        self.assertResult({"type": "array", "items": [
+            {"type": "string", "examples": ["one"]},
+            {"type": "integer", "examples": [2]},
+            {"type": "boolean"},
+        ]})
+
+    def test_object(self):
+        self.add_object({
+            "foo": "bar",
+            "hop": 1
+        }, examples=True)
+        self.add_object({
+            "foo": "nop",
+            "hop": 1
+        }, examples=True)
+        self.assertResult({
+            "required": ["foo", "hop"],
+            "type": "object",
+            "properties": {
+                "foo": {"type": "string", "examples": ["bar", "nop"]},
+                "hop": {"type": "integer", "examples": [1]}
             }
         })

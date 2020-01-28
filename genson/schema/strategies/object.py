@@ -44,7 +44,7 @@ class Object(SchemaStrategy):
             else:
                 self._required &= set(schema['required'])
 
-    def add_object(self, obj):
+    def add_object(self, obj, examples=False):
         properties = set()
         for prop, subobj in obj.items():
             pattern = None
@@ -53,10 +53,10 @@ class Object(SchemaStrategy):
                 pattern = self._matching_pattern(prop)
 
             if pattern is not None:
-                self._pattern_properties[pattern].add_object(subobj)
+                self._pattern_properties[pattern].add_object(subobj, examples)
             else:
                 properties.add(prop)
-                self._properties[prop].add_object(subobj)
+                self._properties[prop].add_object(subobj, examples)
 
         if self._required is None:
             self._required = properties
