@@ -1,6 +1,12 @@
 History
 =======
 
+1.2.0
+-----
+
+* ``SchemaStrategies`` are now extendable, enabling custom ``SchemaBuilder`` classes.
+* optimize ``__eq__`` logic
+
 1.1.0
 -----
 
