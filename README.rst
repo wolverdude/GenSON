@@ -4,7 +4,7 @@ GenSON
 **GenSON** is a powerful, user-friendly `JSON Schema`_ generator built in Python.
 
 .. note::
-    This is *not* the Python equivalent of the `Java Genson library`_. If you are coming from Java need to create JSON objects in Python, you want `Python's builtin json library`_.)
+    This is *not* the Python equivalent of the `Java Genson library`_. If you are coming from Java and need to create JSON objects in Python, you want `Python's builtin json library`_.)
 
 GenSON's core function is to take JSON objects and generate schemas that describe them, but it is unique in its ability to *merge* schemas. It was originally built to describe the common structure of a large number of JSON objects, and it uses its merging ability to generate a single schema from any number of JSON objects and/or schemas.
 
@@ -309,8 +309,6 @@ The documentation below explains the public API and what you need to extend and 
 ``SchemaStrategy`` API
 ++++++++++++++++++++++
 
-These are the basic methods and constants that should
-
 [class constant] ``KEYWORDS``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -324,7 +322,7 @@ When adding keywords to a new ``SchemaStrategy``, it's best to splat the parent 
 Return ``true`` if this strategy should be used to handle the passed-in schema.
 
 :param schema: a JSON Schema in ``dict`` form
-:rype: ``bool``
+:rtype: ``bool``
 
 [class method] ``match_object(obj)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -332,7 +330,7 @@ Return ``true`` if this strategy should be used to handle the passed-in schema.
 Return ``true`` if this strategy should be used to handle the passed-in object.
 
 :param obj: any object or scalar that can be serialized in JSON
-:rype: ``bool``
+:rtype: ``bool``
 
 ``__init__(node_class)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -480,7 +478,7 @@ Note that the exclusive builder is much more particular.
     >>> picky_builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': 5}
     >>> builder.add_object(None) # this is fine
-    >>> picky builder.add_object(None) # this fails
+    >>> picky_builder.add_object(None) # this fails
     genson.schema.node.SchemaGenerationError: Could not find matching schema type for object: None
 
 
@@ -531,7 +529,6 @@ Potential Future Features
 The following are extra features under consideration.
 
 * recognize every validation keyword and ignore any that don't apply
-* open up generator API for custom schema generator classes
 * option to set error level
 * custom serializer plugins
 * logical support for more keywords:
