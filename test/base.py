@@ -32,11 +32,12 @@ class BaseTestCase(unittest.TestCase):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
             jsonschema.Draft7Validator(self.builder.to_schema()).validate(obj)
 
-    def assertResult(self, expected):
+    def assertResult(self, expected, enforceUserContract=True):
         self.assertEqual(
             expected, self.builder.to_schema(),
             'Generated schema (below) does not match expected (above)')
-        self.assertUserContract()
+        if enforceUserContract:
+            self.assertUserContract()
 
     def assertUserContract(self):
         self._assertSchemaIsValid()
