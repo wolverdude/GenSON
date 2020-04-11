@@ -1,3 +1,7 @@
+from .base import (
+    SchemaStrategy,
+    TypedSchemaStrategy
+)
 from .scalar import (
     Typeless,
     Null,
@@ -19,6 +23,8 @@ BASIC_SCHEMA_STRATEGIES = (
 )
 
 __all__ = (
+    'SchemaStrategy',
+    'TypedSchemaStrategy',
     'Null',
     'Boolean',
     'Number',
