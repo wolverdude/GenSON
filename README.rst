@@ -291,7 +291,7 @@ In version 0, GenSON did not accept a schema without a type, but in order to be 
 Customizing ``SchemaBuilder``
 -----------------------------
 
-You can extend the `SchemaBuilder` class to add in your own logic (e.g. recording ``minimum`` and ``maximum`` for a number). In order to do this, you need to:
+You can extend the ``SchemaBuilder`` class to add in your own logic (e.g. recording ``minimum`` and ``maximum`` for a number). In order to do this, you need to:
 
 1. Create a custom ``SchemaStrategy`` class.
 2. Create a ``SchemaBuilder`` subclass that includes your custom ``SchemaStrategy`` class(es).
@@ -300,9 +300,9 @@ You can extend the `SchemaBuilder` class to add in your own logic (e.g. recordin
 ``SchemaStrategy`` Classes
 ++++++++++++++++++++++++++
 
-GenSON uses the Strategy Pattern to parse, update, and serialize different kinds of schemas that behave in different ways. There are several `SchemaStrategy` classes that roughly correspond to different schema types. GenSON maps each node in an object or schema to an instance of one of these classes. Each instance stores the current schema state and updates or returns it when required.
+GenSON uses the Strategy Pattern to parse, update, and serialize different kinds of schemas that behave in different ways. There are several ``SchemaStrategy`` classes that roughly correspond to different schema types. GenSON maps each node in an object or schema to an instance of one of these classes. Each instance stores the current schema state and updates or returns it when required.
 
-You can modify the specific ways these classes work by extending them. You can inherit from any existing `SchemaStrategy` class, though ``SchemaStrategy`` and ``TypedSchemaStrategy`` are the most useful base classes. You should call ``super`` and pass along all arguments when overriding any instance methods.
+You can modify the specific ways these classes work by extending them. You can inherit from any existing ``SchemaStrategy`` class, though ``SchemaStrategy`` and ``TypedSchemaStrategy`` are the most useful base classes. You should call ``super`` and pass along all arguments when overriding any instance methods.
 
 The documentation below explains the public API and what you need to extend and override at a high level. Feel free to explore `the code`_ to see more, but know that the public API is documented here, and anything else you depend on could be subject to change. All ``SchemaStrategy`` subclasses maintain the public API though, so you can extend any of them in this way.
 
@@ -400,8 +400,8 @@ Note that order matters. GenSON checks the list in order, so the first strategy 
 
 This clobbers the existing list of strategies and completely replaces it. Set it to a tuple just like for ``EXTRA_STRATEGIES``, but note that if any object or schema gets added that your exhaustive list of strategies doesn't know how to handle, you'll get an error. You should avoid doing this unless you're extending most or all existing strategies in some way.
 
-Example: `MinNumber`
-++++++++++++++++++++
+Example: ``MinNumber``
+++++++++++++++++++++++
 
 Here's some example code creating a number strategy that tracks the `minimum number`_ seen and includes it in the output schema.
 
@@ -441,7 +441,7 @@ Here's some example code creating a number strategy that tracks the `minimum num
             schema['minimum'] = self.min
             return schema
 
-    # new `SchemaBuilder` class that uses the MinNumber strategy in addition
+    # new SchemaBuilder class that uses the MinNumber strategy in addition
     # to the existing strategies. Both MinNumber and Number are active, but
     # MinNumber has priority, so it effectively replaces Number.
     class MinNumberSchemaBuilder(SchemaBuilder):
