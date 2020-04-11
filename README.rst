@@ -367,6 +367,23 @@ Override this method to customize how a schema object is constructed from the in
     ``SchemaBuilder`` will output a bad schema.
 
 
+``TypedSchemaStrategy`` API
++++++++++++++++++++++++++++
+
+This is an abstract schema strategy for making simple schemas that only deal with the ``type`` keyword, but you can extend it to add more functionality. Subclasses must define the following two class constants, but you get the entire ``SchemaStrategy`` interface for free.
+
+[class constant] ``JS_TYPE``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This will be the value of the ``type`` keyword in the generated schema. It is also used to match any added schemas.
+
+
+[class constant] ``PYTHON_TYPE``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is a Python type or tuple of types that will be matched against an added object using ``isinstance``.
+
+
 Compatibility
 -------------
 
