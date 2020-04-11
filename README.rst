@@ -122,15 +122,18 @@ GenSON Python API
       ]
     }
 
-SchemaBuilder.__init__(schema_uri=None)
-+++++++++++++++++++++++++++++++++++++++
+``SchemaBuilder`` API
++++++++++++++++++++++
+
+``__init__(schema_uri=None)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :param schema_uri: value of the ``$schema`` keyword. If not given, it will use the value of the first available ``$schema`` keyword on an added schema or else the default: ``'http://json-schema.org/schema#'``. A value of ``False`` or ``None`` will direct GenSON to leave out the ``"$schema"`` keyword.
 
-SchemaBuilder.add_schema(schema)
-++++++++++++++++++++++++++++++++
+``add_schema(schema)``
+^^^^^^^^^^^^^^^^^^^^^^
 
-Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder``
+Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder`` object.
 
 :param schema: a JSON Schema
 
@@ -138,29 +141,29 @@ Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder``
     There is no schema validation. If you pass in a bad schema,
     you might get back a bad schema.
 
-SchemaBuilder.add_object(obj)
-+++++++++++++++++++++++++++++
+``add_object(obj)``
+^^^^^^^^^^^^^^^^^^^
 
 Modify the schema to accommodate an object.
 
 :param obj: any object or scalar that can be serialized in JSON
 
-SchemaBuilder.to_schema()
-+++++++++++++++++++++++++
+``to_schema()``
+^^^^^^^^^^^^^^^
 
 Generate a schema based on previous inputs.
 
 :rtype: ``dict``
 
-SchemaBuilder.to_json()
-+++++++++++++++++++++++
+``to_json()``
+^^^^^^^^^^^^^
 
 Generate a schema and convert it directly to serialized JSON.
 
 :rtype: ``str``
 
-SchemaBuilder.__eq__(other)
-+++++++++++++++++++++++++++
+``__eq__(other)``
+^^^^^^^^^^^^^^^^^
 
 Check for equality with another ``SchemaBuilder`` object.
 
@@ -284,6 +287,84 @@ Typeless Schemas
 
 In version 0, GenSON did not accept a schema without a type, but in order to be flexible in the support of seed schemas, support was added for version 1. However, GenSON violates rule #2 in its handling of typeless schemas. Any object will validate under an empty schema, but GenSON incorporates typeless schemas into the first-available typed schema, and since typed schemas are stricter than typless ones, objects that would validate under an added schema will not validate under the result.
 
+
+Customizing ``SchemaBuilder``
+-----------------------------
+
+You can extend the `SchemaBuilder` class to add in your own logic (e.g. recording ``minimum`` and ``maximum`` for a number). In order to do this, you need to:
+
+1. Create a custom ``SchemaStrategy`` class.
+2. Create a ``SchemaBuilder`` subclass that includes your custom ``SchemaStrategy`` class(es).
+3. Use your custom ``SchemaBuilder`` just like you would the stock ``SchemaBuilder``.
+
+``SchemaStrategy`` Classes
+++++++++++++++++++++++++++
+
+GenSON uses the Strategy Pattern to parse, update, and serialize different kinds of schemas that behave in different ways. There are several `SchemaStrategy` classes that roughly correspond to different schema types. GenSON maps each node in an object or schema to an instance of one of these classes. Each instance stores the current schema state and updates or returns it when required.
+
+You can modify the specific ways these classes work by extending them. You can inherit from any existing `SchemaStrategy` class, though ``SchemaStrategy`` and ``TypedSchemaStrategy`` are the most useful base classes. You should call ``super`` and pass along all arguments when overriding any instance methods.
+
+``SchemaStrategy`` API
+++++++++++++++++++++++
+
+These are the basic methods and constants that should
+
+[class constant] ``KEYWORDS``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This should be a tuple listing all of the JSON-schema keywords that this strategy knows how to handle. Any keywords encountered in added schemas will be be naively passed on to the generated schema unless they are in this list (or you override that behavior in ``to_schema``).
+
+When adding keywords to a new ``SchemaStrategy``, it's best to splat the parent class's ``KEYWORDS`` into the new tuple.
+
+[class method] ``match_schema(schema)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Return ``true`` if this strategy should be used to handle the passed-in schema.
+
+:param schema: a JSON Schema in ``dict`` form
+:rype: ``bool``
+
+[class method] ``match_object(obj)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Return ``true`` if this strategy should be used to handle the passed-in object.
+
+:param obj: any object or scalar that can be serialized in JSON
+:rype: ``bool``
+
+``__init__(node_class)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Override this method if you need to initialize a class variable.
+
+:param node_class: This param is not part of the public API. Pass it along to ``super``.
+
+``add_schema(schema)``
+^^^^^^^^^^^^^^^^^^^^^^
+
+Override this to modify how a schema is parsed and stored.
+
+:param schema: a JSON Schema in ``dict`` form
+
+``add_object(obj)``
+^^^^^^^^^^^^^^^^^^^
+
+Override this to change the way a schemas are inferred from objects.
+
+:param obj: any object or scalar that can be serialized in JSON
+
+``to_schema()``
+^^^^^^^^^^^^^^^
+
+Override this method to customize how a schema object is constructed from the inputs. It is suggested that you invoke ``super`` as the basis for the return value, but it is not required.
+
+:rtype: ``dict``
+
+.. note::
+    There is no schema validation. If you return a bad schema from this method,
+    ``SchemaBuilder`` will output a bad schema.
+
+
 Compatibility
 -------------
 
@@ -337,7 +418,7 @@ The following are extra features under consideration.
 * logical support for more keywords:
 
   * ``enum``
-  * ``min``/``max``
+  * ``minimum``/``maximum``
   * ``minLength``/``maxLength``
   * ``minItems``/``maxItems``
   * ``minProperties``/``maxProperties``
