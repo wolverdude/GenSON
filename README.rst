@@ -383,6 +383,89 @@ This will be the value of the ``type`` keyword in the generated schema. It is al
 
 This is a Python type or tuple of types that will be matched against an added object using ``isinstance``.
 
+Example: `MinNumber`
+++++++++++++++++++++
+
+Here's some example code creating a number strategy that tracks the `minimum number`_ seen and includes it in the output schema.
+
+.. note::
+    This example is written in Python 3.3+. Custom strategies also work in Python 2.7, but you need different syntax (``super`` arguments & no splatting ``KEYWORDS``).
+
+.. code-block:: python
+
+    from genson import SchemaBuilder
+    from genson.schema.strategies import Number
+
+    class MinNumber(Number):
+        # add 'minimum' to list of keywords
+        KEYWORDS = (*Number.KEYWORDS, 'minimum')
+
+        # create a new instance variable
+        def __init__(self, node_class):
+            super().__init__(node_class)
+            self.min = None
+
+        # capture 'minimum's from schemas
+        def add_schema(self, schema):
+            super().add_schema(schema)
+            if self.min is None:
+                self.min = schema.get('minimum')
+            elif 'minimum' in schema:
+                self.min = min(self.min, schema['minimum'])
+
+        # adjust minimum based on the data
+        def add_object(self, obj):
+            super().add_object(obj)
+            self.min = obj if self.min is None else min(self.min, obj)
+
+        # include 'minimum' in the output
+        def to_schema(self):
+            schema = super().to_schema()
+            schema['minimum'] = self.min
+            return schema
+
+    # new `SchemaBuilder` class that uses the MinNumber strategy in addition
+    # to the existing strategies. Both MinNumber and Number are in the list,
+    # but MinNumber comes first, so it effectively replaces Number.
+    class MinNumberSchemaBuilder(SchemaBuilder):
+        """ all number nodes include minimum """
+        EXTRA_STRATEGIES = (MinNumber,)
+
+    # this class *ONLY* has the MinNumber strategy. All others have been
+    # removed from the list, so it can't handle things like objects or
+    # arrays. Use this only if you're implementing a complete strategy list.
+    class ExclusiveMinNumberSchemaBuilder(SchemaBuilder):
+        """ all number nodes include minimum, and only handles number """
+        STRATEGIES = (MinNumber,)
+
+Now that we have the MinNumberSchemaBuilder class, let's see how it works.
+
+.. code-block:: python
+
+    >>> builder = MinNumberSchemaBuilder()
+    >>> builder.add_object(5)
+    >>> builder.add_object(7)
+    >>> builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': 5}
+    >>> builder.add_object(-2)
+    >>> builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': -2}
+    >>> builder.add_schema({'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': -7})
+    >>> builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': -7}
+
+Note that the exclusive builder is much more particular.
+
+.. code-block:: python
+    >>> builder = MinNumberSchemaBuilder()
+    >>> picky_builder = ExclusiveMinNumberSchemaBuilder()
+    >>> picky_builder.add_object(5)
+    >>> picky_builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#', 'type': 'integer', 'minimum': 5}
+    >>> builder.add_object(None) # this is fine
+    >>> picky builder.add_object(None) # this fails
+    genson.schema.node.SchemaGenerationError: Could not find matching schema type for object: None
+
 
 Compatibility
 -------------
@@ -448,10 +531,11 @@ The following are extra features under consideration.
 
 .. _JSON Schema: http://json-schema.org/
 .. _Java Genson library: https://owlike.github.io/genson/
-.. _Python's builtin json library: https://docs.python.org/library/json.html
-.. _Flake8: https://pypi.python.org/pypi/flake8
+.. _`Python's builtin json library`: https://docs.python.org/library/json.html
 .. _below: #typeless-schemas
 .. _array validation here: https://spacetelescope.github.io/understanding-json-schema/reference/array.html#items
 .. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
-.. _`Python flavor of RegEx`: https://docs.python.org/3.6/library/re.html
-.. _`the code`: https://github.com/wolverdude/GenSON/tree/v1.2.0/genson/schema/strategies
+.. _Python flavor of RegEx: https://docs.python.org/3.6/library/re.html
+.. _the code: https://github.com/wolverdude/GenSON/tree/v1.2.0/genson/schema/strategies
+.. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range
+.. _Flake8: https://pypi.python.org/pypi/flake8

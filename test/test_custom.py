@@ -55,6 +55,7 @@ class TestExtraStrategies(base.SchemaNodeTestCase):
             'type': 'integer',
             'maximum': 10})
 
+
 class TestClobberStrategies(base.SchemaNodeTestCase):
     CLASS = FalseSchemaBuilder
 
