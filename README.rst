@@ -383,6 +383,23 @@ This will be the value of the ``type`` keyword in the generated schema. It is al
 
 This is a Python type or tuple of types that will be matched against an added object using ``isinstance``.
 
+Extending ``SchemaBuilder``
++++++++++++++++++++++++++++
+
+Once you have extended ``SchemaStrategy`` types, you'll need to create a ``SchemaBuilder`` class that uses them, since the default ``SchemaBuilder`` only incorporates the default strategies. To do this, extend the ``SchemaBuilder`` class and define one of these two constants inside it:
+
+[class constant] ``EXTRA_STRATEGIES``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This is the standard (and suggested) way to add strategies. Set it to a tuple of all your new strategies, and they will be added to the existing list of strategies to check. This preserves all the existing functionality.
+
+Note that order matters. GenSON checks the list in order, so the first strategy has priority over the second and so on. All ``EXTRA_STRATEGIES`` have priority over the default strategies.
+
+[class constant] ``STRATEGIES``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This clobbers the existing list of strategies and completely replaces it. Set it to a tuple just like for ``EXTRA_STRATEGIES``, but note that if any object or schema gets added that your exhaustive list of strategies doesn't know how to handle, you'll get an error. You should avoid doing this unless you're extending most or all existing strategies in some way.
+
 Example: `MinNumber`
 ++++++++++++++++++++
 
@@ -425,15 +442,14 @@ Here's some example code creating a number strategy that tracks the `minimum num
             return schema
 
     # new `SchemaBuilder` class that uses the MinNumber strategy in addition
-    # to the existing strategies. Both MinNumber and Number are in the list,
-    # but MinNumber comes first, so it effectively replaces Number.
+    # to the existing strategies. Both MinNumber and Number are active, but
+    # MinNumber has priority, so it effectively replaces Number.
     class MinNumberSchemaBuilder(SchemaBuilder):
         """ all number nodes include minimum """
         EXTRA_STRATEGIES = (MinNumber,)
 
-    # this class *ONLY* has the MinNumber strategy. All others have been
-    # removed from the list, so it can't handle things like objects or
-    # arrays. Use this only if you're implementing a complete strategy list.
+    # this class *ONLY* has the MinNumber strategy. Any object that is not
+    # a number will cause an error.
     class ExclusiveMinNumberSchemaBuilder(SchemaBuilder):
         """ all number nodes include minimum, and only handles number """
         STRATEGIES = (MinNumber,)
@@ -457,6 +473,7 @@ Now that we have the MinNumberSchemaBuilder class, let's see how it works.
 Note that the exclusive builder is much more particular.
 
 .. code-block:: python
+
     >>> builder = MinNumberSchemaBuilder()
     >>> picky_builder = ExclusiveMinNumberSchemaBuilder()
     >>> picky_builder.add_object(5)
