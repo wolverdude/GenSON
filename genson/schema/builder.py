@@ -115,19 +115,22 @@ class _MetaSchemaBuilder(type):
     def __init__(cls, name, bases, attrs):
         super(_MetaSchemaBuilder, cls).__init__(name, bases, attrs)
 
-        if 'STRATEGIES' in attrs:
-            schema_types = list(attrs['STRATEGIES'])
+        if 'EXTRA_STRATEGIES' in attrs:
+            schema_strategies = list(attrs['EXTRA_STRATEGIES'])
+            # add in all strategies inherited from base classes
             for base in bases:
-                schema_types += list(getattr(base, 'STRATEGIES', []))
+                schema_strategies += list(getattr(base, 'STRATEGIES', []))
 
-            unique_schema_types = []
-            for schema_type in schema_types:
-                if schema_type not in unique_schema_types:
-                    unique_schema_types.append(schema_type)
+            unique_schema_strategies = []
+            for schema_strategy in schema_strategies:
+                if schema_strategy not in unique_schema_strategies:
+                    unique_schema_strategies.append(schema_strategy)
 
-            cls.STRATEGIES = tuple(unique_schema_types)
-            cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
-                                  {'STRATEGIES': cls.STRATEGIES})
+            cls.STRATEGIES = tuple(unique_schema_strategies)
+
+        # create a version of SchemaNode loaded with the custom strategies
+        cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
+                              {'STRATEGIES': cls.STRATEGIES})
 
 
 # apply metaclass in python 2/3 compatible manner
