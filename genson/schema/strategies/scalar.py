@@ -69,7 +69,7 @@ class Number(SchemaStrategy):
         self._type = 'integer'
 
     def add_schema(self, schema):
-        self.add_extra_keywords(schema)
+        super(Number, self).add_schema(schema)
         if schema.get('type') == 'number':
             self._type = 'number'
 

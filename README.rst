@@ -304,6 +304,8 @@ GenSON uses the Strategy Pattern to parse, update, and serialize different kinds
 
 You can modify the specific ways these classes work by extending them. You can inherit from any existing `SchemaStrategy` class, though ``SchemaStrategy`` and ``TypedSchemaStrategy`` are the most useful base classes. You should call ``super`` and pass along all arguments when overriding any instance methods.
 
+The documentation below explains the public API and what you need to extend and override at a high level. Feel free to explore `the code`_ to see more, but know that the public API is documented here, and anything else you depend on could be subject to change. All ``SchemaStrategy`` subclasses maintain the public API though, so you can extend any of them in this way.
+
 ``SchemaStrategy`` API
 ++++++++++++++++++++++
 
@@ -435,3 +437,4 @@ The following are extra features under consideration.
 .. _array validation here: https://spacetelescope.github.io/understanding-json-schema/reference/array.html#items
 .. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
 .. _`Python flavor of RegEx`: https://docs.python.org/3.6/library/re.html
+.. _`the code`: https://github.com/wolverdude/GenSON/tree/v1.2.0/genson/schema/strategies

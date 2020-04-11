@@ -26,7 +26,7 @@ class Object(SchemaStrategy):
         self._include_empty_required = False
 
     def add_schema(self, schema):
-        self.add_extra_keywords(schema)
+        super(Object, self).add_schema(schema)
         if 'properties' in schema:
             for prop, subschema in schema['properties'].items():
                 subnode = self._properties[prop]

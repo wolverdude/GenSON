@@ -30,9 +30,9 @@ class SchemaStrategy(object):
         self._extra_keywords = {}
 
     def add_schema(self, schema):
-        self.add_extra_keywords(schema)
+        self._add_extra_keywords(schema)
 
-    def add_extra_keywords(self, schema):
+    def _add_extra_keywords(self, schema):
         for keyword, value in schema.items():
             if keyword in self.KEYWORDS:
                 continue

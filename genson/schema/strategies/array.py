@@ -34,7 +34,7 @@ class List(BaseArray):
         self._items = node_class()
 
     def add_schema(self, schema):
-        self.add_extra_keywords(schema)
+        super(List, self).add_schema(schema)
         if 'items' in schema:
             self._items.add_schema(schema['items'])
 
@@ -61,7 +61,7 @@ class Tuple(BaseArray):
         self._items = [node_class()]
 
     def add_schema(self, schema):
-        self.add_extra_keywords(schema)
+        super(Tuple, self).add_schema(schema)
         if 'items' in schema:
             self._add(schema['items'], 'add_schema')
 
