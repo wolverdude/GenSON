@@ -101,8 +101,14 @@ class SchemaBuilder(object):
         :param other: another ``SchemaBuilder`` object. Other types are
           accepted, but will always return ``False``
         """
-        return other is self or (isinstance(other, self.__class__)
-                                 and self.__dict__ == other.__dict__)
+        if other is self:
+            return True
+        if not isinstance(other, self.__class__):
+            return False
+
+        # use _base_schema to get proper comparison for $schema keyword
+        return (self._base_schema() == other._base_schema()
+                and self._root_node == other._root_node)
 
     def _base_schema(self):
         if self.schema_uri == self.NULL_URI:
