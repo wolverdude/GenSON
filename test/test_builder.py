@@ -88,3 +88,10 @@ class TestInteraction(base.SchemaBuilderTestCase):
         b2 = SchemaBuilder()
         b2.add_object('one')
         self.assertNotEqual(b1, b2)
+
+    def test_eq_after_serialization(self):
+        b1 = SchemaBuilder()
+        b1.add_object({"bar": 10, "foo": 20})
+        b2 = SchemaBuilder()
+        b2.add_schema(b1.to_schema())
+        self.assertEqual(b1, b2)
