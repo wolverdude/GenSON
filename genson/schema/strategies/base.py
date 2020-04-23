@@ -16,6 +16,7 @@ class SchemaStrategy(object):
     * __eq__
     """
     KEYWORDS = ('type',)
+    EQ_IGNORE_PROPERTIES = tuple()
 
     @classmethod
     def match_schema(cls, schema):
@@ -51,8 +52,19 @@ class SchemaStrategy(object):
 
     def __eq__(self, other):
         """ Required for SchemaBuilder.__eq__ to work properly """
+
+        # raise Exception('hahaha SchemaStrategy')
+
         return (isinstance(other, self.__class__)
-                and self.__dict__ == other.__dict__)
+                and self.__eq_dict() == other.__eq_dict())
+
+    def __eq_dict(self):
+        """ Assemble __dict__ for __eq__ without the ignored properties """
+        if not self.EQ_IGNORE_PROPERTIES:
+            return self.__dict__
+
+        return {k: v for k, v in self.__dict__.items()
+                if k not in self.EQ_IGNORE_PROPERTIES}
 
 
 class TypedSchemaStrategy(SchemaStrategy):

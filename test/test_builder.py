@@ -95,3 +95,15 @@ class TestInteraction(base.SchemaBuilderTestCase):
         b2 = SchemaBuilder()
         b2.add_schema(b1.to_schema())
         self.assertEqual(b1, b2)
+
+    def test_eq_empty_required(self):
+        b1 = SchemaBuilder()
+        b1.add_schema({
+            "type": "object",
+            "properties": {
+                "bar": {"type": "integer"},
+                "foo": {"type": "integer"}},
+            "required": []})
+        b2 = SchemaBuilder()
+        b2.add_schema(b1.to_schema())
+        self.assertEqual(b1, b2)

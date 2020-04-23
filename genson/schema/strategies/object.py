@@ -8,6 +8,7 @@ class Object(SchemaStrategy):
     object schema strategy
     """
     KEYWORDS = ('type', 'properties', 'patternProperties', 'required')
+    EQ_IGNORE_PROPERTIES = ('_include_empty_required',)
 
     @staticmethod
     def match_schema(schema):
