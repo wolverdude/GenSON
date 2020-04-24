@@ -71,8 +71,10 @@ class TestRequired(base.SchemaNodeTestCase):
             {"type": "object", "properties": {"spam": {}, "eggs": {}}})
 
     def test_maintains_empty(self):
+        seed = {"required": []}
         schema1 = {"type": "object", "required": ["series of statements"]}
         schema2 = {"type": "object", "required": ["definite proposition"]}
+        self.add_schema(seed)
         self.add_schema(schema1)
         self.add_schema(schema2)
         self.assertResult({"type": "object", "required": []})
