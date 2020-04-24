@@ -316,7 +316,16 @@ This should be a tuple listing all of the JSON-schema keywords that this strateg
 
 When adding keywords to a new ``SchemaStrategy``, it's best to splat the parent class's ``KEYWORDS`` into the new tuple.
 
-[class method] ``match_schema(schema)``
+[class constant] ``EQ_IGNORE_ATTRS``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When checking for ``SchemaBuilder`` equality, strategies are matched using ``__eq__``. The default implementation uses a simple ``__dict__`` equality check. This could result in non-intuitive behavior if you add extra instance variables that don't change the output.
+
+This is a tuple listing the names of all attrs you want ``__eq__`` to ignore when checking for equality with another SchemaStrategy.
+
+When adding attrs to a new ``SchemaStrategy``, it's best to splat the parent class's ``EQ_IGNORE_ATTRS`` into the new tuple.
+
+[class method] ``match_schema(cls, schema)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Return ``true`` if this strategy should be used to handle the passed-in schema.
@@ -324,7 +333,7 @@ Return ``true`` if this strategy should be used to handle the passed-in schema.
 :param schema: a JSON Schema in ``dict`` form
 :rtype: ``bool``
 
-[class method] ``match_object(obj)``
+[class method] ``match_object(cls, obj)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Return ``true`` if this strategy should be used to handle the passed-in object.
@@ -332,28 +341,28 @@ Return ``true`` if this strategy should be used to handle the passed-in object.
 :param obj: any object or scalar that can be serialized in JSON
 :rtype: ``bool``
 
-``__init__(node_class)``
+``__init__(self, node_class)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Override this method if you need to initialize a class variable.
+Override this method if you need to initialize an instance variable.
 
 :param node_class: This param is not part of the public API. Pass it along to ``super``.
 
-``add_schema(schema)``
+``add_schema(self, schema)``
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Override this to modify how a schema is parsed and stored.
 
 :param schema: a JSON Schema in ``dict`` form
 
-``add_object(obj)``
+``add_object(self, obj)``
 ^^^^^^^^^^^^^^^^^^^
 
 Override this to change the way a schemas are inferred from objects.
 
 :param obj: any object or scalar that can be serialized in JSON
 
-``to_schema()``
+``to_schema(self)``
 ^^^^^^^^^^^^^^^
 
 Override this method to customize how a schema object is constructed from the inputs. It is suggested that you invoke ``super`` as the basis for the return value, but it is not required.
@@ -363,6 +372,14 @@ Override this method to customize how a schema object is constructed from the in
 .. note::
     There is no schema validation. If you return a bad schema from this method,
     ``SchemaBuilder`` will output a bad schema.
+
+``__eq__(self, other)``
+^^^^^^^^^^^^
+
+Override this method if you need more flexibility than ``EQ_IGNORE_ATTRS`` can give you when customizing ``__eq__`` behavior.
+
+:rtype: ``dict``
+
 
 
 ``TypedSchemaStrategy`` API
@@ -550,6 +567,6 @@ The following are extra features under consideration.
 .. _array validation here: https://spacetelescope.github.io/understanding-json-schema/reference/array.html#items
 .. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
 .. _Python flavor of RegEx: https://docs.python.org/3.6/library/re.html
-.. _the code: https://github.com/wolverdude/GenSON/tree/v1.2.0/genson/schema/strategies
+.. _the code: https://github.com/wolverdude/GenSON/tree/master/genson/schema/strategies
 .. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range
 .. _Flake8: https://pypi.python.org/pypi/flake8

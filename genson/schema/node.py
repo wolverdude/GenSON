@@ -118,7 +118,7 @@ class SchemaNode(object):
             if getattr(strategy, 'match_' + kind)(schema_or_obj):
                 active_strategy = strategy(self.__class__)
 
-                # incorporate typeless generator if it exists
+                # incorporate typeless strategy if it exists
                 if self._active_strategies and \
                         isinstance(self._active_strategies[-1], Typeless):
                     typeless = self._active_strategies.pop()
@@ -127,7 +127,7 @@ class SchemaNode(object):
                 self._active_strategies.append(active_strategy)
                 return active_strategy
 
-        # no match found, if typeless add to first generator
+        # no match found, if typeless add to first strategy
         if kind == 'schema' and Typeless.match_schema(schema_or_obj):
             if not self._active_strategies:
                 self._active_strategies.append(Typeless(self.__class__))
