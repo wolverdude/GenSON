@@ -317,7 +317,7 @@ This should be a tuple listing all of the JSON-schema keywords that this strateg
 When adding keywords to a new ``SchemaStrategy``, it's best to splat the parent class's ``KEYWORDS`` into the new tuple.
 
 [class method] ``match_schema(cls, schema)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Return ``true`` if this strategy should be used to handle the passed-in schema.
 
@@ -325,7 +325,7 @@ Return ``true`` if this strategy should be used to handle the passed-in schema.
 :rtype: ``bool``
 
 [class method] ``match_object(cls, obj)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Return ``true`` if this strategy should be used to handle the passed-in object.
 
@@ -333,28 +333,28 @@ Return ``true`` if this strategy should be used to handle the passed-in object.
 :rtype: ``bool``
 
 ``__init__(self, node_class)``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Override this method if you need to initialize an instance variable.
 
 :param node_class: This param is not part of the public API. Pass it along to ``super``.
 
 ``add_schema(self, schema)``
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Override this to modify how a schema is parsed and stored.
 
 :param schema: a JSON Schema in ``dict`` form
 
 ``add_object(self, obj)``
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Override this to change the way a schemas are inferred from objects.
 
 :param obj: any object or scalar that can be serialized in JSON
 
 ``to_schema(self)``
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 Override this method to customize how a schema object is constructed from the inputs. It is suggested that you invoke ``super`` as the basis for the return value, but it is not required.
 
@@ -365,7 +365,7 @@ Override this method to customize how a schema object is constructed from the in
     ``SchemaBuilder`` will output a bad schema.
 
 ``__eq__(self, other)``
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 When checking for ``SchemaBuilder`` equality, strategies are matched using ``__eq__``. The default implementation uses a simple ``__dict__`` equality check.
 
