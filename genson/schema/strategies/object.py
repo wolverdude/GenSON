@@ -38,11 +38,13 @@ class Object(SchemaStrategy):
                 if subschema is not None:
                     subnode.add_schema(subschema)
         if 'required' in schema:
-            self._include_empty_required = True
+            required = set(schema['required'])
+            if not required:
+                self._include_empty_required = True
             if self._required is None:
-                self._required = set(schema['required'])
+                self._required = required
             else:
-                self._required &= set(schema['required'])
+                self._required &= required
 
     def add_object(self, obj):
         properties = set()
