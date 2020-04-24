@@ -1,6 +1,16 @@
 History
 =======
 
+1.2.1
+-----
+
+* expose ``SchemaStrategy.__eq__()`` for extension
+* add support for Python 3.8
+* update Trove classifiers
+* **Bugfix**: ``SchemaBuilder.__eq__()`` wasn't matching the ``$schema`` keyword correctly
+* **Bugfix**: only activate empty ``required`` option when ``required`` is actualy empty
+
+
 1.2.0
 -----
 
