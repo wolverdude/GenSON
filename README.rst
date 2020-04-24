@@ -316,15 +316,6 @@ This should be a tuple listing all of the JSON-schema keywords that this strateg
 
 When adding keywords to a new ``SchemaStrategy``, it's best to splat the parent class's ``KEYWORDS`` into the new tuple.
 
-[class constant] ``EQ_IGNORE_ATTRS``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-When checking for ``SchemaBuilder`` equality, strategies are matched using ``__eq__``. The default implementation uses a simple ``__dict__`` equality check. This could result in non-intuitive behavior if you add extra instance variables that don't change the output.
-
-This is a tuple listing the names of all attrs you want ``__eq__`` to ignore when checking for equality with another SchemaStrategy.
-
-When adding attrs to a new ``SchemaStrategy``, it's best to splat the parent class's ``EQ_IGNORE_ATTRS`` into the new tuple.
-
 [class method] ``match_schema(cls, schema)``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -376,9 +367,11 @@ Override this method to customize how a schema object is constructed from the in
 ``__eq__(self, other)``
 ^^^^^^^^^^^^
 
-Override this method if you need more flexibility than ``EQ_IGNORE_ATTRS`` can give you when customizing ``__eq__`` behavior.
+When checking for ``SchemaBuilder`` equality, strategies are matched using ``__eq__``. The default implementation uses a simple ``__dict__`` equality check.
 
-:rtype: ``dict``
+Override this method if you need to override that behavior. This may be useful if you add instance variables that aren't relevant to whether two SchemaStrategies are considered equal.
+
+:rtype: ``bool``
 
 
 
