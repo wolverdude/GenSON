@@ -49,6 +49,8 @@ class Object(SchemaStrategy):
     def add_object(self, obj):
         properties = set()
         for prop, subobj in obj.items():
+            if prop == 'schema_options':
+                continue
             pattern = None
 
             if prop not in self._properties:
@@ -59,7 +61,10 @@ class Object(SchemaStrategy):
             else:
                 properties.add(prop)
                 self._properties[prop].add_object(subobj)
-
+        if 'schema_options' in obj and 'required' in obj['schema_options']:
+            properties = set()
+            for property in obj['schema_options']['required']:
+                properties.add(property)
         if self._required is None:
             self._required = properties
         else:
