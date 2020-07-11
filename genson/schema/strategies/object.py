@@ -8,6 +8,9 @@ class Object(SchemaStrategy):
     object schema strategy
     """
     KEYWORDS = ('type', 'properties', 'patternProperties', 'required')
+    SCHEMA_OPTIONS = 'schema_options'
+    SCHEMA_OPTIONS_REQUIRED = 'required'
+    SCHEMA_OPTIONS_ADDITIONALPROPERTIES = 'additionalProperties'
 
     @staticmethod
     def match_schema(schema):
@@ -49,7 +52,7 @@ class Object(SchemaStrategy):
     def add_object(self, obj):
         properties = set()
         for prop, subobj in obj.items():
-            if prop == 'schema_options':
+            if prop == self.SCHEMA_OPTIONS:
                 continue
             pattern = None
 
@@ -61,10 +64,14 @@ class Object(SchemaStrategy):
             else:
                 properties.add(prop)
                 self._properties[prop].add_object(subobj)
-        if 'schema_options' in obj and 'required' in obj['schema_options']:
-            properties = set()
-            for property in obj['schema_options']['required']:
-                properties.add(property)
+        if self.SCHEMA_OPTIONS in obj:
+            if self.SCHEMA_OPTIONS_REQUIRED in obj[self.SCHEMA_OPTIONS]:
+                properties = set()
+                for property in obj[self.SCHEMA_OPTIONS][self.SCHEMA_OPTIONS_REQUIRED]:
+                    properties.add(property)
+            if self.SCHEMA_OPTIONS_ADDITIONALPROPERTIES in obj[self.SCHEMA_OPTIONS]:
+                self._additionalProperties = obj[self.SCHEMA_OPTIONS][self.SCHEMA_OPTIONS_ADDITIONALPROPERTIES]
+
         if self._required is None:
             self._required = properties
         else:
@@ -93,6 +100,9 @@ class Object(SchemaStrategy):
                 self._pattern_properties)
         if self._required or self._include_empty_required:
             schema['required'] = sorted(self._required)
+        if self._additionalProperties is not None:
+            schema['additionalProperties'] = self._additionalProperties
+            self._additionalProperties = None
         return schema
 
     def _properties_to_schema(self, properties):
