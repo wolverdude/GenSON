@@ -1,11 +1,12 @@
 import unittest
 import json
+from os import path
 from subprocess import Popen, PIPE
 from genson import SchemaBuilder
 
 BASE_SCHEMA = {"$schema": SchemaBuilder.DEFAULT_URI}
-
-binpath = 'bin/genson.py'
+BIN_PATH = path.abspath(path.join(__file__, '..', '..', 'bin', 'genson.py'))
+FIXTURE_PATH = path.abspath(path.join(__file__, '..', 'fixtures'))
 
 
 def run(args=[], stdin_data=None):
@@ -14,11 +15,11 @@ def run(args=[], stdin_data=None):
     (stdout, stderr). Some assuaging is necessary to maintain
     Python compatibility with both Python 2 and 3.
     """
-    bin = Popen([binpath] + args, stdin=PIPE, stdout=PIPE)
+    genson_process = Popen([BIN_PATH] + args, stdin=PIPE, stdout=PIPE)
     if stdin_data is not None:
         stdin_data = stdin_data.encode('utf-8')
-    (stdout, stderr) = bin.communicate(stdin_data)
-    bin.wait()
+    (stdout, stderr) = genson_process.communicate(stdin_data)
+    genson_process.wait()
     if isinstance(stdout, bytes):
         stdout = stdout.decode('utf-8')
     if isinstance(stderr, bytes):
@@ -63,3 +64,17 @@ class TestStdin(unittest.TestCase):
             json.loads(stdout),
             dict({"required": ["hi"], "type": "object", "properties": {
                 "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
+
+    def test_encoding_unicode(self):
+        (stdout, stderr) = run(['-e', 'utf-8', path.join(FIXTURE_PATH, 'utf-8.json')])
+        self.assertEqual(stderr, None)
+        self.assertEqual(
+            json.loads(stdout),
+            dict({"type": "string"}, **BASE_SCHEMA))
+
+    def test_encoding_cp1252(self):
+        (stdout, stderr) = run(['-e', 'cp1252', path.join(FIXTURE_PATH, 'cp1252.json')])
+        self.assertEqual(stderr, None)
+        self.assertEqual(
+            json.loads(stdout),
+            dict({"type": "string"}, **BASE_SCHEMA))
