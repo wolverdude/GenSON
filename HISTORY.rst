@@ -1,6 +1,12 @@
 History
 =======
 
+1.2.2
+-----
+
+* add ``__version__`` attr to module and ``--version`` option to CLI tool
+* add ``--encoding`` option to CLI tool that overrides default file encoding (fixes #47)
+
 1.2.1
 -----
 
