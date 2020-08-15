@@ -4,124 +4,134 @@ import re
 import json
 from . import SchemaBuilder
 
-DESCRIPTION = """
-Generate one, unified JSON Schema from one or more JSON objects
-and/or JSON Schemas. It's compatible with Draft 4 and above.
-"""
-
 
 def main():
-    args = parse_args()
-
-    if args.schema_uri:
-        builder = SchemaBuilder(schema_uri=args.schema_uri)
-    else:
-        builder = SchemaBuilder()
-
-    for schema_file in args.schema:
-        add_json_from_file(builder, schema_file, args.delimiter, schema=True)
-
-    for object_file in args.object:
-        add_json_from_file(builder, object_file, args.delimiter)
-
-    print(builder.to_json(indent=args.indent))
+    CLI().run()
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument('-d', '--delimiter', metavar='DELIM',
-                        help='''set a delimiter - Use this option if the
-                        input files contain multiple JSON objects/schemas.
-                        You can pass any string. A few cases ('newline', 'tab',
-                        'space') will get converted to a whitespace
-                        character. If this option is omitted, the parser
-                        will try to auto-detect boundaries.''')
-    parser.add_argument('-e', '--encoding', type=str, metavar='ENCODING',
-                        help='''use ENCODING instead of the default system
-                        encoding when reading files. ENCODING must be a valid
-                        codec name or alias''')
-    parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
-                        help='''pretty-print the output, indenting SPACES
-                        spaces''')
-    parser.add_argument('-s', '--schema', action='append', default=[],
-                        type=argparse.FileType('r'),
-                        help='''file containing a JSON Schema (can be
-                        specified multiple times to merge schemas)''')
-    parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
-                        help='''the value of the '$schema' keyword (defaults
-                        to {default!r} or can be specified in a schema with
-                        the -s option). If {null!r} is passed, the "$schema"
-                        keyword will not be included in the result.'''.format(
-                            default=SchemaBuilder.DEFAULT_URI,
-                            null=SchemaBuilder.NULL_URI))
-    parser.add_argument('object', nargs=argparse.REMAINDER,
-                        type=argparse.FileType('r'), help='''files containing
-                        JSON objects (defaults to stdin if no arguments
-                        are passed)''')
+class CLI:
+    def __init__(self):
+        self._make_parser()
+        self._prepare_args()
+        self.builder = SchemaBuilder(schema_uri=self.args.schema_uri)
 
-    args = parser.parse_args()
+    def run(self):
+        if not self.args.schema and not self.args.object:
+            self.fail('noting to do - no schemas or objects given')
+        self.add_schemas()
+        self.add_objects()
+        self.print_output()
 
-    args.delimiter = get_delim(args.delimiter)
+    def add_schemas(self):
+        for fp in self.args.schema:
+            self._call_with_json_from_fp(self.builder.add_schema, fp)
+            fp.close()
 
-    # default to stdin if no objects or schemas
-    if not args.object and not sys.stdin.isatty():
-        args.object.append(sys.stdin)
+    def add_objects(self):
+        for fp in self.args.object:
+            self._call_with_json_from_fp(self.builder.add_object, fp)
+            fp.close()
 
-    if not args.schema and not args.object:
-        print('GenSON: noting to do - no schemas or objects given\n')
+    def print_output(self):
+        print(self.builder.to_json(indent=self.args.indent))
 
-        parser.print_help()
-        sys.exit(1)
+    def fail(self, message):
+        self.parser.error(message)
 
-    return args
+    def _make_parser(self):
+        self.parser = argparse.ArgumentParser(
+            description="""Generate one, unified JSON Schema from one or more
+            JSON objects and/or JSON Schemas. Compatible with JSON-Schema Draft
+            4 and above.""")
 
+        self.parser.add_argument(
+            '-e', '--encoding', type=str, metavar='ENCODING',
+            help="""use ENCODING instead of the default system encoding when
+            reading files. ENCODING must be a valid codec name or alias""")
 
-def get_delim(delim):
-    """
-    manage special conversions for difficult bash characters
-    """
-    if delim == 'newline':
-        delim = '\n'
-    elif delim == 'tab':
-        delim = '\t'
-    elif delim == 'space':
-        delim = ' '
+        encoding = self._get_encoding()
 
-    return delim
+        self.parser.add_argument(
+            '-d', '--delimiter', metavar='DELIM',
+            help="""set a delimiter - Use this option if the input files
+            contain multiple JSON objects/schemas. You can pass any string. A
+            few cases ('newline', 'tab', 'space') will get converted to a
+            whitespace character. If this option is omitted, the parser will
+            try to auto-detect boundaries.""")
+        self.parser.add_argument(
+            '-i', '--indent', type=int, metavar='SPACES',
+            help="""pretty-print the output, indenting SPACES spaces""")
+        self.parser.add_argument(
+            '-s', '--schema', action='append', default=[],
+            type=argparse.FileType('r', encoding=encoding),
+            help="""file containing a JSON Schema (can be specified multiple
+            times to merge schemas)""")
+        self.parser.add_argument(
+            '-$', '--schema-uri', metavar='SCHEMA_URI', dest='schema_uri',
+            default=SchemaBuilder.DEFAULT_URI,
+            help="""the value of the '$schema' keyword (defaults to {default!r}
+            or can be specified in a schema with the -s option). If {null!r} is
+            passed, the "$schema" keyword will not be included in the
+            result.""".format(default=SchemaBuilder.DEFAULT_URI,
+                              null=SchemaBuilder.NULL_URI))
+        self.parser.add_argument(
+            'object', nargs=argparse.REMAINDER,
+            type=argparse.FileType('r', encoding=encoding),
+            help="""files containing JSON objects (defaults to stdin if no
+            arguments are passed)""")
 
+    def _get_encoding(self):
+        """
+        pre-parse encoding argument for use with FileType args
+        """
+        args, _ = self.parser.parse_known_args()
+        return args.encoding
 
-def add_json_from_file(builder, fp, delimiter, schema=False):
-    method = getattr(builder, 'add_schema' if schema else 'add_object')
+    def _prepare_args(self):
+        self.args = self.parser.parse_args()
+        self._prepare_delimiter()
 
-    raw_text = fp.read().strip()
-    fp.close()
+        # default to stdin if no objects or schemas
+        if not self.args.object and not sys.stdin.isatty():
+            self.args.object.append(sys.stdin)
 
-    for json_string in get_json_strings(raw_text, delimiter):
-        method(json.loads(json_string))
+    def _prepare_delimiter(self):
+        """
+        manage special conversions for difficult bash characters
+        """
+        if self.args.delimiter == 'newline':
+            self.args.delimiter = '\n'
+        elif self.args.delimiter == 'tab':
+            self.args.delimiter = '\t'
+        elif self.args.delimiter == 'space':
+            self.args.delimiter = ' '
 
+    def _call_with_json_from_fp(self, method, fp):
+        for json_string in self._get_json_strings(fp.read().strip()):
+            method(json.loads(json_string))
 
-def get_json_strings(raw_text, delim):
-    if delim is None or delim == '':
-        json_strings = detect_json_strings(raw_text)
-    else:
-        json_strings = raw_text.split(delim)
+    def _get_json_strings(self, raw_text):
+        if self.args.delimiter is None or self.args.delimiter == '':
+            json_strings = self._detect_json_strings(raw_text)
+        else:
+            json_strings = raw_text.split(self.args.delimiter)
 
-    # sanitize data before returning
-    return [string.strip() for string in json_strings if string.strip()]
+        # sanitize data before returning
+        return [string.strip() for string in json_strings if string.strip()]
 
+    @staticmethod
+    def _detect_json_strings(raw_text):
+        """
+        Use regex with lookaround to spot the boundaries between JSON objects.
+        Unfortunately, it has to match *something*, so at least one character
+        must be removed and replaced.
+        """
+        strings = re.split(r'}\s*(?={)', raw_text)
 
-def detect_json_strings(raw_text):
-    """
-    Use regex with lookaround to spot the boundaries between JSON objects.
-    Unfortunately, it has to match *something*, so at least one character
-    must be removed and replaced.
-    """
-    strings = re.split('}\s*(?={)', raw_text)
+        # put back the stripped character
+        json_strings = [string + '}' for string in strings[:-1]]
 
-    # put back the stripped character
-    json_strings = [string + '}' for string in strings[:-1]]
+        # the last one doesn't need to be modified
+        json_strings.append(strings[-1])
 
-    # the last one doesn't need to be modified
-    json_strings.append(strings[-1])
-
-    return json_strings
+        return json_strings
