@@ -44,12 +44,15 @@ class CLI:
             JSON objects and/or JSON Schemas. Compatible with JSON-Schema Draft
             4 and above.""")
 
-        self.parser.add_argument(
-            '-e', '--encoding', type=str, metavar='ENCODING',
-            help="""use ENCODING instead of the default system encoding when
-            reading files. ENCODING must be a valid codec name or alias""")
-
-        encoding = self._get_encoding()
+        # only support encoding option for Python 3
+        if sys.version_info.major == 3:
+            self.parser.add_argument(
+                '-e', '--encoding', type=str, metavar='ENCODING',
+                help="""use ENCODING instead of the default system encoding for
+                reading files. ENCODING must be a valid codec name or alias""")
+            file_type = argparse.FileType('r', encoding=self._get_encoding())
+        else:
+            file_type = argparse.FileType('r')
 
         self.parser.add_argument(
             '-d', '--delimiter', metavar='DELIM',
@@ -62,8 +65,7 @@ class CLI:
             '-i', '--indent', type=int, metavar='SPACES',
             help="""pretty-print the output, indenting SPACES spaces""")
         self.parser.add_argument(
-            '-s', '--schema', action='append', default=[],
-            type=argparse.FileType('r', encoding=encoding),
+            '-s', '--schema', action='append', default=[], type=file_type,
             help="""file containing a JSON Schema (can be specified multiple
             times to merge schemas)""")
         self.parser.add_argument(
@@ -75,8 +77,7 @@ class CLI:
             result.""".format(default=SchemaBuilder.DEFAULT_URI,
                               null=SchemaBuilder.NULL_URI))
         self.parser.add_argument(
-            'object', nargs=argparse.REMAINDER,
-            type=argparse.FileType('r', encoding=encoding),
+            'object', nargs=argparse.REMAINDER, type=file_type,
             help="""files containing JSON objects (defaults to stdin if no
             arguments are passed)""")
 
