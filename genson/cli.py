@@ -35,7 +35,11 @@ def parse_args():
                         You can pass any string. A few cases ('newline', 'tab',
                         'space') will get converted to a whitespace
                         character. If this option is omitted, the parser
-                        will try to auto-detect boundaries''')
+                        will try to auto-detect boundaries.''')
+    parser.add_argument('-e', '--encoding', type=str, metavar='ENCODING',
+                        help='''use ENCODING instead of the default system
+                        encoding when reading files. ENCODING must be a valid
+                        codec name or alias''')
     parser.add_argument('-i', '--indent', type=int, metavar='SPACES',
                         help='''pretty-print the output, indenting SPACES
                         spaces''')
@@ -44,7 +48,6 @@ def parse_args():
                         help='''file containing a JSON Schema (can be
                         specified multiple times to merge schemas)''')
     parser.add_argument('-$', '--schema-uri', metavar='URI', dest='schema_uri',
-
                         help='''the value of the '$schema' keyword (defaults
                         to {default!r} or can be specified in a schema with
                         the -s option). If {null!r} is passed, the "$schema"
