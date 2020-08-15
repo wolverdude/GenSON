@@ -39,53 +39,62 @@ class CLI:
         self.parser.error(message)
 
     def _make_parser(self):
-        self.parser = argparse.ArgumentParser(
-            description="""Generate one, unified JSON Schema from one or more
-            JSON objects and/or JSON Schemas. Compatible with JSON-Schema Draft
-            4 and above.""")
-
         # only support encoding option for Python 3
         if sys.version_info.major == 3:
-            self.parser.add_argument(
-                '-e', '--encoding', type=str, metavar='ENCODING',
-                help="""use ENCODING instead of the default system encoding for
-                reading files. ENCODING must be a valid codec name or alias""")
             file_type = argparse.FileType('r', encoding=self._get_encoding())
         else:
             file_type = argparse.FileType('r')
 
+        self.parser = argparse.ArgumentParser(
+            add_help=False,
+            description="""Generate one, unified JSON Schema from one or more
+            JSON objects and/or JSON Schemas. Compatible with JSON-Schema Draft
+            4 and above.""")
+
+        self.parser.add_argument(
+            '-h', '--help', action='help', default=argparse.SUPPRESS,
+            help='Show this help message and exit.')
         self.parser.add_argument(
             '-d', '--delimiter', metavar='DELIM',
-            help="""set a delimiter - Use this option if the input files
+            help="""Set a delimiter. Use this option if the input files
             contain multiple JSON objects/schemas. You can pass any string. A
             few cases ('newline', 'tab', 'space') will get converted to a
             whitespace character. If this option is omitted, the parser will
             try to auto-detect boundaries.""")
+        if sys.version_info.major == 3:
+            self.parser.add_argument(
+                '-e', '--encoding', type=str, metavar='ENCODING',
+                help="""Use ENCODING instead of the default system encoding
+                when reading files. ENCODING must be a valid codec name or
+                alias.""")
         self.parser.add_argument(
             '-i', '--indent', type=int, metavar='SPACES',
-            help="""pretty-print the output, indenting SPACES spaces""")
+            help="""Pretty-print the output, indenting SPACES spaces.""")
         self.parser.add_argument(
             '-s', '--schema', action='append', default=[], type=file_type,
-            help="""file containing a JSON Schema (can be specified multiple
-            times to merge schemas)""")
+            help="""File containing a JSON Schema (can be specified multiple
+            times to merge schemas).""")
         self.parser.add_argument(
             '-$', '--schema-uri', metavar='SCHEMA_URI', dest='schema_uri',
             default=SchemaBuilder.DEFAULT_URI,
-            help="""the value of the '$schema' keyword (defaults to {default!r}
+            help="""The value of the '$schema' keyword (defaults to {default!r}
             or can be specified in a schema with the -s option). If {null!r} is
             passed, the "$schema" keyword will not be included in the
             result.""".format(default=SchemaBuilder.DEFAULT_URI,
                               null=SchemaBuilder.NULL_URI))
         self.parser.add_argument(
             'object', nargs=argparse.REMAINDER, type=file_type,
-            help="""files containing JSON objects (defaults to stdin if no
-            arguments are passed)""")
+            help="""Files containing JSON objects (defaults to stdin if no
+            arguments are passed).""")
 
     def _get_encoding(self):
         """
-        pre-parse encoding argument for use with FileType args
+        use separate arg parser to grab encoding argument before
+        defining FileType args
         """
-        args, _ = self.parser.parse_known_args()
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument('-e', '--encoding', type=str)
+        args, _ = parser.parse_known_args()
         return args.encoding
 
     def _prepare_args(self):
@@ -123,9 +132,9 @@ class CLI:
     @staticmethod
     def _detect_json_strings(raw_text):
         """
-        Use regex with lookaround to spot the boundaries between JSON objects.
-        Unfortunately, it has to match *something*, so at least one character
-        must be removed and replaced.
+        Use regex with lookaround to spot the boundaries between JSON
+        objects. Unfortunately, it has to match *something*, so at least
+        one character must be removed and replaced.
         """
         strings = re.split(r'}\s*(?={)', raw_text)
 
