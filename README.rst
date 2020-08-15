@@ -505,13 +505,15 @@ Note that the exclusive builder is much more particular.
 Compatibility
 -------------
 
-GenSON has been tested and verified using the following versions of Python:
+GenSON has been tested and verified under the following Python versions:
 
-* Python 2.7.11
+* Python 2.7.13
 * Python 3.3.5
-* Python 3.4.4
-* Python 3.5.1
+* Python 3.4.5
+* Python 3.5.4
 * Python 3.6.2
+* Python 3.7.3
+* Python 3.8.2
 
 
 Contributing
