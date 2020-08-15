@@ -2,7 +2,7 @@ import argparse
 import sys
 import re
 import json
-from . import SchemaBuilder
+from . import SchemaBuilder, __version__
 
 
 def main():
@@ -54,6 +54,10 @@ class CLI:
         self.parser.add_argument(
             '-h', '--help', action='help', default=argparse.SUPPRESS,
             help='Show this help message and exit.')
+        self.parser.add_argument(
+            '--version', action='version', default=argparse.SUPPRESS,
+            version='%(prog)s {}'.format(__version__),
+            help='Show version number and exit.')
         self.parser.add_argument(
             '-d', '--delimiter', metavar='DELIM',
             help="""Set a delimiter. Use this option if the input files

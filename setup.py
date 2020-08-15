@@ -1,5 +1,12 @@
 #!/usr/bin/env python
+import re
 from setuptools import setup
+
+
+def get_version():
+    with open('genson/__init__.py') as f:
+        match = re.search(r"__version__ = '([\d\.]+)'", f.read())
+        return match.group(1)
 
 
 def get_long_docs(*filenames):
@@ -14,7 +21,7 @@ def get_long_docs(*filenames):
 
 setup(
     name='genson',
-    version='1.2.1',
+    version=get_version(),
     description='GenSON is a powerful, user-friendly JSON Schema generator.',
     long_description=get_long_docs('README.rst', 'HISTORY.rst', 'AUTHORS.rst'),
     keywords=['json', 'schema', 'json-schema', 'jsonschema', 'object',
