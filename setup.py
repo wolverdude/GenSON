@@ -56,8 +56,4 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities',
     ],
-    tests_require=[
-        'jsonschema>=3.0.1',
-    ],
-    test_suite='test',
 )

@@ -1,13 +1,14 @@
 import unittest
 import json
-from os import path
+import os
 from subprocess import Popen, PIPE
 from . import base
 from genson import SchemaBuilder
 
 BASE_SCHEMA = {"$schema": SchemaBuilder.DEFAULT_URI}
-BIN_PATH = path.abspath(path.join(__file__, '..', '..', 'bin', 'genson.py'))
-FIXTURE_PATH = path.abspath(path.join(__file__, '..', 'fixtures'))
+BIN_PATH = os.path.join(
+    os.path.dirname(__file__), os.pardir, 'bin', 'genson.py')
+FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 
 
 def run(args=[], stdin_data=None):
@@ -68,7 +69,8 @@ class TestStdin(unittest.TestCase):
 
     @base.only_for_python_version('>=3.3')
     def test_encoding_unicode(self):
-        (stdout, stderr) = run(['-e', 'utf-8', path.join(FIXTURE_PATH, 'utf-8.json')])
+        (stdout, stderr) = run(
+            ['-e', 'utf-8', os.path.join(FIXTURE_PATH, 'utf-8.json')])
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),
@@ -76,7 +78,8 @@ class TestStdin(unittest.TestCase):
 
     @base.only_for_python_version('>=3.3')
     def test_encoding_cp1252(self):
-        (stdout, stderr) = run(['-e', 'cp1252', path.join(FIXTURE_PATH, 'cp1252.json')])
+        (stdout, stderr) = run(
+            ['-e', 'cp1252', os.path.join(FIXTURE_PATH, 'cp1252.json')])
         self.assertEqual(stderr, None)
         self.assertEqual(
             json.loads(stdout),

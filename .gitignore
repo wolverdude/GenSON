@@ -10,3 +10,7 @@ dist/
 *.egg-info/
 *.egg
 *.eggs
+
+# Testing / CI
+.coverage
+.tox
