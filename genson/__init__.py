@@ -1,4 +1,3 @@
-from os import path
 from .schema.builder import SchemaBuilder, Schema
 from .schema.node import SchemaNode, SchemaGenerationError
 from .schema.strategies.base import SchemaStrategy, TypedSchemaStrategy
