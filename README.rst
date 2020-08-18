@@ -1,3 +1,7 @@
+.. image:: https://travis-ci.com/wolverdude/GenSON.svg?branch=master
+   :alt: Travis CI build badge
+   :target: `Travis CI`_
+
 GenSON
 ======
 
@@ -383,8 +387,6 @@ Override this method if you need to override that behavior. This may be useful i
 
 :rtype: ``bool``
 
-
-
 ``TypedSchemaStrategy`` API
 +++++++++++++++++++++++++++
 
@@ -502,20 +504,6 @@ Note that the exclusive builder is much more particular.
     genson.schema.node.SchemaGenerationError: Could not find matching schema type for object: None
 
 
-Compatibility
--------------
-
-GenSON has been tested and verified under the following Python versions:
-
-* Python 2.7.13
-* Python 3.3.5
-* Python 3.4.5
-* Python 3.5.4
-* Python 3.6.2
-* Python 3.7.3
-* Python 3.8.2
-
-
 Contributing
 ------------
 
@@ -523,8 +511,8 @@ When contributing, please follow these steps:
 
 1. Clone the repo and make your changes.
 2. Make sure your code has test cases written against it.
-3. Make sure all the tests pass.
-4. Lint your code with `Flake8`_.
+3. Lint your code with `Flake8`_.
+4. Run `tox`_ to make sure the test suite passes.
 5. Ensure the docs are accurate.
 6. Add your name to the list of contributers.
 7. Submit a Pull Request.
@@ -532,18 +520,30 @@ When contributing, please follow these steps:
 Tests
 +++++
 
-Tests are written in ``unittest``. You can run them all easily with the included executable ``bin/test.py``.
+Tests are written in ``unittest`` and are run using `tox`_ and `nose`_. Tox will run all tests with coverage against each supported Python version that is installed on your machine.
 
 .. code-block:: bash
 
-    $ bin/test.py
+    $ tox
 
-You can also invoke individual test suites:
+You should always run tox before submitting a PR, but it takes some time, so when developing, it may be faster just to run ``nosetests`` in your own environment. e.g.
 
 .. code-block:: bash
 
-    $ bin/test.py --test-suite test.test_gen_single
+    $ nosetests
+    $ nosetests --with-coverate --cover-package=genson
+    $ nosetests test.test_gen_single:TestBasicTypes.test_number
 
+Integration
++++++++++++
+
+When you submit a PR, `Travis CI`_ performs the following steps:
+
+1. Lints the code with Flake8
+2. Runs the entire test suite against each supported Python version.
+3. Ensures that test coverage is at least 90%
+
+If any of these steps fail, your PR cannot be merged until it is fixed.
 
 Potential Future Features
 +++++++++++++++++++++++++
@@ -575,3 +575,5 @@ The following are extra features under consideration.
 .. _the code: https://github.com/wolverdude/GenSON/tree/master/genson/schema/strategies
 .. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range
 .. _Flake8: https://pypi.python.org/pypi/flake8
+.. _tox: https://pypi.python.org/pypi/tox
+.. _Travis CI: https://travis-ci.com/github/wolverdude/GenSON

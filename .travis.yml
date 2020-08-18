@@ -18,4 +18,4 @@ jobs:
     - python: 3.8
       env: ISOLATED=false
       install: pip install flake8
-      script: flake8 genson test
+      script: flake8
