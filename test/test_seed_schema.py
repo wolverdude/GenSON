@@ -13,54 +13,54 @@ class TestPatternProperties(base.SchemaNodeTestCase):
 
     def test_single_pattern(self):
         self.add_schema({'type': 'object', 'patternProperties': {
-            '^\d$': None}})
+            r'^\d$': None}})
         self.add_object({'0': 0, '1': 1, '2': 2})
         self.assertResult({'type': 'object', 'patternProperties': {
-            '^\d$': {'type': 'integer'}}})
+            r'^\d$': {'type': 'integer'}}})
 
     def test_multi_pattern(self):
         self.add_schema({'type': 'object', 'patternProperties': {
-            '^\d$': None,
-            '^[a-z]$': None}})
+            r'^\d$': None,
+            r'^[a-z]$': None}})
         self.add_object({'0': 0, '1': 1, 'a': True, 'b': False})
         self.assertResult({'type': 'object', 'patternProperties': {
-            '^\d$': {'type': 'integer'},
-            '^[a-z]$': {'type': 'boolean'}}})
+            r'^\d$': {'type': 'integer'},
+            r'^[a-z]$': {'type': 'boolean'}}})
 
     def test_multi_pattern_multi_object(self):
         self.add_schema({'type': 'object', 'patternProperties': {
-            '^\d$': None,
-            '^[a-z]$': None}})
+            r'^\d$': None,
+            r'^[a-z]$': None}})
         self.add_object({'0': 0})
         self.add_object({'1': 1})
         self.add_object({'a': True})
         self.add_object({'b': False})
         self.assertResult({'type': 'object', 'patternProperties': {
-            '^\d$': {'type': 'integer'},
-            '^[a-z]$': {'type': 'boolean'}}})
+            r'^\d$': {'type': 'integer'},
+            r'^[a-z]$': {'type': 'boolean'}}})
 
     def test_existing_schema(self):
         self.add_schema({'type': 'object', 'patternProperties': {
-            '^\d$': {'type': 'boolean'}}})
+            r'^\d$': {'type': 'boolean'}}})
         self.add_object({'0': 0, '1': 1, '2': 2})
         self.assertResult({'type': 'object', 'patternProperties': {
-            '^\d$': {'type': ['boolean', 'integer']}}})
+            r'^\d$': {'type': ['boolean', 'integer']}}})
 
     def test_prefers_existing_properties(self):
         self.add_schema({'type': 'object',
                          'properties': {'0': None},
-                         'patternProperties': {'^\d$': None}})
+                         'patternProperties': {r'^\d$': None}})
         self.add_object({'0': 0, '1': 1, '2': 2})
         self.assertResult({'type': 'object',
                            'properties': {'0': {'type': 'integer'}},
-                           'patternProperties': {'^\d$': {'type': 'integer'}},
+                           'patternProperties': {r'^\d$': {'type': 'integer'}},
                            'required': ['0']})
 
     def test_keeps_unrecognized_properties(self):
         self.add_schema({'type': 'object',
-                         'patternProperties': {'^\d$': None}})
+                         'patternProperties': {r'^\d$': None}})
         self.add_object({'0': 0, '1': 1, '2': 2, 'a': True})
         self.assertResult({'type': 'object',
                            'properties': {'a': {'type': 'boolean'}},
-                           'patternProperties': {'^\d$': {'type': 'integer'}},
+                           'patternProperties': {r'^\d$': {'type': 'integer'}},
                            'required': ['a']})
