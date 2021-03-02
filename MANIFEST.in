@@ -1,6 +1,3 @@
 include *.rst
 include LICENSE
-recursive-include genson *.py
-recursive-include bin *.py
-recursive-include test *.py
 recursive-include test *.json
