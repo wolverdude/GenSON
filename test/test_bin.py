@@ -25,8 +25,9 @@ def run(args=[], stdin_data=None):
     Run the ``genson`` executable as a subprocess and return
     (stdout, stderr).
     """
-    genson_process = Popen(['genson'] + args, stdout=PIPE, stderr=PIPE,
-                           stdin=PIPE if stdin_data is not None else None)
+    genson_process = Popen(
+        ['python', '-m', 'genson'] + args, stdout=PIPE, stderr=PIPE,
+        stdin=PIPE if stdin_data is not None else None)
     if stdin_data is not None:
         stdin_data = stdin_data.encode('utf-8')
     (stdout, stderr) = genson_process.communicate(stdin_data)
