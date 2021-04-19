@@ -4,7 +4,29 @@ from .node import SchemaNode
 from .strategies import BASIC_SCHEMA_STRATEGIES
 
 
-class SchemaBuilder(object):
+class _MetaSchemaBuilder(type):
+    def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+
+        if 'EXTRA_STRATEGIES' in attrs:
+            schema_strategies = list(attrs['EXTRA_STRATEGIES'])
+            # add in all strategies inherited from base classes
+            for base in bases:
+                schema_strategies += list(getattr(base, 'STRATEGIES', []))
+
+            unique_schema_strategies = []
+            for schema_strategy in schema_strategies:
+                if schema_strategy not in unique_schema_strategies:
+                    unique_schema_strategies.append(schema_strategy)
+
+            cls.STRATEGIES = tuple(unique_schema_strategies)
+
+        # create a version of SchemaNode loaded with the custom strategies
+        cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
+                              {'STRATEGIES': cls.STRATEGIES})
+
+
+class SchemaBuilder(metaclass=_MetaSchemaBuilder):
     """
     ``SchemaBuilder`` is the basic schema generator class.
     ``SchemaBuilder`` instances can be loaded up with existing schemas
@@ -115,32 +137,6 @@ class SchemaBuilder(object):
             return {}
         else:
             return {'$schema': self.schema_uri or self.DEFAULT_URI}
-
-
-class _MetaSchemaBuilder(type):
-    def __init__(cls, name, bases, attrs):
-        super(_MetaSchemaBuilder, cls).__init__(name, bases, attrs)
-
-        if 'EXTRA_STRATEGIES' in attrs:
-            schema_strategies = list(attrs['EXTRA_STRATEGIES'])
-            # add in all strategies inherited from base classes
-            for base in bases:
-                schema_strategies += list(getattr(base, 'STRATEGIES', []))
-
-            unique_schema_strategies = []
-            for schema_strategy in schema_strategies:
-                if schema_strategy not in unique_schema_strategies:
-                    unique_schema_strategies.append(schema_strategy)
-
-            cls.STRATEGIES = tuple(unique_schema_strategies)
-
-        # create a version of SchemaNode loaded with the custom strategies
-        cls.NODE_CLASS = type('%sSchemaNode' % name, (SchemaNode,),
-                              {'STRATEGIES': cls.STRATEGIES})
-
-
-# apply metaclass in python 2/3 compatible manner
-SchemaBuilder = _MetaSchemaBuilder('SchemaBuilder', (SchemaBuilder,), {})
 
 
 class Schema(SchemaBuilder):

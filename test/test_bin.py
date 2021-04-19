@@ -14,18 +14,13 @@ FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 def run(args=[], stdin_data=None):
     """
     Run the ``genson`` executable as a subprocess and return
-    (stdout, stderr). Some assuaging is necessary to maintain
-    Python compatibility with both Python 2 and 3.
+    (stdout, stderr).
     """
     genson_process = Popen([BIN_PATH] + args, stdin=PIPE, stdout=PIPE)
     if stdin_data is not None:
         stdin_data = stdin_data.encode('utf-8')
     (stdout, stderr) = genson_process.communicate(stdin_data)
     genson_process.wait()
-    if isinstance(stdout, bytes):
-        stdout = stdout.decode('utf-8')
-    if isinstance(stderr, bytes):
-        stderr = stderr.decode('utf-8')
     return (stdout, stderr)
 
 

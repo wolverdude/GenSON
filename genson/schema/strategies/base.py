@@ -2,7 +2,7 @@ from copy import copy
 from warnings import warn
 
 
-class SchemaStrategy(object):
+class SchemaStrategy:
     """
     base schema strategy. This contains the common interface for
     all subclasses:

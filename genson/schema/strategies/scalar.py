@@ -39,7 +39,7 @@ class String(TypedSchemaStrategy):
     strategy for string schemas - works for ascii and unicode strings
     """
     JS_TYPE = 'string'
-    PYTHON_TYPE = (str, type(u''))
+    PYTHON_TYPE = str
 
 
 class Number(SchemaStrategy):
@@ -48,12 +48,8 @@ class Number(SchemaStrategy):
     converts from `integer` to `number` when a float object or a
     number schema is added
     """
-    if sys.version_info < (3,):
-        JS_TYPES = ('integer', 'number', 'integer')
-        PYTHON_TYPES = (int, float, long)  # noqa
-    else:
-        JS_TYPES = ('integer', 'number')
-        PYTHON_TYPES = (int, float)
+    JS_TYPES = ('integer', 'number')
+    PYTHON_TYPES = (int, float)
 
     @classmethod
     def match_schema(cls, schema):

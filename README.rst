@@ -95,8 +95,6 @@ The package includes a ``genson`` executable that allows you to access this func
                             the "$schema" keyword will not be included in the
                             result.
 
-.. note::
-    The ``--encoding`` option is only available in Python 3.
 
 GenSON Python API
 -----------------

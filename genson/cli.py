@@ -39,11 +39,7 @@ class CLI:
         self.parser.error(message)
 
     def _make_parser(self):
-        # only support encoding option for Python 3
-        if sys.version_info.major == 3:
-            file_type = argparse.FileType('r', encoding=self._get_encoding())
-        else:
-            file_type = argparse.FileType('r')
+        file_type = argparse.FileType('r', encoding=self._get_encoding())
 
         self.parser = argparse.ArgumentParser(
             add_help=False,
@@ -65,12 +61,11 @@ class CLI:
             few cases ('newline', 'tab', 'space') will get converted to a
             whitespace character. If this option is omitted, the parser will
             try to auto-detect boundaries.""")
-        if sys.version_info.major == 3:
-            self.parser.add_argument(
-                '-e', '--encoding', type=str, metavar='ENCODING',
-                help="""Use ENCODING instead of the default system encoding
-                when reading files. ENCODING must be a valid codec name or
-                alias.""")
+        self.parser.add_argument(
+            '-e', '--encoding', type=str, metavar='ENCODING',
+            help="""Use ENCODING instead of the default system encoding
+            when reading files. ENCODING must be a valid codec name or
+            alias.""")
         self.parser.add_argument(
             '-i', '--indent', type=int, metavar='SPACES',
             help="""Pretty-print the output, indenting SPACES spaces.""")
