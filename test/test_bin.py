@@ -2,7 +2,6 @@ import unittest
 import json
 import os
 from subprocess import Popen, PIPE
-from . import base
 from genson import SchemaBuilder
 
 BASE_SCHEMA = {"$schema": SchemaBuilder.DEFAULT_URI}

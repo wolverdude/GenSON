@@ -1,7 +1,6 @@
 import sys
 import unittest
 import jsonschema
-from pkg_resources import Requirement
 from genson import SchemaNode, SchemaBuilder
 
 PYTHON_VERSION = sys.version[:sys.version.find(' ')]
