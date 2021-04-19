@@ -5,13 +5,9 @@ import json
 from . import SchemaBuilder, __version__
 
 
-def main():
-    CLI().run()
-
-
 class CLI:
-    def __init__(self):
-        self._make_parser()
+    def __init__(self, prog=None):
+        self._make_parser(prog)
         self._prepare_args()
         self.builder = SchemaBuilder(schema_uri=self.args.schema_uri)
 
@@ -38,11 +34,12 @@ class CLI:
     def fail(self, message):
         self.parser.error(message)
 
-    def _make_parser(self):
+    def _make_parser(self, prog=None):
         file_type = argparse.FileType('r', encoding=self._get_encoding())
 
         self.parser = argparse.ArgumentParser(
             add_help=False,
+            prog=prog,
             description="""Generate one, unified JSON Schema from one or more
             JSON objects and/or JSON Schemas. Compatible with JSON-Schema Draft
             4 and above.""")
@@ -117,7 +114,11 @@ class CLI:
 
     def _call_with_json_from_fp(self, method, fp):
         for json_string in self._get_json_strings(fp.read().strip()):
-            method(json.loads(json_string))
+            try:
+                json_obj = json.loads(json_string)
+            except json.JSONDecodeError as err:
+                self.fail('invalid JSON in {}: {}'.format(fp.name, err))
+            method(json_obj)
 
     def _get_json_strings(self, raw_text):
         if self.args.delimiter is None or self.args.delimiter == '':
@@ -144,3 +145,11 @@ class CLI:
         json_strings.append(strings[-1])
 
         return json_strings
+
+
+def main():
+    CLI().run()
+
+
+if __name__ == "__main__":
+    CLI('genson').run()
