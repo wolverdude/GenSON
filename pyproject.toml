@@ -1,7 +1,3 @@
 [build-system]
-requires = ["setuptools>=44", "wheel", "setuptools_scm[toml]>=3.4.3"]
+requires = ["setuptools>=44", "wheel"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools_scm]
-write_to = "genson/version.py"
-write_to_template = "__version__ = '{version}'\n"
