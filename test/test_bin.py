@@ -67,7 +67,6 @@ class TestStdin(unittest.TestCase):
             dict({"required": ["hi"], "type": "object", "properties": {
                 "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
 
-    @base.only_for_python_version('>=3.3')
     def test_encoding_unicode(self):
         (stdout, stderr) = run(
             ['-e', 'utf-8', os.path.join(FIXTURE_PATH, 'utf-8.json')])
@@ -76,7 +75,6 @@ class TestStdin(unittest.TestCase):
             json.loads(stdout),
             dict({"type": "string"}, **BASE_SCHEMA))
 
-    @base.only_for_python_version('>=3.3')
     def test_encoding_cp1252(self):
         (stdout, stderr) = run(
             ['-e', 'cp1252', os.path.join(FIXTURE_PATH, 'cp1252.json')])

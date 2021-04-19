@@ -58,17 +58,3 @@ class SchemaNodeTestCase(BaseTestCase):
 
 class SchemaBuilderTestCase(BaseTestCase):
     CLASS = SchemaBuilder
-
-
-# backwards compatibility
-
-def only_for_python_version(version_specifier):
-    req = Requirement.parse('python%s' % version_specifier)
-
-    def handler(func):
-        if PYTHON_VERSION in req:
-            return func
-        else:
-            return unittest.skip('Python version %s does not match: %s'
-                                 % (PYTHON_VERSION, req))(func)
-    return handler
