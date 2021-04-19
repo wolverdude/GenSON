@@ -571,4 +571,5 @@ The following are extra features under consideration.
 .. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range
 .. _Flake8: https://pypi.python.org/pypi/flake8
 .. _tox: https://pypi.python.org/pypi/tox
+.. _nose: https://pypi.python.org/pypi/nose
 .. _Travis CI: https://travis-ci.com/github/wolverdude/GenSON
