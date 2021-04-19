@@ -94,7 +94,8 @@ class TestError(unittest.TestCase):
 class TestDelimiter(unittest.TestCase):
 
     def test_delim_newline(self):
-        (stdout, stderr) = run(['-d', 'newline'], stdin_data='{"hi":"there"}\n{"hi":5}')
+        (stdout, stderr) = run(['-d', 'newline'],
+                               stdin_data='{"hi":"there"}\n{"hi":5}')
         self.assertEqual(stderr, '')
         self.assertEqual(
             json.loads(stdout),
@@ -110,7 +111,8 @@ class TestDelimiter(unittest.TestCase):
                 "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
 
     def test_delim_auto_whitespace(self):
-        (stdout, stderr) = run(['-d', ''], stdin_data='{"hi":"there"} \n\t{"hi":5}')
+        (stdout, stderr) = run(['-d', ''],
+                               stdin_data='{"hi":"there"} \n\t{"hi":5}')
         self.assertEqual(stderr, '')
         self.assertEqual(
             json.loads(stdout),
