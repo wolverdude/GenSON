@@ -73,6 +73,6 @@ class TypedSchemaStrategy(SchemaStrategy):
         return isinstance(obj, cls.PYTHON_TYPE)
 
     def to_schema(self):
-        schema = super(TypedSchemaStrategy, self).to_schema()
+        schema = super().to_schema()
         schema['type'] = self.JS_TYPE
         return schema

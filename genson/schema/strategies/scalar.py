@@ -65,11 +65,11 @@ class Number(SchemaStrategy):
         return type(obj) in cls.PYTHON_TYPES
 
     def __init__(self, node_class):
-        super(Number, self).__init__(node_class)
+        super().__init__(node_class)
         self._type = 'integer'
 
     def add_schema(self, schema):
-        super(Number, self).add_schema(schema)
+        super().add_schema(schema)
         if schema.get('type') == 'number':
             self._type = 'number'
 
@@ -78,6 +78,6 @@ class Number(SchemaStrategy):
             self._type = 'number'
 
     def to_schema(self):
-        schema = super(Number, self).to_schema()
+        schema = super().to_schema()
         schema['type'] = self._type
         return schema

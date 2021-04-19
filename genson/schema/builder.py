@@ -150,7 +150,7 @@ class Schema(SchemaBuilder):
              'removed in future versions. Use genson.SchemaBuilder'
              'instead.',
              PendingDeprecationWarning)
-        super(Schema, self).__init__(schema_uri=SchemaBuilder.NULL_URI)
+        super().__init__(schema_uri=SchemaBuilder.NULL_URI)
 
     def to_dict(self, recurse='DEPRECATED'):
         warn('#to_dict is deprecated in v1.0, and it may be removed in '

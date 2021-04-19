@@ -7,7 +7,7 @@ class MaxTenStrategy(Number):
     KEYWORDS = tuple(list(Number.KEYWORDS) + ['maximum'])
 
     def to_schema(self):
-        schema = super(MaxTenStrategy, self).to_schema()
+        schema = super().to_schema()
         schema['maximum'] = 10
         return schema
 
@@ -24,7 +24,7 @@ class FalseStrategy(SchemaStrategy):
         return True
 
     def to_schema(self):
-        schema = super(FalseStrategy, self).to_schema()
+        schema = super().to_schema()
         schema['type'] = 'boolean'
         schema['const'] = False
         return schema

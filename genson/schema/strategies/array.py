@@ -12,7 +12,7 @@ class BaseArray(SchemaStrategy):
         return isinstance(obj, list)
 
     def to_schema(self):
-        schema = super(BaseArray, self).to_schema()
+        schema = super().to_schema()
         schema['type'] = 'array'
         if self._items:
             schema['items'] = self.items_to_schema()
@@ -30,11 +30,11 @@ class List(BaseArray):
             and isinstance(schema.get('items', {}), dict)
 
     def __init__(self, node_class):
-        super(List, self).__init__(node_class)
+        super().__init__(node_class)
         self._items = node_class()
 
     def add_schema(self, schema):
-        super(List, self).add_schema(schema)
+        super().add_schema(schema)
         if 'items' in schema:
             self._items.add_schema(schema['items'])
 
@@ -57,11 +57,11 @@ class Tuple(BaseArray):
             and isinstance(schema.get('items'), list)
 
     def __init__(self, node_class):
-        super(Tuple, self).__init__(node_class)
+        super().__init__(node_class)
         self._items = [node_class()]
 
     def add_schema(self, schema):
-        super(Tuple, self).add_schema(schema)
+        super().add_schema(schema)
         if 'items' in schema:
             self._add(schema['items'], 'add_schema')
 
