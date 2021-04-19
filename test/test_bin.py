@@ -20,6 +20,10 @@ def run(args=[], stdin_data=None):
         stdin_data = stdin_data.encode('utf-8')
     (stdout, stderr) = genson_process.communicate(stdin_data)
     genson_process.wait()
+    if isinstance(stdout, bytes):
+        stdout = stdout.decode('utf-8')
+    if isinstance(stderr, bytes):
+        stderr = stderr.decode('utf-8')
     return (stdout, stderr)
 
 
