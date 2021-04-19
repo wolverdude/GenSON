@@ -5,7 +5,7 @@ class SchemaGenerationError(RuntimeError):
     pass
 
 
-class SchemaNode(object):
+class SchemaNode:
     """
     Basic schema generator class. SchemaNode objects can be loaded
     up with existing schemas and objects before being serialized.

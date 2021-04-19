@@ -18,7 +18,7 @@ class Object(SchemaStrategy):
         return isinstance(obj, dict)
 
     def __init__(self, node_class):
-        super(Object, self).__init__(node_class)
+        super().__init__(node_class)
 
         self._properties = defaultdict(node_class)
         self._pattern_properties = defaultdict(node_class)
@@ -26,7 +26,7 @@ class Object(SchemaStrategy):
         self._include_empty_required = False
 
     def add_schema(self, schema):
-        super(Object, self).add_schema(schema)
+        super().add_schema(schema)
         if 'properties' in schema:
             for prop, subschema in schema['properties'].items():
                 subnode = self._properties[prop]
@@ -78,7 +78,7 @@ class Object(SchemaStrategy):
             getattr(subschema, func)(item)
 
     def to_schema(self):
-        schema = super(Object, self).to_schema()
+        schema = super().to_schema()
         schema['type'] = 'object'
         if self._properties:
             schema['properties'] = self._properties_to_schema(

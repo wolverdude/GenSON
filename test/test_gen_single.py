@@ -14,11 +14,6 @@ class TestBasicTypes(base.SchemaNodeTestCase):
         self.add_object(1)
         self.assertResult({"type": "integer"})
 
-    @base.only_for_python_version('<3')
-    def test_long(self):
-        self.add_object(long(1))  # noqa
-        self.assertResult({"type": "integer"})
-
     def test_number(self):
         self.add_object(1.1)
         self.assertResult({"type": "number"})

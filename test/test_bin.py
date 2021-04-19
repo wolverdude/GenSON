@@ -2,7 +2,6 @@ import unittest
 import json
 import os
 from subprocess import Popen, PIPE
-from . import base
 from genson import SchemaBuilder
 
 BASE_SCHEMA = {"$schema": SchemaBuilder.DEFAULT_URI}
@@ -14,8 +13,7 @@ FIXTURE_PATH = os.path.join(os.path.dirname(__file__), 'fixtures')
 def run(args=[], stdin_data=None):
     """
     Run the ``genson`` executable as a subprocess and return
-    (stdout, stderr). Some assuaging is necessary to maintain
-    Python compatibility with both Python 2 and 3.
+    (stdout, stderr).
     """
     genson_process = Popen([BIN_PATH] + args, stdin=PIPE, stdout=PIPE)
     if stdin_data is not None:
@@ -67,7 +65,6 @@ class TestStdin(unittest.TestCase):
             dict({"required": ["hi"], "type": "object", "properties": {
                 "hi": {"type": ["integer", "string"]}}}, **BASE_SCHEMA))
 
-    @base.only_for_python_version('>=3.3')
     def test_encoding_unicode(self):
         (stdout, stderr) = run(
             ['-e', 'utf-8', os.path.join(FIXTURE_PATH, 'utf-8.json')])
@@ -76,7 +73,6 @@ class TestStdin(unittest.TestCase):
             json.loads(stdout),
             dict({"type": "string"}, **BASE_SCHEMA))
 
-    @base.only_for_python_version('>=3.3')
     def test_encoding_cp1252(self):
         (stdout, stderr) = run(
             ['-e', 'cp1252', os.path.join(FIXTURE_PATH, 'cp1252.json')])

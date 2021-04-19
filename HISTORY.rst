@@ -1,6 +1,16 @@
 History
 =======
 
+1.3.0
+-----
+
+* add support for Python 3.9
+* remove support for old Python versions that test dependencies no longer support
+  * Python 3.4
+  * Python 2.7
+    * remove tests & test commands only relevant to Python 2.7
+    * remove backwards-compatibility from code
+
 1.2.2
 -----
 

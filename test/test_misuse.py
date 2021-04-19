@@ -8,7 +8,6 @@ class TestMisuse(base.SchemaBuilderTestCase):
         with self.assertRaises(SchemaGenerationError):
             self.add_schema({'type': 'african swallow'})
 
-    @base.only_for_python_version('>=3.3')
     def test_to_dict_pending_deprecation_warning(self):
         with self.assertWarns(PendingDeprecationWarning):
             builder = Schema()
@@ -16,14 +15,12 @@ class TestMisuse(base.SchemaBuilderTestCase):
             builder.add_object('I fart in your general direction!')
             builder.to_dict()
 
-    @base.only_for_python_version('>=3.3')
     def test_recurse_deprecation_warning(self):
         with self.assertWarns(DeprecationWarning):
             builder = Schema()
             builder.add_object('Go away or I shall taunt you a second time!')
             builder.to_dict(recurse=True)
 
-    @base.only_for_python_version('>=3.3')
     def test_incompatible_schema_warning(self):
         with self.assertWarns(UserWarning):
             self.add_schema({'type': 'string', 'length': 5})

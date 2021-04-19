@@ -95,8 +95,6 @@ The package includes a ``genson`` executable that allows you to access this func
                             the "$schema" keyword will not be included in the
                             result.
 
-.. note::
-    The ``--encoding`` option is only available in Python 3.
 
 GenSON Python API
 -----------------
@@ -424,9 +422,6 @@ Example: ``MinNumber``
 ++++++++++++++++++++++
 
 Here's some example code creating a number strategy that tracks the `minimum number`_ seen and includes it in the output schema.
-
-.. note::
-    This example is written in Python 3.3+. Custom strategies also work in Python 2.7, but you need different syntax (``super`` arguments & no splatting ``KEYWORDS``).
 
 .. code-block:: python
 
