@@ -11,3 +11,4 @@ Contributors
 - `David Kay <https://github.com/davek2>`_
 - `Heiho1 <https://github.com/heiho1>`_
 - `YehudaCorsia <https://github.com/YehudaCorsia>`_
+- `KOLANICH <https://github.com/KOLANICH>`_

@@ -13,6 +13,9 @@ History
     * remove tests & test commands only relevant to Python 2.7
     * remove backwards-compatibility from code
 
+* enable running as a module (``python -m genson``)
+* modernize package configuration
+
 1.2.2
 -----
 
