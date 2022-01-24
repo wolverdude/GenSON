@@ -38,9 +38,9 @@ class List(BaseArray):
         if 'items' in schema:
             self._items.add_schema(schema['items'])
 
-    def add_object(self, obj):
+    def add_object(self, obj, **kwargs):
         for item in obj:
-            self._items.add_object(item)
+            self._items.add_object(item, **kwargs)
 
     def items_to_schema(self):
         return self._items.to_schema()

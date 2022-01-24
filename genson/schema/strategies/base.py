@@ -43,7 +43,7 @@ class SchemaStrategy:
                       'values ({1!r} vs. {2!r}). Using {1!r}').format(
                           keyword, self._extra_keywords[keyword], value))
 
-    def add_object(self, obj):
+    def add_object(self, obj, **kwargs):
         pass
 
     def to_schema(self):

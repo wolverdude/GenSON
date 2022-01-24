@@ -28,6 +28,39 @@ class TestMethods(base.SchemaBuilderTestCase):
             "$schema": SchemaBuilder.DEFAULT_URI,
             "type": "null"})
 
+    def test_add_object_required_false(self):
+        mock_dict = {
+            "mock_value_one": "abc"
+        }
+        self.add_object(mock_dict, required=False)
+
+        self.assertResult({
+            "$schema": SchemaBuilder.DEFAULT_URI,
+            "type": "object",
+            "properties": {
+                "mock_value_one": {
+                    "type": "string"
+                }
+            }
+        })
+
+    def test_add_object_required_true(self):
+        mock_dict = {
+            "mock_value_one": "abc"
+        }
+        self.add_object(mock_dict, required=True)
+
+        self.assertResult({
+            "$schema": SchemaBuilder.DEFAULT_URI,
+            "type": "object",
+            "properties": {
+                "mock_value_one": {
+                    "type": "string"
+                }
+            },
+            "required": ["mock_value_one"]
+        })
+
     def test_to_json(self):
         self.assertEqual(
             self.builder.to_json(),

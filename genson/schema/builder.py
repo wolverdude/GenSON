@@ -83,13 +83,13 @@ class SchemaBuilder(metaclass=_MetaSchemaBuilder):
             del schema['$schema']
         self._root_node.add_schema(schema)
 
-    def add_object(self, obj):
+    def add_object(self, obj, **kwargs):
         """
         Modify the schema to accommodate an object.
 
         :param obj: any object or scalar that can be serialized in JSON
         """
-        self._root_node.add_object(obj)
+        self._root_node.add_object(obj, **kwargs)
 
     def to_schema(self):
         """
