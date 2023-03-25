@@ -521,14 +521,6 @@ Tests are written in ``unittest`` and are run using `tox`_ and `nose`_. Tox will
 
     $ tox
 
-You should always run tox before submitting a PR, but it takes some time, so when developing, it may be faster just to run ``nosetests`` in your own environment. e.g.
-
-.. code-block:: bash
-
-    $ nosetests
-    $ nosetests --with-coverate --cover-package=genson
-    $ nosetests test.test_gen_single:TestBasicTypes.test_number
-
 Integration
 +++++++++++
 
