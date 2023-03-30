@@ -5,7 +5,7 @@ from genson import SchemaBuilder
 class TestParams(base.SchemaBuilderTestCase):
 
     def test_uri(self):
-        test_uri = 'TEST_URI'
+        test_uri = 'test://'
         self.builder = SchemaBuilder(schema_uri=test_uri)
         self.assertResult({"$schema": test_uri})
 
@@ -34,12 +34,12 @@ class TestMethods(base.SchemaBuilderTestCase):
             '{"$schema": "%s"}' % SchemaBuilder.DEFAULT_URI)
 
     def test_add_schema_with_uri_default(self):
-        test_uri = 'TEST_URI'
+        test_uri = 'test://'
         self.add_schema({"$schema": test_uri, "type": "null"})
         self.assertResult({"$schema": test_uri, "type": "null"})
 
     def test_add_schema_with_uri_not_defuult(self):
-        test_uri = 'TEST_URI'
+        test_uri = 'test://'
         self.builder = SchemaBuilder(schema_uri=test_uri)
         self.add_schema({"$schema": 'BAD_URI', "type": "null"})
         self.assertResult({"$schema": test_uri, "type": "null"})
@@ -55,7 +55,7 @@ class TestMethods(base.SchemaBuilderTestCase):
 class TestInteraction(base.SchemaBuilderTestCase):
 
     def test_add_other(self):
-        test_uri = 'TEST_URI'
+        test_uri = 'test://'
         other = SchemaBuilder(schema_uri=test_uri)
         other.add_object(1)
         self.add_object('one')
@@ -65,7 +65,7 @@ class TestInteraction(base.SchemaBuilderTestCase):
             "type": ["integer", "string"]})
 
     def test_add_other_no_uri_overwrite(self):
-        test_uri = 'TEST_URI'
+        test_uri = 'test://'
         other = SchemaBuilder()
         other.add_object(1)
         self.add_object('one')
