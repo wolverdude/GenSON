@@ -153,12 +153,13 @@ Merge in a JSON schema. This can be a ``dict`` or another ``SchemaBuilder`` obje
     There is no schema validation. If you pass in a bad schema,
     you might get back a bad schema.
 
-``add_object(obj)``
-^^^^^^^^^^^^^^^^^^^
+``add_object(obj, **kwargs)``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Modify the schema to accommodate an object.
 
 :param obj: any object or scalar that can be serialized in JSON
+:param \**required (bool): if set to `False` the required keyword in the schema will not be included
 
 ``to_schema()``
 ^^^^^^^^^^^^^^^

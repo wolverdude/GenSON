@@ -12,3 +12,4 @@ Contributors
 - `Heiho1 <https://github.com/heiho1>`_
 - `YehudaCorsia <https://github.com/YehudaCorsia>`_
 - `KOLANICH <https://github.com/KOLANICH>`_
+- `Shane Curtin <https://github.com/sj-curtin>`_
