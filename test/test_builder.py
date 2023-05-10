@@ -1,13 +1,13 @@
 from . import base
 from genson import SchemaBuilder
 
+SCHEMA_URI = 'https://json-schema.org/draft/2020-12/schema'
 
 class TestParams(base.SchemaBuilderTestCase):
 
     def test_uri(self):
-        test_uri = 'TEST_URI'
-        self.builder = SchemaBuilder(schema_uri=test_uri)
-        self.assertResult({"$schema": test_uri})
+        self.builder = SchemaBuilder(schema_uri=SCHEMA_URI)
+        self.assertResult({"$schema": SCHEMA_URI})
 
     def test_null_uri(self):
         self.builder = SchemaBuilder(schema_uri=None)
@@ -34,15 +34,13 @@ class TestMethods(base.SchemaBuilderTestCase):
             '{"$schema": "%s"}' % SchemaBuilder.DEFAULT_URI)
 
     def test_add_schema_with_uri_default(self):
-        test_uri = 'TEST_URI'
-        self.add_schema({"$schema": test_uri, "type": "null"})
-        self.assertResult({"$schema": test_uri, "type": "null"})
+        self.add_schema({"$schema": SCHEMA_URI, "type": "null"})
+        self.assertResult({"$schema": SCHEMA_URI, "type": "null"})
 
     def test_add_schema_with_uri_not_defuult(self):
-        test_uri = 'TEST_URI'
-        self.builder = SchemaBuilder(schema_uri=test_uri)
+        self.builder = SchemaBuilder(schema_uri=SCHEMA_URI)
         self.add_schema({"$schema": 'BAD_URI', "type": "null"})
-        self.assertResult({"$schema": test_uri, "type": "null"})
+        self.assertResult({"$schema": SCHEMA_URI, "type": "null"})
 
     def test_empty_falsy(self):
         self.assertIs(bool(self.builder), False)
@@ -55,24 +53,22 @@ class TestMethods(base.SchemaBuilderTestCase):
 class TestInteraction(base.SchemaBuilderTestCase):
 
     def test_add_other(self):
-        test_uri = 'TEST_URI'
-        other = SchemaBuilder(schema_uri=test_uri)
+        other = SchemaBuilder(schema_uri=SCHEMA_URI)
         other.add_object(1)
         self.add_object('one')
         self.add_schema(other)
         self.assertResult({
-            "$schema": test_uri,
+            "$schema": SCHEMA_URI,
             "type": ["integer", "string"]})
 
     def test_add_other_no_uri_overwrite(self):
-        test_uri = 'TEST_URI'
         other = SchemaBuilder()
         other.add_object(1)
         self.add_object('one')
         self.add_schema(other)
-        self.add_schema({'$schema': test_uri})
+        self.add_schema({'$schema': SCHEMA_URI})
         self.assertResult({
-            "$schema": test_uri,
+            "$schema": SCHEMA_URI,
             "type": ["integer", "string"]})
 
     def test_eq(self):
