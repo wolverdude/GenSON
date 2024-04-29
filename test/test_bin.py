@@ -75,20 +75,32 @@ class TestError(unittest.TestCase):
         'invalid JSON in %s: Expecting value: line 1 column 1 (char 0)'
         % BAD_JSON_FILE)
 
+    def assertEqualIgnoreWhitespace(
+            self,
+            first: str,
+            second: str,
+            msg: "str|None" = None,
+        ):
+        return self.assertEqual(
+            " ".join(first.split()),
+            " ".join(second.split()),
+            msg=msg
+        )
+
     def test_no_input(self):
         (stdout, stderr) = run()
-        self.assertEqual(stderr, stderr_message(
+        self.assertEqualIgnoreWhitespace(stderr, stderr_message(
             'noting to do - no schemas or objects given'))
         self.assertEqual(stdout, '')
 
     def test_object_not_json(self):
         (stdout, stderr) = run([self.BAD_JSON_FILE])
-        self.assertEqual(stderr, self.BAD_JSON_MESSAGE)
+        self.assertEqualIgnoreWhitespace(stderr, self.BAD_JSON_MESSAGE)
         self.assertEqual(stdout, '')
 
     def test_schema_not_json(self):
         (stdout, stderr) = run(['-s', self.BAD_JSON_FILE])
-        self.assertEqual(stderr, self.BAD_JSON_MESSAGE)
+        self.assertEqualIgnoreWhitespace(stderr, self.BAD_JSON_MESSAGE)
         self.assertEqual(stdout, '')
 
 
