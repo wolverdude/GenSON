@@ -4,17 +4,18 @@ History
 1.3.0
 -----
 
-* add support for Python 3.9
-* remove support for old Python versions that test dependencies no longer support
+Modernization
 
-  * Python 3.4
-  * Python 2.7
+* add support for Python versions up through 3.12
+* remove support for old Python versions older than 3.7 since test dependencies no longer support them
+* remove Python 2.7 support
 
-    * remove tests & test commands only relevant to Python 2.7
-    * remove backwards-compatibility from code
+  * remove tests & test commands only relevant to Python 2.7
+  * remove backwards-compatibility from code
 
 * enable running as a module (``python -m genson``)
-* modernize package configuration
+* modernize package configuration (issue #68)
+* Use a valid ``schema_uri`` in tests (issue #69)
 
 1.2.2
 -----
