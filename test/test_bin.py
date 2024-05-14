@@ -20,18 +20,24 @@ def stderr_message(message):
     return '{}\ngenson: error: {}\n'.format(SHORT_USAGE, message)
 
 
-def run(args=[], stdin_data=None):
+def run(args=tuple(), stdin_data=None):
     """
     Run the ``genson`` executable as a subprocess and return
     (stdout, stderr).
     """
+    full_args = ['python', '-m', 'genson']
+    full_args.extend(args)
+    env = os.environ.copy()
+    env['COLUMNS'] = '80'  # set width for deterministic text wrapping
+
     genson_process = Popen(
-        ['python', '-m', 'genson'] + args, stdout=PIPE, stderr=PIPE,
+        full_args, env=env, stdout=PIPE, stderr=PIPE,
         stdin=PIPE if stdin_data is not None else None)
     if stdin_data is not None:
         stdin_data = stdin_data.encode('utf-8')
     (stdout, stderr) = genson_process.communicate(stdin_data)
     genson_process.wait()
+
     if isinstance(stdout, bytes):
         stdout = stdout.decode('utf-8')
     if isinstance(stderr, bytes):
