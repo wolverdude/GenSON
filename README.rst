@@ -1,7 +1,3 @@
-.. image:: https://travis-ci.com/wolverdude/GenSON.svg?branch=master
-   :alt: Travis CI build badge
-   :target: `Travis CI`_
-
 GenSON
 ======
 
