@@ -3,6 +3,7 @@ from genson import SchemaBuilder
 
 SCHEMA_URI = 'https://json-schema.org/draft/2020-12/schema'
 
+
 class TestParams(base.SchemaBuilderTestCase):
 
     def test_uri(self):
