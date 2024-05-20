@@ -7,9 +7,10 @@ python:
   - '3.9'
   - '3.8'
   - '3.7'
-env: ISOLATED=false
-install: pip install -U tox tox-travis
-script: tox
+install: pip install -U 'jsonschema>=4.0.0' coverage
+script: |
+  coverage run --source=genson -m unittest
+  coverage report --omit='*/__main__.py' --fail-under=90
 
 jobs:
   include:
