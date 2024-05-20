@@ -1,21 +1,18 @@
 language: python
-
-# run tests for all envs
+dist: jammy
 python:
-  - 3.7
-  - 3.8
-  - 3.9
-  - 3.10
-  - 3.11
-  - 3.12
+  - '3.12'
+  - '3.11'
+  - '3.10'
+  - '3.9'
+  - '3.8'
+  - '3.7'
 env: ISOLATED=false
-install: pip install tox tox-travis
+install: pip install -U tox tox-travis
 script: tox
 
-# lint only needs run once
 jobs:
   include:
-    - python: 3.9
-      env: ISOLATED=false
-      install: pip install flake8
+    # lint only needs run once
+    - install: pip install -U flake8
       script: flake8
