@@ -69,6 +69,7 @@ class Number(SchemaStrategy):
             self._type = 'number'
 
     def add_object(self, obj):
+        super().add_object(obj)
         if isinstance(obj, float):
             self._type = 'number'
 
