@@ -102,10 +102,12 @@ GenSON Python API
     >>> from genson import SchemaBuilder
 
     >>> builder = SchemaBuilder()
-    >>> builder.add_schema({"type": "object", "properties": {}})
+
+    >>> # Add some objects to infer their schema.
     >>> builder.add_object({"hi": "there"})
     >>> builder.add_object({"hi": 5})
 
+    >>> # Export the schema as a Python dict.
     >>> builder.to_schema()
     {'$schema': 'http://json-schema.org/schema#',
      'type': 'object',
@@ -113,6 +115,15 @@ GenSON Python API
         'hi': {'type': ['integer', 'string']}},
         'required': ['hi']}
 
+    >>> # Merge in another schema.
+    >>> builder.add_schema({
+        "type": "object",
+        "properties": {
+            "hi": {"type": "boolean"}
+        }
+    })
+
+    >>> # Export the schema as a JSON string.
     >>> print(builder.to_json(indent=2))
     {
       "$schema": "http://json-schema.org/schema#",
@@ -120,6 +131,7 @@ GenSON Python API
       "properties": {
         "hi": {
           "type": [
+            "boolean",
             "integer",
             "string"
           ]
