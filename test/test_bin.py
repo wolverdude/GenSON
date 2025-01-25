@@ -82,11 +82,11 @@ class TestError(unittest.TestCase):
         % BAD_JSON_FILE)
 
     def assertEqualIgnoreWhitespace(
-            self,
-            first: str,
-            second: str,
-            msg: "str|None" = None,
-        ):
+        self,
+        first: str,
+        second: str,
+        msg: "str|None" = None,
+    ):
         return self.assertEqual(
             " ".join(first.split()),
             " ".join(second.split()),
