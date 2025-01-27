@@ -64,3 +64,11 @@ class TestPatternProperties(base.SchemaNodeTestCase):
                            'properties': {'a': {'type': 'boolean'}},
                            'patternProperties': {r'^\d$': {'type': 'integer'}},
                            'required': ['a']})
+
+    def test_enum(self):
+        self.add_schema({'type': 'object',
+                         'properties': {'a': {'enum': []}},})
+        self.add_object({'a': 'enum_member_1'})
+        self.assertResult({'type': 'object',
+                           'properties': {'a': {'enum': ['enum_member_1']}},
+                           'required': ['a'],})
