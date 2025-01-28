@@ -1,4 +1,4 @@
-from .strategies import BASIC_SCHEMA_STRATEGIES, Typeless, Enum
+from .strategies import BASIC_SCHEMA_STRATEGIES, Typeless
 
 
 class SchemaGenerationError(RuntimeError):
@@ -128,13 +128,11 @@ class SchemaNode:
                 return active_strategy
 
         # no match found, if typeless add to first strategy
-        if kind == "schema":
-            for special_strategy in [Enum, Typeless]:
-                if special_strategy.match_schema(schema_or_obj):
-                    if not self._active_strategies:
-                        self._active_strategies.append(special_strategy(self.__class__))
-                    active_strategy = self._active_strategies[0]
-                    return active_strategy
+        if kind == 'schema' and Typeless.match_schema(schema_or_obj):
+            if not self._active_strategies:
+                self._active_strategies.append(Typeless(self.__class__))
+            active_strategy = self._active_strategies[0]
+            return active_strategy
 
         # no match found, raise an error
         raise SchemaGenerationError(

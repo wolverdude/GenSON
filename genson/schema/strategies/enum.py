@@ -20,8 +20,9 @@ class Enum(SchemaStrategy):
 
     @classmethod
     def match_object(cls, obj):
-        # Match any enum object. Enum is not in basic strategies.
-        return True
+        # Match scalars and list (of scalars). Technically, the JSON-Schema allows any type
+        # in an enum list, but using objects and lists is a very rare use-case.
+        return type(obj) in [list, bool, str, int, float] or obj is None
 
     def add_schema(self, schema):
         super().add_schema(schema)
@@ -31,8 +32,10 @@ class Enum(SchemaStrategy):
             self._enum.update(schema["enum"])
 
     def add_object(self, obj):
-        # Convert to list to unify processing of iterables and other types.
-        obj_list = list(obj)
+        super().add_object(obj)
+        # Convert to list to unify processing of iterables and other types in a set.
+        obj_list = [obj] if type(obj) is not list else obj
+        # Add only scalar types.
         for item in obj_list:
             item_type = type(item)
             if item_type in [bool, str, int, float]:
