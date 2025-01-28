@@ -20,7 +20,8 @@ BASIC_SCHEMA_STRATEGIES = (
     String,
     List,
     Tuple,
-    Object
+    Object,
+    Enum,
 )
 
 __all__ = (
