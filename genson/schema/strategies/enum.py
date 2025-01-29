@@ -9,20 +9,28 @@ class Enum(SchemaStrategy):
 
     KEYWORDS = ("enum",)
 
-    def init(self, node_class):
-        super().init(node_class)
+    def __init__(self, node_class):
+        super().__init__(node_class)
         # Use set to easily merge 'enum's from different schemas.
         self._enum = set()
+        # Apply different matching logic depending on whether schema exists or not.
+        # Give the Enum strategy preference over other strategies. So there's no way
+        # the Enum will get created unless it was explicitly asked for by a schema,
+        # and this behavior is not order- or type-dependent.
+        self.match_object = self._instance_match_object
+
+    @classmethod
+    def match_object(cls, obj):
+        # Exclude the strategy from the basic object matching. It must be explicitly selected by a schema.
+        return False
+
+    def _instance_match_object(self, obj):
+        # The strategy is selected by a schema. Give the Enum strategy preference over all other strategies.
+        return True
 
     @staticmethod
     def match_schema(schema):
         return "enum" in schema
-
-    @classmethod
-    def match_object(cls, obj):
-        # Match scalars and list (of scalars). Technically, the JSON-Schema allows any type
-        # in an enum list, but using objects and lists is a very rare use-case.
-        return type(obj) in [list, bool, str, int, float] or obj is None
 
     def add_schema(self, schema):
         super().add_schema(schema)
