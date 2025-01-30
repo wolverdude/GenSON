@@ -1,6 +1,7 @@
 from sys import intern
 
-class Py2Key:
+
+class MultiTypeSortKey:
     """Custom key class for 'sorted' to sort a list of different types."""
 
     __slots__ = ("value", "typestr")
@@ -11,6 +12,7 @@ class Py2Key:
 
     def __lt__(self, other):
         try:
+            # Covers current test scope of different sortable types.
             return self.value < other.value
         except TypeError:
             return self.typestr < other.typestr
@@ -27,7 +29,7 @@ def sort_lists_in_schema(schema, sorted_key):
                 if isinstance(v, dict):
                     stack.append(v)
                 elif isinstance(v, list):
-                    node[k] = sorted(v, key=sorted_key)
+                    node[k] = sorted(v, key=MultiTypeSortKey)
                     stack.append(v)
 
         if isinstance(node, list):
@@ -35,5 +37,5 @@ def sort_lists_in_schema(schema, sorted_key):
                 if isinstance(list_item, dict):
                     stack.append(list_item)
                 if isinstance(list_item, list):
-                    node[position] = sorted(list_item, key=sorted_key)
+                    node[position] = sorted(list_item, key=MultiTypeSortKey)
                     stack.append(list_item)

@@ -13,19 +13,22 @@ class Enum(SchemaStrategy):
         super().__init__(node_class)
         # Use set to easily merge 'enum's from different schemas.
         self._enum = set()
-        # Apply different matching logic depending on whether schema exists or not.
-        # Give the Enum strategy preference over other strategies. So there's no way
-        # the Enum will get created unless it was explicitly asked for by a schema,
-        # and this behavior is not order- or type-dependent.
+        # Apply different matching logic depending on whether schema exists or
+        # not. Give the Enum strategy preference over other strategies. So
+        # there's no way the Enum will get created unless it was explicitly
+        # asked for by a schema, and this behavior is not order- or
+        # type-dependent.
         self.match_object = self._instance_match_object
 
-    @classmethod
+    @staticmethod
     def match_object(cls, obj):
-        # Exclude the strategy from the basic object matching. It must be explicitly selected by a schema.
+        # Exclude the strategy from the basic object matching. It must be
+        # explicitly selected by a schema.
         return False
 
     def _instance_match_object(self, obj):
-        # The strategy is selected by a schema. Give the Enum strategy preference over all other strategies.
+        # The strategy is selected by a schema. Give the Enum strategy
+        # preference over all other strategies.
         return True
 
     @staticmethod
@@ -41,17 +44,14 @@ class Enum(SchemaStrategy):
 
     def add_object(self, obj):
         super().add_object(obj)
-        # Convert to list to unify processing of iterables and other types in a set.
-        obj_list = [obj] if type(obj) is not list else obj
-        # Add only scalar types.
-        for item in obj_list:
-            item_type = type(item)
-            if item_type in [bool, str, int, float]:
-                self._enum.add(item)
-            elif item is None:
-                self._enum.add("null")
-            else:
-                raise TypeError(f"Unsupported enum type: {type(item_type)}")
+        # Add only scalar types. Technically, the JSON-Schema spec allows
+        # any type in an enum list, but using objects and lists is a very
+        # rare use-case.
+        if obj is not None and type(obj) not in [bool, str, int, float]:
+            raise TypeError(f"Unsupported enum type of {type(obj)}."
+                            "Scalar type is expected.")
+        # Convert to list to unify processing of string and other types.
+        self._enum.update([obj])
 
     def to_schema(self):
         schema = super().to_schema()
