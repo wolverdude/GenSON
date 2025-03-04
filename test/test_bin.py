@@ -1,6 +1,7 @@
 import unittest
 import json
 import os
+import sys
 from subprocess import Popen, PIPE
 from genson import SchemaBuilder
 
@@ -25,7 +26,7 @@ def run(args=tuple(), stdin_data=None):
     Run the ``genson`` executable as a subprocess and return
     (stdout, stderr).
     """
-    full_args = ['python', '-m', 'genson']
+    full_args = [sys.executable, '-m', 'genson']
     full_args.extend(args)
     env = os.environ.copy()
     env['COLUMNS'] = '80'  # set width for deterministic text wrapping
