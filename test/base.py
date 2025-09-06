@@ -2,6 +2,7 @@ import sys
 import unittest
 import jsonschema
 from genson import SchemaNode, SchemaBuilder
+from .sort import sort_lists_in_schema
 
 PYTHON_VERSION = sys.version[:sys.version.find(' ')]
 
@@ -31,9 +32,14 @@ class BaseTestCase(unittest.TestCase):
         with self.assertRaises(jsonschema.exceptions.ValidationError):
             jsonschema.Draft7Validator(self.builder.to_schema()).validate(obj)
 
-    def assertResult(self, expected, enforceUserContract=True):
+    def assertResult(self, expected, enforceUserContract=True,
+                     ignore_order=False):
+        actual = self.builder.to_schema()
+        if ignore_order:
+            sort_lists_in_schema(actual)
+            sort_lists_in_schema(expected)
         self.assertEqual(
-            expected, self.builder.to_schema(),
+            expected, actual,
             'Generated schema (below) does not match expected (above)')
         if enforceUserContract:
             self.assertUserContract()

@@ -10,6 +10,7 @@ from .scalar import (
     String
 )
 from .array import List, Tuple
+from .enum import Enum
 from .object import Object
 
 BASIC_SCHEMA_STRATEGIES = (
@@ -19,7 +20,8 @@ BASIC_SCHEMA_STRATEGIES = (
     String,
     List,
     Tuple,
-    Object
+    Object,
+    Enum,
 )
 
 __all__ = (
@@ -33,5 +35,6 @@ __all__ = (
     'Tuple',
     'Object',
     'Typeless',
+    'Enum',
     'BASIC_SCHEMA_STRATEGIES'
 )
