@@ -21,7 +21,7 @@ class Enum(SchemaStrategy):
         self.match_object = self._instance_match_object
 
     @staticmethod
-    def match_object(cls, obj):
+    def match_object(obj):
         # Exclude the strategy from the basic object matching. It must be
         # explicitly selected by a schema.
         return False
@@ -44,14 +44,17 @@ class Enum(SchemaStrategy):
 
     def add_object(self, obj):
         super().add_object(obj)
-        # Add only scalar types. Technically, the JSON-Schema spec allows
-        # any type in an enum list, but using objects and lists is a very
-        # rare use-case.
-        if obj is not None and type(obj) not in [bool, str, int, float]:
+        # Add only scalar types. Technically, the JSON-Schema spec allows any
+        # type in an enum list, but using objects and lists is a very rare
+        # use-case.
+        scalar_types = (bool, str, int, float, type(None))
+        if isinstance(obj, scalar_types):
+            # Scalar type. Convert to list to unify processing of string and
+            # other types.
+            self._enum.update([obj])
+        else:
             raise TypeError(f"Unsupported enum type of {type(obj)}."
                             "Scalar type is expected.")
-        # Convert to list to unify processing of string and other types.
-        self._enum.update([obj])
 
     def to_schema(self):
         schema = super().to_schema()
