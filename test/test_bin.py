@@ -21,23 +21,35 @@ def stderr_message(message):
     return '{}\ngenson: error: {}\n'.format(SHORT_USAGE, message)
 
 
-def run(args=tuple(), stdin_data=None):
+def run(args=tuple(), stdin_data=None, tty_stdin=False):
     """
     Run the ``genson`` executable as a subprocess and return
-    (stdout, stderr).
+    (stdout, stderr). ``tty_stdin`` attaches stdin to a pseudo-TTY so
+    the CLI treats the session as interactive; otherwise stdin is a
+    pipe (with ``stdin_data`` written to it, if given).
     """
     full_args = [sys.executable, '-m', 'genson']
     full_args.extend(args)
     env = os.environ.copy()
     env['COLUMNS'] = '80'  # set width for deterministic text wrapping
 
+    if tty_stdin:
+        import pty
+        master_fd, slave_fd = pty.openpty()
+        stdin = slave_fd
+    else:
+        master_fd = slave_fd = None
+        stdin = PIPE if stdin_data is not None else None
+
     genson_process = Popen(
-        full_args, env=env, stdout=PIPE, stderr=PIPE,
-        stdin=PIPE if stdin_data is not None else None)
+        full_args, env=env, stdout=PIPE, stderr=PIPE, stdin=stdin)
     if stdin_data is not None:
         stdin_data = stdin_data.encode('utf-8')
     (stdout, stderr) = genson_process.communicate(stdin_data)
     genson_process.wait()
+    if slave_fd is not None:
+        os.close(slave_fd)
+        os.close(master_fd)
 
     if isinstance(stdout, bytes):
         stdout = stdout.decode('utf-8')
@@ -94,8 +106,11 @@ class TestError(unittest.TestCase):
             msg=msg
         )
 
+    @unittest.skipUnless(os.name == 'posix', 'pty requires a POSIX system')
     def test_no_input(self):
-        (stdout, stderr) = run()
+        # attach a pseudo-TTY so the CLI sees an interactive session
+        # with no piped input rather than inheriting the runner's stdin
+        (stdout, stderr) = run(tty_stdin=True)
         self.assertEqualIgnoreWhitespace(stderr, stderr_message(
             'noting to do - no schemas or objects given'))
         self.assertEqual(stdout, '')
