@@ -2,8 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [master]
   pull_request:
+    # covers PRs from forks; same-repo branches already run via push
+    branches: [master]
   workflow_dispatch:
 
 jobs:
