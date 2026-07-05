@@ -1,6 +1,14 @@
 History
 =======
 
+1.3.1
+-----
+
+* **Bugfix**: include the ``genson.schema`` subpackage in the package build; installing v1.3.0 from a wheel failed with ``ModuleNotFoundError`` (fixes #80, #92)
+* **Bugfix**: call ``super().add_object()`` in the ``Number`` strategy so subclass hooks run (PR #79)
+* migrate CI from Travis to GitHub Actions; releases are now published via PyPI trusted publishing
+* **Tests**: CLI integration tests use ``sys.executable`` (PR #84) and no longer depend on the test runner having an interactive stdin
+
 1.3.0
 -----
 
