@@ -1,0 +1,62 @@
+name: Publish
+
+# Release flow (see RELEASING.md):
+#   - rc tags (e.g. v1.3.1rc1) publish to TestPyPI for end-to-end validation
+#   - final tags (e.g. v1.3.1) publish to PyPI
+# Both use PyPI trusted publishing (OIDC) — no tokens stored in the repo.
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run tests
+        run: |
+          pip install -U 'jsonschema>=4.0.0'
+          python -m unittest
+      - name: Build sdist and wheel
+        run: |
+          pip install -U build twine
+          python -m build
+          twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-testpypi:
+    needs: build
+    if: contains(github.ref_name, 'rc')
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    needs: build
+    if: "!contains(github.ref_name, 'rc')"
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
