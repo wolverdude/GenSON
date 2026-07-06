@@ -58,7 +58,7 @@ class Tuple(BaseArray):
 
     def __init__(self, node_class):
         super().__init__(node_class)
-        self._items = []  # Start empty, let add_schema/add_object populate
+        self._items = [node_class()]
 
     def add_schema(self, schema):
         super().add_schema(schema)
@@ -77,10 +77,3 @@ class Tuple(BaseArray):
 
     def items_to_schema(self):
         return [item.to_schema() for item in self._items]
-
-    def to_schema(self):
-        """Override to always include items key for tuples (even when empty)"""
-        schema = super().to_schema()
-        # Tuples always have items key to preserve tuple nature
-        schema['items'] = self.items_to_schema()
-        return schema

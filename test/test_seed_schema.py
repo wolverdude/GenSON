@@ -9,18 +9,16 @@ class TestSeedTuple(base.SchemaNodeTestCase):
         self.assertResult({'type': 'array', 'items': [{'type': 'null'}]})
 
     def test_empty_tuple(self):
-        # the output mirrors the seed even though a zero-length `items`
-        # array is technically invalid under the draft-07 meta-schema,
-        # so the user contract can't be enforced here (see issue #90)
+        # an empty tuple seed is padded to one empty item schema; a
+        # zero-length `items` array would be invalid under every draft
+        # of the meta-schema (see the discussion on issue #90)
         self.add_schema({'type': 'array', 'items': []})
-        self.assertResult({'type': 'array', 'items': []},
-                          enforceUserContract=False)
+        self.assertResult({'type': 'array', 'items': [{}]})
 
     def test_empty_tuple_merge(self):
         self.add_schema({'type': 'array', 'items': []})
         self.add_schema({'type': 'array', 'items': []})
-        self.assertResult({'type': 'array', 'items': []},
-                          enforceUserContract=False)
+        self.assertResult({'type': 'array', 'items': [{}]})
 
 
 class TestPatternProperties(base.SchemaNodeTestCase):
