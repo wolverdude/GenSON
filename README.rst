@@ -8,13 +8,19 @@ GenSON
 
 GenSON's core function is to take JSON objects and generate schemas that describe them, but it is unique in its ability to *merge* schemas. It was originally built to describe the common structure of a large number of JSON objects, and it uses its merging ability to generate a single schema from any number of JSON objects and/or schemas.
 
+
+GenSON's Guiding Rules
+----------------------
+
 GenSON's schema builder follows these three rules:
 
 1. *Every* object it is given must validate under the generated schema.
 2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema. (there is one glaring exception to this, detailed `below`_)
 3. The generated schema should be as strict as possible given the first 2 rules.
 
-One consequence of these rules is that inputs of the same broad type always *merge* into a single schema: two object inputs become one object schema with the union of their properties, never an ``anyOf`` of the two. GenSON only reaches for ``anyOf`` when it encounters fundamentally different structures, like an object and an array. If you want alternatives kept separate, generate a schema per shape using separate builders and combine them yourself with ``{"anyOf": [...]}``.
+There are of course a number of gotchas and edge-cases that GenSON tries to resolve, but doesn't always do it the way that you want. For example, inputs of the same broad type always *merge* into a single schema: two object inputs become one object schema with the union of their properties, never an ``anyOf`` of the two. GenSON only reaches for ``anyOf`` when it encounters fundamentally different structures, like an object and an array.
+
+GenSON is extensible, making it possible for you to make a different choice in many of these cases. In the case above, if you want alternatives kept separate, generate a schema per shape using separate builders and combine them yourself with ``{"anyOf": [...]}``.
 
 
 JSON Schema Implementation
