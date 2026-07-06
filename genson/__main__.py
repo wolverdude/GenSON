@@ -13,7 +13,7 @@ class CLI:
 
     def run(self):
         if not self.args.schema and not self.args.object:
-            self.fail('noting to do - no schemas or objects given')
+            self.fail('nothing to do - no schemas or objects given')
         self.add_schemas()
         self.add_objects()
         self.print_output()

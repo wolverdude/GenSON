@@ -70,13 +70,6 @@ class Object(SchemaStrategy):
             if search(pattern, prop):
                 return pattern
 
-    def _add(self, items, func):
-        while len(self._items) < len(items):
-            self._items.append(self._schema_node_class())
-
-        for subschema, item in zip(self._items, items):
-            getattr(subschema, func)(item)
-
     def to_schema(self):
         schema = super().to_schema()
         schema['type'] = 'object'
