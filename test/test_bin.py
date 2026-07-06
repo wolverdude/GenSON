@@ -112,7 +112,7 @@ class TestError(unittest.TestCase):
         # with no piped input rather than inheriting the runner's stdin
         (stdout, stderr) = run(tty_stdin=True)
         self.assertEqualIgnoreWhitespace(stderr, stderr_message(
-            'noting to do - no schemas or objects given'))
+            'nothing to do - no schemas or objects given'))
         self.assertEqual(stdout, '')
 
     def test_object_not_json(self):
