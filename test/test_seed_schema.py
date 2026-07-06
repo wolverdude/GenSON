@@ -64,3 +64,32 @@ class TestPatternProperties(base.SchemaNodeTestCase):
                            'properties': {'a': {'type': 'boolean'}},
                            'patternProperties': {r'^\d$': {'type': 'integer'}},
                            'required': ['a']})
+
+
+class TestEnum(base.SchemaNodeTestCase):
+
+    def test_enum_scalar_string(self):
+        self.add_schema({"enum": []})
+        self.add_object("1")
+        self.assertResult({"enum": ["1"]})
+
+    def test_enum_scalar_list(self):
+        self.add_schema({"enum": ["1", 2]})
+        self.add_object("34")
+        self.add_object(5)
+        self.add_object(6.7)
+        self.add_object(False)
+        self.add_object(None)
+        self.assertResult(
+            {"enum": ["1", 2, "34", 5, 6.7, False, None]},
+            enforceUserContract=False,
+            ignore_order=True,
+        )
+
+    def test_enum_repeated_item(self):
+        self.add_schema({"enum": []})
+        self.add_object(1)
+        self.add_object(1)
+        self.add_object(2)
+        self.add_object(1)
+        self.assertResult({"enum": [1, 2]}, ignore_order=True)
