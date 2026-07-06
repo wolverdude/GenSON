@@ -31,6 +31,7 @@ Currently, GenSON only deals with these keywords:
 * ``"patternProperties"``
 * ``"required"``
 * ``"anyOf"``
+* ``"enum"`` (only with a `seed schema <#seeding-enums>`__)
 
 You should be aware that this limited vocabulary could cause GenSON to violate rules 1 and 2. If you feed it schemas with advanced keywords, it will just blindly pass them on to the final schema. Note that ``"$ref"`` and ``id`` are also not supported, so GenSON will not dereference linked nodes when building a schema.
 
@@ -302,6 +303,34 @@ There are a few gotchas you should be aware of here:
 * If a key matches multiple patterns, there is *no guarantee* of which one will be updated.
 * The patternProperties_ docs themselves have some more useful pointers that can save you time.
 
+Seeding enums
++++++++++++++
+
+Support for enum_ is new in version 1.4. GenSON never infers an ``enum`` on its own; you activate it per node by seeding that node with a schema containing the ``enum`` keyword (an empty list is fine). Once activated, the node records every value it encounters — deduplicated — instead of inferring a type.
+
+.. code-block:: python
+
+    >>> from genson import SchemaBuilder
+
+    >>> builder = SchemaBuilder()
+    >>> builder.add_schema({'type': 'object', 'properties': {
+    ...     'status': {'enum': []}}})
+    >>> builder.add_object({'status': 'active'})
+    >>> builder.add_object({'status': 'inactive'})
+    >>> builder.add_object({'status': 'active'})
+    >>> builder.to_schema()
+    {'$schema': 'http://json-schema.org/schema#',
+     'type': 'object',
+     'properties': {'status': {'enum': ['inactive', 'active']}},
+     'required': ['status']}
+
+Some things to be aware of:
+
+* Values are merged as a set, so the order of the output list is *not* guaranteed.
+* Only scalar values (strings, numbers, booleans, and ``null``) are supported. Feeding a list or object to an enum node raises a ``TypeError``. (The JSON-Schema spec technically allows non-scalar enum values, but this is a rare use-case; if you need it, extend the ``Enum`` strategy.)
+* An activated enum node captures *all* values it sees, taking precedence over the typed strategies.
+* There is no direct support for const_, but it's easy to get there from here: seed the node with ``enum``, and if exactly one value comes back, replace ``{"enum": [value]}`` with ``{"const": value}`` yourself.
+
 Typeless Schemas
 ++++++++++++++++
 
@@ -517,7 +546,7 @@ When contributing, please follow these steps:
 3. Lint your code with `Flake8`_.
 4. Run `tox`_ to make sure the test suite passes.
 5. Ensure the docs are accurate.
-6. Add your name to the list of contributers.
+6. Add your name to the list of contributors.
 7. Submit a Pull Request.
 
 Tests
@@ -566,6 +595,8 @@ The following are extra features under consideration.
 .. _below: #typeless-schemas
 .. _array validation here: https://spacetelescope.github.io/understanding-json-schema/reference/array.html#items
 .. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
+.. _enum: https://json-schema.org/understanding-json-schema/reference/enum
+.. _const: https://json-schema.org/understanding-json-schema/reference/const
 .. _Python flavor of RegEx: https://docs.python.org/3.6/library/re.html
 .. _the code: https://github.com/wolverdude/GenSON/tree/master/genson/schema/strategies
 .. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range

@@ -48,7 +48,7 @@ class Enum(SchemaStrategy):
         # any type in an enum list, but using objects and lists is a very
         # rare use-case.
         if not isinstance(obj, (bool, str, int, float, type(None))):
-            raise TypeError(f"Unsupported enum type of {type(obj)}."
+            raise TypeError(f"Unsupported enum type of {type(obj)}. "
                             "Scalar type is expected.")
         # Convert to list to unify processing of string and other types.
         self._enum.update([obj])
