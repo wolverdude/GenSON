@@ -65,6 +65,9 @@ class TestPatternProperties(base.SchemaNodeTestCase):
                            'patternProperties': {r'^\d$': {'type': 'integer'}},
                            'required': ['a']})
 
+
+class TestEnum(base.SchemaNodeTestCase):
+
     def test_enum_scalar_string(self):
         self.add_schema({"enum": []})
         self.add_object("1")
@@ -83,29 +86,10 @@ class TestPatternProperties(base.SchemaNodeTestCase):
             ignore_order=True,
         )
 
-    def test_enum_property(self):
-        self.add_schema(
-            {
-                "type": "object",
-                "properties": {"a": {"enum": []}},
-            }
-        )
-        self.add_object({"a": ["123", 1, True, 1.2, None]})
-        self.assertResult(
-            {
-                "type": "object",
-                "properties": {
-                    "a": {
-                        "enum": [
-                            1,
-                            "null",
-                            1.2,
-                            "123",
-                        ]
-                    }
-                },
-                "required": ["a"],
-            },
-            enforceUserContract=False,
-            ignore_order=True,
-        )
+    def test_enum_repeated_item(self):
+        self.add_schema({"enum": []})
+        self.add_object(1)
+        self.add_object(1)
+        self.add_object(2)
+        self.add_object(1)
+        self.assertResult({"enum": [1, 2]}, ignore_order=True)

@@ -1,41 +1,21 @@
-from sys import intern
-
-
-class MultiTypeSortKey:
-    """Custom key class for 'sorted' to sort a list of different types."""
-
-    __slots__ = ("value", "typestr")
-
-    def __init__(self, value):
-        self.value = value
-        self.typestr = intern(type(value).__name__)
-
-    def __lt__(self, other):
+def sort_lists_in_schema(schema):
+    """
+    Recursively traverses a schema and sorts any lists it finds.
+    The sorting is stable and works on lists with mixed types.
+    """
+    if isinstance(schema, dict):
+        for key, value in schema.items():
+            schema[key] = sort_lists_in_schema(value)
+        return schema
+    elif isinstance(schema, list):
+        new_list = [sort_lists_in_schema(item) for item in schema]
         try:
-            # Covers current test scope of different sortable types.
-            return self.value < other.value
+            return sorted(new_list)
         except TypeError:
-            return self.typestr < other.typestr
-
-
-def sort_lists_in_schema(schema, sorted_key):
-    stack = []
-    stack.append(schema)
-    while stack:
-        node = stack.pop()
-
-        if isinstance(node, dict):
-            for k, v in node.items():
-                if isinstance(v, dict):
-                    stack.append(v)
-                elif isinstance(v, list):
-                    node[k] = sorted(v, key=MultiTypeSortKey)
-                    stack.append(v)
-
-        if isinstance(node, list):
-            for position, list_item in enumerate(node):
-                if isinstance(list_item, dict):
-                    stack.append(list_item)
-                if isinstance(list_item, list):
-                    node[position] = sorted(list_item, key=MultiTypeSortKey)
-                    stack.append(list_item)
+            # This handles mixed types by creating a tuple of the type
+            # name and the value. This ensures that types are grouped
+            # together and then sorted.
+            # It's safe to use str() here since only malformed custom
+            # objects could cause it to fail.
+            return sorted(new_list, key=lambda x: (type(x).__name__, str(x)))
+    return schema

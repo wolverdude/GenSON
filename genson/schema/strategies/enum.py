@@ -44,17 +44,14 @@ class Enum(SchemaStrategy):
 
     def add_object(self, obj):
         super().add_object(obj)
-        # Add only scalar types. Technically, the JSON-Schema spec allows any
-        # type in an enum list, but using objects and lists is a very rare
-        # use-case.
-        scalar_types = (bool, str, int, float, type(None))
-        if isinstance(obj, scalar_types):
-            # Scalar type. Convert to list to unify processing of string and
-            # other types.
-            self._enum.update([obj])
-        else:
+        # Add only scalar types. Technically, the JSON-Schema spec allows
+        # any type in an enum list, but using objects and lists is a very
+        # rare use-case.
+        if not isinstance(obj, (bool, str, int, float, type(None))):
             raise TypeError(f"Unsupported enum type of {type(obj)}."
                             "Scalar type is expected.")
+        # Convert to list to unify processing of string and other types.
+        self._enum.update([obj])
 
     def to_schema(self):
         schema = super().to_schema()
