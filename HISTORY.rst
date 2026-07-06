@@ -1,6 +1,16 @@
 History
 =======
 
+1.4.0
+-----
+
+* add ``enum`` support, activated per node by seed schemas (PR #82 — thanks @tokarenko; closes #46, #81)
+* **Performance**: strategy deduplication when defining custom ``SchemaBuilder`` classes is now O(n) instead of O(n²) (PR #91 — thanks @Bitshifter-9; fixes #90)
+* include the complete, runnable test suite in the source distribution (PR #94 — thanks @mgorny)
+* **Bugfix**: fix "noting to do" typo in the CLI error message and remove dead code (PR #93 — thanks @est)
+* **Docs**: document the ``required``-dropping behavior and the builder-merge gotcha (#78, #25); explain why same-type inputs merge rather than producing ``anyOf``; add a ``NoRequiredObject`` example for suppressing ``required`` (#37, #60)
+* declare ``python_requires >= 3.10``, matching the tested Python versions
+
 1.3.1
 -----
 
