@@ -303,6 +303,14 @@ There are a few gotchas you should be aware of here:
 * If a key matches multiple patterns, there is *no guarantee* of which one will be updated.
 * The patternProperties_ docs themselves have some more useful pointers that can save you time.
 
+Seeding required
+++++++++++++++++
+
+GenSON sets ``required`` to the keys that have appeared in *every* object it has seen, and once that intersection is empty, it drops ``required`` from the output entirely rather than emitting an empty list. To force an empty ``required`` into the output, seed the builder with one: ``{"type": "object", "required": []}``.
+
+.. warning::
+    This matters when merging one ``SchemaBuilder`` into another, because the hand-off goes through ``to_schema()``. An unseeded builder whose ``required`` has *become* empty serializes without ``required``, so the receiving builder can diverge from the original as more schemas are added. Seeding both builders with ``"required": []`` prevents this. See issues `#78`_ and `#25`_ for the full story.
+
 Seeding enums
 +++++++++++++
 
@@ -597,6 +605,8 @@ The following are extra features under consideration.
 .. _patternProperties: https://spacetelescope.github.io/understanding-json-schema/reference/object.html#pattern-properties
 .. _enum: https://json-schema.org/understanding-json-schema/reference/enum
 .. _const: https://json-schema.org/understanding-json-schema/reference/const
+.. _#78: https://github.com/wolverdude/GenSON/issues/78
+.. _#25: https://github.com/wolverdude/GenSON/issues/25
 .. _Python flavor of RegEx: https://docs.python.org/3.6/library/re.html
 .. _the code: https://github.com/wolverdude/GenSON/tree/master/genson/schema/strategies
 .. _minimum number: https://json-schema.org/understanding-json-schema/reference/numeric.html#range
