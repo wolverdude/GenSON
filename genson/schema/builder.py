@@ -14,10 +14,8 @@ class _MetaSchemaBuilder(type):
             for base in bases:
                 schema_strategies += list(getattr(base, 'STRATEGIES', []))
 
-            unique_schema_strategies = []
-            for schema_strategy in schema_strategies:
-                if schema_strategy not in unique_schema_strategies:
-                    unique_schema_strategies.append(schema_strategy)
+            # Use dict.fromkeys() to remove duplicates while preserving order (Python 3.7+)
+            unique_schema_strategies = list(dict.fromkeys(schema_strategies))
 
             cls.STRATEGIES = tuple(unique_schema_strategies)
 
