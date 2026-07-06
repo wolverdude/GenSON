@@ -14,10 +14,14 @@ no local credentials or `twine upload` needed. Pushing a tag is the release.
    - `setup.cfg` (classifiers)
 
    Note any support changes in `HISTORY.rst`.
+
 2. Add a `HISTORY.rst` entry for the new version.
+
 3. Bump `__version__` in `genson/__init__.py` (it is the single source of
    truth; `setup.cfg` reads it).
+
 4. Make sure CI is green on `master`.
+
 5. **Dry run against TestPyPI**: push an rc tag, e.g.
 
    ```sh
@@ -36,6 +40,9 @@ no local credentials or `twine upload` needed. Pushing a tag is the release.
 
    The import check matters: it catches packaging bugs like v1.3.0's missing
    `genson.schema` subpackage.
+
+   Finally, open the web page and inspect the docs to ensure nothing broke the RST parsing.
+
 6. **Release**: push the final tag.
 
    ```sh
@@ -44,6 +51,7 @@ no local credentials or `twine upload` needed. Pushing a tag is the release.
 
    The workflow publishes final tags to PyPI. Verify with
    `pip install genson==<version>` in a fresh venv.
+
 7. Create a GitHub release from the tag with the `HISTORY.rst` entry as notes
    (optional but nice for watchers).
 
