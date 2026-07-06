@@ -8,6 +8,18 @@ class TestSeedTuple(base.SchemaNodeTestCase):
         self.add_object([None])
         self.assertResult({'type': 'array', 'items': [{'type': 'null'}]})
 
+    def test_empty_tuple(self):
+        # an empty tuple seed is padded to one empty item schema; a
+        # zero-length `items` array would be invalid under every draft
+        # of the meta-schema (see the discussion on issue #90)
+        self.add_schema({'type': 'array', 'items': []})
+        self.assertResult({'type': 'array', 'items': [{}]})
+
+    def test_empty_tuple_merge(self):
+        self.add_schema({'type': 'array', 'items': []})
+        self.add_schema({'type': 'array', 'items': []})
+        self.assertResult({'type': 'array', 'items': [{}]})
+
 
 class TestPatternProperties(base.SchemaNodeTestCase):
 
