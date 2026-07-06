@@ -14,6 +14,8 @@ GenSON's schema builder follows these three rules:
 2. *Any* object that is valid under *any* schema it is given must also validate under the generated schema. (there is one glaring exception to this, detailed `below`_)
 3. The generated schema should be as strict as possible given the first 2 rules.
 
+One consequence of these rules is that inputs of the same broad type always *merge* into a single schema: two object inputs become one object schema with the union of their properties, never an ``anyOf`` of the two. GenSON only reaches for ``anyOf`` when it encounters fundamentally different structures, like an object and an array. If you want alternatives kept separate, generate a schema per shape using separate builders and combine them yourself with ``{"anyOf": [...]}``.
+
 
 JSON Schema Implementation
 --------------------------
@@ -542,6 +544,29 @@ Note that the exclusive builder is much more particular.
     >>> builder.add_object(None) # this is fine
     >>> picky_builder.add_object(None) # this fails
     genson.schema.node.SchemaGenerationError: Could not find matching schema type for object: None
+
+Example: ``NoRequiredObject``
++++++++++++++++++++++++++++++
+
+Custom strategies can also *remove* keywords. A common request is to leave ``required`` out of generated schemas entirely, so that objects with missing keys still validate:
+
+.. code-block:: python
+
+    from genson import SchemaBuilder
+    from genson.schema.strategies import Object
+
+    class NoRequiredObject(Object):
+        # drop 'required' from the list of handled keywords
+        KEYWORDS = tuple(kw for kw in Object.KEYWORDS if kw != 'required')
+
+        def to_schema(self):
+            schema = super().to_schema()
+            schema.pop('required', None)
+            return schema
+
+    class NoRequiredSchemaBuilder(SchemaBuilder):
+        """ generates schemas without the 'required' keyword """
+        EXTRA_STRATEGIES = (NoRequiredObject,)
 
 
 Contributing
