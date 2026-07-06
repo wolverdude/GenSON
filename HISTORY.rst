@@ -6,6 +6,7 @@ History
 
 * **Bugfix**: include the ``genson.schema`` subpackage in the package build; installing v1.3.0 from a wheel failed with ``ModuleNotFoundError`` (fixes #80, #92)
 * **Bugfix**: call ``super().add_object()`` in the ``Number`` strategy so subclass hooks run (PR #79)
+* add Python 3.13 and 3.14 to the test matrix and classifiers; drop EOL Python 3.7–3.9 (the package itself is unchanged and older Pythons may still work, but they are no longer tested)
 * migrate CI from Travis to GitHub Actions; releases are now published via PyPI trusted publishing
 * **Tests**: CLI integration tests use ``sys.executable`` (PR #84) and no longer depend on the test runner having an interactive stdin
 

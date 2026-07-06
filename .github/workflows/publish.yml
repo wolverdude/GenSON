@@ -17,6 +17,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Check tag matches package version
+        # The published version comes from genson.__version__, NOT the
+        # tag. Fail fast on mismatch so an rc tag can't silently publish
+        # a final-looking version (see RELEASING.md).
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(python -c 'import genson; print(genson.__version__)')"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME != genson.__version__ ($PKG_VERSION)." \
+                 "Bump genson/__init__.py and re-tag (see RELEASING.md)."
+            exit 1
+          fi
       - name: Run tests
         run: |
           pip install -U 'jsonschema>=4.0.0'
@@ -47,6 +59,27 @@ jobs:
         with:
           repository-url: https://test.pypi.org/legacy/
 
+  verify-testpypi:
+    needs: publish-testpypi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install from TestPyPI and smoke test
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          # the index can lag behind the upload; retry for a few minutes
+          for i in $(seq 1 10); do
+            pip install --index-url https://test.pypi.org/simple/ \
+              "genson==$VERSION" && break
+            echo "genson==$VERSION not yet on TestPyPI; retrying in 30s"
+            sleep 30
+          done
+          python -c "import genson; v=genson.__version__; assert v == '$VERSION', v"
+          python -m genson --version
+          echo '{"hi": 5}' | genson
+
   publish-pypi:
     needs: build
     if: "!contains(github.ref_name, 'rc')"
@@ -60,3 +93,22 @@ jobs:
           name: dist
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
+
+  verify-pypi:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install from PyPI and smoke test
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          for i in $(seq 1 10); do
+            pip install "genson==$VERSION" && break
+            echo "genson==$VERSION not yet on PyPI; retrying in 30s"
+            sleep 30
+          done
+          python -c "import genson; v=genson.__version__; assert v == '$VERSION', v"
+          python -m genson --version
+          echo '{"hi": 5}' | genson
