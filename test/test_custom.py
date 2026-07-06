@@ -1,5 +1,7 @@
+import unittest
 from genson import SchemaBuilder
-from genson.schema.strategies import SchemaStrategy, Number
+from genson.schema.strategies import (
+    SchemaStrategy, Number, BASIC_SCHEMA_STRATEGIES)
 from . import base
 
 
@@ -54,6 +56,31 @@ class TestExtraStrategies(base.SchemaNodeTestCase):
             '$schema': 'http://json-schema.org/schema#',
             'type': 'integer',
             'maximum': 10})
+
+
+class DuplicateStrategiesSchemaBuilder(SchemaBuilder):
+    """many duplicate strategies to exercise deduplication"""
+    EXTRA_STRATEGIES = BASIC_SCHEMA_STRATEGIES * 100
+
+
+class TestStrategyDeduplication(unittest.TestCase):
+
+    def test_deduplicates_strategies(self):
+        strategies = DuplicateStrategiesSchemaBuilder.STRATEGIES
+        self.assertEqual(len(strategies), len(set(strategies)))
+
+    def test_preserves_first_occurrence_order(self):
+        self.assertEqual(DuplicateStrategiesSchemaBuilder.STRATEGIES,
+                         tuple(BASIC_SCHEMA_STRATEGIES))
+
+    def test_extra_strategies_keep_priority(self):
+        # EXTRA_STRATEGIES stay ahead of the inherited strategies even
+        # when they duplicate each other
+        class DupExtra(SchemaBuilder):
+            EXTRA_STRATEGIES = (MaxTenStrategy, MaxTenStrategy)
+
+        self.assertIs(DupExtra.STRATEGIES[0], MaxTenStrategy)
+        self.assertEqual(DupExtra.STRATEGIES.count(MaxTenStrategy), 1)
 
 
 class TestClobberStrategies(base.SchemaNodeTestCase):

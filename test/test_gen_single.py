@@ -74,7 +74,11 @@ class TestArrayTuple(base.SchemaNodeTestCase):
         self.add_schema({"type": "array", "items": []})
 
         self.add_object([])
-        self.assertResult({"type": "array", "items": [{}]})
+        # empty tuples stay empty rather than being padded with an
+        # empty schema; the result mirrors the (technically invalid)
+        # seed, so the user contract can't be enforced (see issue #90)
+        self.assertResult({"type": "array", "items": []},
+                          enforceUserContract=False)
 
     def test_empty_schema(self):
         self.add_schema({"type": "array", "items": [{}]})

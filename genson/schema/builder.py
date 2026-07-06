@@ -14,7 +14,7 @@ class _MetaSchemaBuilder(type):
             for base in bases:
                 schema_strategies += list(getattr(base, 'STRATEGIES', []))
 
-            # Use dict.fromkeys() to remove duplicates while preserving order (Python 3.7+)
+            # dict.fromkeys() dedupes in O(n) while preserving order
             unique_schema_strategies = list(dict.fromkeys(schema_strategies))
 
             cls.STRATEGIES = tuple(unique_schema_strategies)
