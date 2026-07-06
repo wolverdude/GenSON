@@ -20,7 +20,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install test dependencies
-        run: pip install -U 'jsonschema>=4.0.0' readme_renderer coverage
+        run: pip install -U 'jsonschema>=4.0.0' coverage
+      - name: Install docs-test dependencies (latest Python only)
+        if: matrix.python-version == '3.14'
+        run: pip install -U readme_renderer
       - name: Run tests with coverage
         run: coverage run --source=genson -m unittest
       - name: Enforce coverage threshold

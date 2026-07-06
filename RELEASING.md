@@ -20,8 +20,10 @@ pip ignores them unless explicitly pinned.
 1. **Python version matrix check** (do this every release — it goes stale with
    time, not with code): are there new stable CPython releases to add, or
    EOL versions to drop? Update all three together:
-   - `tox.ini` (`envlist`)
-   - `.github/workflows/test.yml` (matrix)
+   - `tox.ini` (`envlist`, and the `pyXYZ:` factor pinning `readme_renderer`
+     to the latest version)
+   - `.github/workflows/test.yml` (matrix, and the docs-test `if:` condition
+     pinned to the latest version)
    - `setup.cfg` (classifiers)
 
    Note any support changes in `HISTORY.rst`.
