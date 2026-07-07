@@ -47,6 +47,7 @@ class Object(SchemaStrategy):
                 self._required &= required
 
     def add_object(self, obj):
+        super().add_object(obj)
         properties = set()
         for prop, subobj in obj.items():
             pattern = None

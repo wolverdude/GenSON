@@ -39,6 +39,7 @@ class List(BaseArray):
             self._items.add_schema(schema['items'])
 
     def add_object(self, obj):
+        super().add_object(obj)
         for item in obj:
             self._items.add_object(item)
 
@@ -66,6 +67,7 @@ class Tuple(BaseArray):
             self._add(schema['items'], 'add_schema')
 
     def add_object(self, obj):
+        super().add_object(obj)
         self._add(obj, 'add_object')
 
     def _add(self, items, func):
